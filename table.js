@@ -36,7 +36,7 @@ function toBin(v) {
     for(let i = 1 ; i <= v.length ; i++){
         bin += v[i-1];
         if(i % 4 == 0 && i != v.length){
-            bin += " ";
+            bin +=" ";
         }
     }
     return bin
