@@ -1,0 +1,98 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #1e1e1e;
+  overflow: hidden;
+}
+
+/** ヘッダーが34px、フッターが20px */
+
+
+
+#header_fixed {
+  position: fixed;
+  height: 34px;
+  width: 100%;
+}
+
+#footer_fixed {
+  position: fixed;
+  height: 20px;
+  width: 100%;
+  bottom: 0px;
+  background-color: #337ab7;
+  color: #eeeeee;
+}
+
+#input_leader {
+  width: 100%;
+  height: 100%;
+  display: table;
+  table-layout: fixed;
+  padding: 34px 0px 0px 0px;
+}
+
+#input_area {
+  display: table-cell;
+  background-color: green;
+}
+
+#input_txt {
+  width: 100%;
+  height: 100%;
+}
+
+
+#register_memory {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#register_area {
+  display: block;
+  height: 50%;
+  text-align: center;
+  background-color: blue;
+  overflow: scroll;
+}
+
+#memory_area {
+  display: block;
+  height: 50%;
+  text-align: center;
+  background-color: white;
+  overflow: scroll;
+}
+
+#display_stack {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#display_area {
+  display: block;
+  height: 50%;
+  text-align: center;
+  background-color: yellow;
+}
+
+#stack_area {
+  display: block;
+  height: 50%;
+  text-align: center;
+  background-color: red;
+  overflow: scroll;
+}
+
+#table_id1 td {
+  width: 100%;
+  height: 100%;
+  border: 3px solid red;
+  
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <title>Electron Text Editor</title>
+
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet"/>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/mode-javascript.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/theme-twilight.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="editor.js"></script>
+  <script src="table.js"></script>
+</head>
+<body>
+  <div id="header_fixed">
+    <button type="button"
+            class="btn-sm btn-primary"
+            id="btnLoad">
+      読み込む
+    </button>
+    <button type="button"
+            class="btn-sm
+            btn-primary"
+            id="btnSave">
+      保存する
+    </button>
+  </div>
+  <div id="footer_fixed"></div>
+<!--ここからメイン部分-->
+<!--一番外側のdiv-->
+  <div id="input_leader">
+    <!--テキストエディタ表示用のdiv-->
+    <div id="input_area">
+      <!--テキストエディタ部分-->
+      <div id="input_txt"></div>
+    </div>
+
+    <!--レジスタとメモリ表示用のdiv-->
+    <div id="register_memory">
+       <!--メモリ表示-->
+       <div id="memory_area"></div>
+      <!--レジスタ表示-->
+      <div id="register_area">
+          <table border="1" width="100%">
+              <tr>
+                <th>Name</th>
+                <th>Hex</th>
+                <th>uDec</th>
+                <th>sDec</th>
+                <th colspan="3">Bin</th>
+              </tr>
+              <tr>
+                <td>PR</td>
+                <td>#0000</td>
+                <td>0</td>
+                <td>0</td>
+                <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR0</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR1</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR2</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR3</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR4</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR5</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR6</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR7</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>GR8</td>
+                  <td>#0000</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td colspan="3">0000 0000 0000 0000</td>
+              </tr>
+              <tr>
+                  <td>SP</td>
+                  <td>#FFFF</td>
+                  <td>65535</td>
+                  <td>-1</td>
+                  <td colspan="3">1111 1111 1111 1111</td>
+              </tr>
+              <tr>
+                  <th>Name</th>
+                  <th>Overflow</th>
+                  <th>Sign</th>
+                  <th>Zero</th>
+                  <th>Overflow</th>
+                  <th>Sign</th>
+                  <th>Zero</th>
+                </tr>
+              <tr>
+                  <td>Flags</td>
+                  <td>〇</td>
+                  <td>正</td>
+                  <td>NonZ</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+              </tr>
+            </table>
+      </div>
+    </div>
+
+<!--ディスプレイとスタック表示用のdiv-->
+    <div id="display_stack">
+      <!--ディスプレイ表示-->
+      <div id="display_area"></div>
+      <!--スタック表示-->
+      <div id="stack_area"></div>
+    </div>
+
+  </div>
+</body>
+</html>
