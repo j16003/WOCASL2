@@ -193,3 +193,59 @@ function memoryAllSet(address,value){
     memorySdecSet(address,value);
     memoryBinSet(address,value);
 }
+
+// toOverflowFlagSet Overflow Flagを設定する
+// 引数 
+// v        :  値
+function toOverflowFlagSet(value){
+    let table = document.getElementById('Registertable');
+    if(value == 0){
+        table.rows[ 13 ].cells[ 4 ].firstChild.data = 0;
+        table.rows[ 13 ].cells[ 0 ].firstChild.data = '〇';
+    }else{
+        table.rows[ 13 ].cells[ 4 ].firstChild.data = 1;
+        table.rows[ 13 ].cells[ 0 ].firstChild.data = '☆';
+    }
+}
+
+// toOverflowFlagSet Overflow Flagを設定する
+// 引数 
+// v        :  値
+function toOverflowFlagSet(value){
+    let table = document.getElementById('Registertable');
+    if(value == 0){
+        table.rows[ 13 ].cells[ 4 ].firstChild.data = 0;
+        table.rows[ 13 ].cells[ 1 ].firstChild.data = '〇';
+    }else{
+        table.rows[ 13 ].cells[ 4 ].firstChild.data = 1;
+        table.rows[ 13 ].cells[ 1 ].firstChild.data = '☆';
+    }
+}
+
+// toSignFlagSet Sign Flagを設定する
+// 引数 
+// v        :  値
+function toSignFlagSet(value){
+    let table = document.getElementById('Registertable');
+    if(value == 0){
+        table.rows[ 13 ].cells[ 5 ].firstChild.data = 0;
+        table.rows[ 13 ].cells[ 2 ].firstChild.data = '正';
+    }else{
+        table.rows[ 13 ].cells[ 5 ].firstChild.data = 1;
+        table.rows[ 13 ].cells[ 2 ].firstChild.data = '負';
+    }
+}
+
+// toZeroFlagSet Zero Flagを設定する
+// 引数 
+// v        :  値
+function toZeroFlagSet(value){
+    let table = document.getElementById('Registertable');
+    if(value == 0){
+        table.rows[ 13 ].cells[ 6 ].firstChild.data = 0;
+        table.rows[ 13 ].cells[ 3 ].firstChild.data = 'NonZ';
+    }else{
+        table.rows[ 13 ].cells[ 6 ].firstChild.data = 1;
+        table.rows[ 13 ].cells[ 3 ].firstChild.data = 'Zero';
+    }
+}
