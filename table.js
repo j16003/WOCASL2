@@ -1,7 +1,10 @@
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
 --------------------------------------------------*/
-//TODO Tableの幅を直す
+// jQuery start
+// create table
+// rows  :500
+// cells :6
 $(document).ready(function () {
     var r_end = 500;  // 行数
     var c_end = 6;  // 列数 
@@ -30,7 +33,11 @@ $(document).ready(function () {
     $(memory_Area).append(tableJQ);
 });
 
-//2進数変換
+// toBin 2進数に変換する
+// 引数 
+// v        :  値
+// 戻り値
+// string   :  値
 function toBin(v) {
     if(v >= 0){
         v = (('0000000000000000' + v.toString(2).toUpperCase()).substr(-16));
@@ -48,7 +55,11 @@ function toBin(v) {
     return bin
 }
 
-//16進数変換
+// toHex 16進数に変換する
+// 引数 
+// v        :  値
+// 戻り値
+// string   :  値
 function toHex(v) {
     if(v >= 0){
         return '#' + (('0000' + v.toString(16).toUpperCase()).substr(-4));
@@ -58,7 +69,11 @@ function toHex(v) {
     }
 }
 
-//符号付10進数オーバーフロー
+// toSdecOver 符号あり10進数のオーバーフローを検知、整形する
+// 引数 
+// v        :  値
+// 戻り値
+// string   :  値
 function toSdecOver(v){
     if(v > 32767 || v < -32768){
         v = v % 32767 - v;
@@ -69,7 +84,11 @@ function toSdecOver(v){
     return v
 }
 
-//符号なし10進数オーバーフロー
+// toUdecOver 符号なし10進数のオーバーフローを検知、整形する
+// 引数 
+// v        :  値
+// 戻り値
+// v        :  値
 function toUdecOver(v){
     if(v > 65535){
         v = (v - 1) % 65535;
@@ -79,61 +98,98 @@ function toUdecOver(v){
     return v
 }
 
-//レジスタの値を表示する関数
+// registerHexSet Registertableの16進数の値を書き換える
+// 引数 
+// address  :  Registertableの番地
+// value    :  値
 function registerHexSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 1 ].firstChild.data = toHex(value);
 }
 
-function registeruDecSet(address,value){
+// registerUdecSet Registertableの符号なし10進数の値を書き換える
+// 引数 
+// address  :  Registertableの番地
+// value    :  値
+function registerUdecSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 2 ].firstChild.data = toUdecOver(value);
 }
 
-function registersDecSet(address,value){
+// registerSdecSet Registertableの符号あり10進数の値を書き換える
+// 引数 
+// address  :  Registertableの番地
+// value    :  値
+function registerSdecSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 3 ].firstChild.data = toSdecOver(value);
 }
 
+// registerBinSet Registertableの2進数の値を書き換える
+// 引数 
+// address  :  Registertableの番地
+// value    :  値
 function registerBinSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 4 ].firstChild.data = toBin(value);
 }
 
+// registerAllSet Registertableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
+// 引数 
+// address  :  Registertableの番地
+// value    :  値
 function registerAllSet(address,value){
-    let table = document.getElementById('Memorytable');
+    let table = document.getElementById('Registertable');
     registerHexSet(address,value);
-    registeruDecSet(address,value);
-    registersDecSet(address,value);
+    registerUdecSet(address,value);
+    registerSdecSet(address,value);
     registerBinSet(address,value);
 }
 
-//メモリの値を表示する関数
+// memoryHexSet Memorytableの16進数の値を書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
 function memoryHexSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 2 ].firstChild.data = toHex(value);
 }
-
-function memoryuDecSet(address,value){
+// memoryUdecSet Memorytableの符号なし10進数の値を書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryUdecSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 3 ].firstChild.data = toUdecOver(value);
 }
 
-function memorysDecSet(address,value){
+// memorySdecSet Memorytableの符号あり10進数の値を書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memorySdecSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 4 ].firstChild.data = toSdecOver(value);
 }
 
+// memoryBinSet Memorytableの2進数の値を書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
 function memoryBinSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 5 ].firstChild.data = toBin(value);
     
 }
 
+// memoryAllSet Memorytableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
 function memoryAllSet(address,value){
     let table = document.getElementById('Memorytable');
     memoryHexSet(address,value);
-    memoryuDecSet(address,value);
-    memorysDecSet(address,value);
+    memoryUdecSet(address,value);
+    memorySdecSet(address,value);
     memoryBinSet(address,value);
 }
