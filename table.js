@@ -30,8 +30,14 @@ $(document).ready(function () {
     $(memory_Area).append(tableJQ);
 });
 
+//2進数変換
 function toBin(v) {
-    v = (('0000000000000000' + v.toString(2).toUpperCase()).substr(-16));
+    if(v >= 0){
+        v = (('0000000000000000' + v.toString(2).toUpperCase()).substr(-16));
+    }else{
+        v = v >>> 0;
+        v = (('0000000000000000' + v.toString(2).toUpperCase()).substr(-16));
+    }
     let bin = "";
     for(let i = 1 ; i <= v.length ; i++){
         bin += v[i-1];
@@ -42,56 +48,92 @@ function toBin(v) {
     return bin
 }
 
+//16進数変換
 function toHex(v) {
-    return '#' + (('0000' + v.toString(16).toUpperCase()).substr(-4));
-}
-
-function registerHexSet(addless,value){
-    let table = document.getElementById('Registertable');
-    table.rows[ addless ].cells[ 1 ].firstChild.data = toHex(value);
-}
-
-function registeruDecSet(addless,value){
-    let table = document.getElementById('Registertable');
-    table.rows[ addless ].cells[ 2 ].firstChild.data = value;
-}
-
-function registersDecSet(addless,value){
-    let table = document.getElementById('Registertable');
-    if(value > 0){
-        table.rows[ addless ].cells[ 3 ].firstChild.data = '+' + value;
+    if(v >= 0){
+        return '#' + (('0000' + v.toString(16).toUpperCase()).substr(-4));
     }else{
-        table.rows[ addless ].cells[ 3 ].firstChild.data = value;
+        v = v >>> 0;
+        return '#' + (('0000' + v.toString(16).toUpperCase()).substr(-4));
     }
 }
 
-function registerBinSet(addless,value){
-    let table = document.getElementById('Registertable');
-    table.rows[ addless ].cells[ 4 ].firstChild.data = toBin(value);
-    
-}
-
-function memoryHexSet(addless,value){
-    let table = document.getElementById('Memorytable');
-    table.rows[ addless ].cells[ 2 ].firstChild.data = toHex(value);
-}
-
-function memoryuDecSet(addless,value){
-    let table = document.getElementById('Memorytable');
-    table.rows[ addless ].cells[ 3 ].firstChild.data = value;
-}
-
-function memorysDecSet(addless,value){
-    let table = document.getElementById('Memorytable');
-    if(value > 0){
-        table.rows[ addless ].cells[ 4 ].firstChild.data = '+' + value;
-    }else{
-        table.rows[ addless ].cells[ 4 ].firstChild.data = value;
+//符号付10進数オーバーフロー
+function toSdecOver(v){
+    if(v > 32767 || v < -32768){
+        v = v % 32767 - v;
     }
+    if(v > 0){
+        v = '+' + v;
+    }
+    return v
 }
 
-function memoryBinSet(addless,value){
+//符号なし10進数オーバーフロー
+function toUdecOver(v){
+    if(v > 65535){
+        v = (v - 1) % 65535;
+    }else if(v < 0){
+        v = 65535 + (v + 1)%65535;
+    }
+    return v
+}
+
+//レジスタの値を表示する関数
+function registerHexSet(address,value){
+    let table = document.getElementById('Registertable');
+    table.rows[ address ].cells[ 1 ].firstChild.data = toHex(value);
+}
+
+function registeruDecSet(address,value){
+    let table = document.getElementById('Registertable');
+    table.rows[ address ].cells[ 2 ].firstChild.data = toUdecOver(value);
+}
+
+function registersDecSet(address,value){
+    let table = document.getElementById('Registertable');
+    table.rows[ address ].cells[ 3 ].firstChild.data = toSdecOver(value);
+}
+
+function registerBinSet(address,value){
+    let table = document.getElementById('Registertable');
+    table.rows[ address ].cells[ 4 ].firstChild.data = toBin(value);
+}
+
+function registerAllSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ addless ].cells[ 5 ].firstChild.data = toBin(value);
+    registerHexSet(address,value);
+    registeruDecSet(address,value);
+    registersDecSet(address,value);
+    registerBinSet(address,value);
+}
+
+//メモリの値を表示する関数
+function memoryHexSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 2 ].firstChild.data = toHex(value);
+}
+
+function memoryuDecSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 3 ].firstChild.data = toUdecOver(value);
+}
+
+function memorysDecSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 4 ].firstChild.data = toSdecOver(value);
+}
+
+function memoryBinSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 5 ].firstChild.data = toBin(value);
     
+}
+
+function memoryAllSet(address,value){
+    let table = document.getElementById('Memorytable');
+    memoryHexSet(address,value);
+    memoryuDecSet(address,value);
+    memorysDecSet(address,value);
+    memoryBinSet(address,value);
 }
