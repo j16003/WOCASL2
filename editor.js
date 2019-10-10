@@ -59,6 +59,10 @@ function onLoad() {
   document.querySelector('#btnSave').addEventListener('click', () => {
     openLoadFile();
   });
+
+  document.querySelector('#btnAsen').addEventListener('click', () => {
+    jsonParseToMemoryMap(json);
+  });
 };
 
 /**

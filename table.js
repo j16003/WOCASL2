@@ -479,3 +479,19 @@ function stackBinGet(address){
     v = parseInt(v.replace(/ /g,''), 2);
     return v
 }
+
+function jsonParseToMemoryMap(json){
+    obj = JSON.parse(json);
+    if(obj["Result"]==undefined){
+        alert("Result is undefined");
+    }else{
+        let address= 0;
+        obj["Result"].forEach(element => {
+            memoryAllSet(address,element.Code);
+            if(element.Length == 2){
+                memoryAllSet(address+1,element.Addr); 
+            }
+            address += element.Length;
+        });
+    }
+}
