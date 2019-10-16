@@ -1,3 +1,4 @@
+let demoData = '{"result":"OK","code" :[{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"PRG","Index":0,"Address":0},"Token":{"Literal":"START"}},{"Code":4624,"Addr":4,"AddrLabel":"A","Op":18,"Length":2,"Token":{"Literal":"LAD"}},{"Code":5153,"Addr":0,"AddrLabel":"","Op":20,"Length":1,"Token":{"Literal":"LD"}},{"Code":0,"Addr":10,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"A","Index":1,"Address":4},"Token":{"Literal":"DC"}}]}';
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
 --------------------------------------------------*/
@@ -7,7 +8,7 @@ jQuery でプログラム的にテーブルを作成する
 // cells :6
 $(document).ready(function () {
     var r_end = 500;  // 行数
-    var c_end = 6;  // 列数 
+    var c_end = 7;  // 列数 
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
     var tableJQ = $('<table id="Memorytable">');
@@ -28,11 +29,15 @@ $(document).ready(function () {
                 $('<td>0</td>').appendTo(trJQ_r);
             }else if(c == 5){
                 $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
-            }              
+            }else{
+                $('<td hidden>LAD</td>').appendTo(trJQ_r);
+
+            }            
        }
     }
     $(memory_Area).append(tableJQ);
-    r_end = 200;
+    jsonParseToMemoryMap(demoData);
+    var r_end = 200;
     tableJQ = $('<table id="Stacktable">');
     for (var r = 0; r < (r_end + 1); r++) {
         var r000 = toHex(65537 - ((r_end + 2) - r));
@@ -53,6 +58,9 @@ $(document).ready(function () {
        }
     }
     $(stack_Area).append(tableJQ);
+    let stacktable = document.getElementById('Stacktable');
+    let stackPosition = stacktable.rows[r_end].offsetTop;
+    $(stack_Area).scrollTop(stackPosition);
 });
 
 // toBin 2進数に変換する
@@ -156,6 +164,16 @@ function registerBinSet(address,value){
     table.rows[ address ].cells[ 4 ].firstChild.data = toBin(value);
 }
 
+// registerScrollset Registertableの要素位置にスクロールを設定する
+// 引数 
+// address  :  Registertableの番地
+function registerScrollset(address){
+    let table = document.getElementById('Registertable');
+    let register_Area = document.getElementById('register_area');
+    let position = table.rows[address].offsetTop;
+    $(register_Area).scrollTop(position);
+}
+
 // registerAllSet Registertableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
 // 引数 
 // address  :  Registertableの番地
@@ -250,6 +268,25 @@ function memoryBinSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 5 ].firstChild.data = toBin(value);
     
+}
+
+// memoryLiteralSet MemorytableのLiteralの値を書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryLiteralSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 6 ].firstChild.data = value;
+}
+
+// memoryScrollset Memorytableの要素位置にスクロールを設定する
+// 引数 
+// address  :  Memorytableの番地
+function memoryScrollset(address){
+    let table = document.getElementById('Memorytable');
+    let memory_Area = document.getElementById('memory_area');
+    let position = table.rows[address].offsetTop;
+    $(memory_Area).scrollTop(position);
 }
 
 // memoryAllSet Memorytableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
@@ -420,6 +457,16 @@ function stackHexSet(address,value){
     table.rows[ address ].cells[ 5 ].firstChild.data = toHex(value);
 }
 
+// stackScrollset Stacktableの要素位置にスクロールを設定する
+// 引数 
+// address  :  stacktableの番地
+function stackScrollset(address){
+    let table = document.getElementById('Stacktable');
+    let stack_Area = document.getElementById('stack_area');
+    let position = table.rows[address].offsetTop;
+    $(stack_Area).scrollTop(position);
+}
+
 // stackAllSet Stacktableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
 // 引数 
 // address  :  Memorytableの番地
@@ -493,15 +540,17 @@ function jsonParseToMemoryMap(json){
     .replace(/\\t/g, "\\t")
     .replace(/\\b/g, "\\b")
     .replace(/\\f/g, "\\f");
-    alert(mox);
     obj = JSON.parse(mox);
-    alert(obj);
     if(obj["result"]==undefined){
         alert("Result is undefined");
     }else if(obj["result"]=="OK"){
         let address= 0;
         obj["code"].forEach(element => {
             memoryAllSet(address,element.Code);
+            memoryLiteralSet(address,element.Token.Literal);
+            if(element.Token.Literal=="DC"){
+                memoryAllSet(address,element.Addr); 
+            }
             if(element.Length == 2){
                 memoryAllSet(address+1,element.Addr); 
             }
@@ -514,3 +563,33 @@ function jsonParseToMemoryMap(json){
         });
     }
 }
+
+// memoryTableRowColorSet Memorytableの行の色を変更する
+// 引数 
+// address  :  Memorytableの番地
+// color    :  値
+function memoryTableRowColorSet(address,color){
+    let table = document.getElementById('Memorytable');
+    table.rows[address].style.backgroundColor=color;
+}
+
+// registerTableRowColorSet Registertableの行の色を変更する
+// 引数 
+// address  :  Registertableの番地
+// color    :  値
+function registerTableRowColorSet(address,color){
+    let table = document.getElementById('Registertable');
+    table.rows[address].style.backgroundColor=color;
+}
+
+// stackTableRowColorSet Stacktableの行の色を変更する
+// 引数 
+// address  :  Stacktableの番地
+// color    :  値
+function stackTableRowColorSet(address,color){
+    address = 0xFFFF-address;
+    let r_end = 200;
+    let table = document.getElementById('Stacktable');
+    table.rows[r_end-address].style.backgroundColor=color;
+}
+
