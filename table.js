@@ -480,18 +480,37 @@ function stackBinGet(address){
     return v
 }
 
+// jsonParseToMemoryMap memorytableにjsonファイルの値を読み込む
+// 引数 
+// json  :  文字列
 function jsonParseToMemoryMap(json){
-    obj = JSON.parse(json);
-    if(obj["Result"]==undefined){
+    let mox = json;
+    mox.replace(/\\n/g, "\\n")  
+    .replace(/\\'/g, "\\'")
+    .replace(/\//g, '\\"')
+    .replace(/\\&/g, "\\&")
+    .replace(/\\r/g, "\\r")
+    .replace(/\\t/g, "\\t")
+    .replace(/\\b/g, "\\b")
+    .replace(/\\f/g, "\\f");
+    alert(mox);
+    obj = JSON.parse(mox);
+    alert(obj);
+    if(obj["result"]==undefined){
         alert("Result is undefined");
-    }else{
+    }else if(obj["result"]=="OK"){
         let address= 0;
-        obj["Result"].forEach(element => {
+        obj["code"].forEach(element => {
             memoryAllSet(address,element.Code);
             if(element.Length == 2){
                 memoryAllSet(address+1,element.Addr); 
             }
             address += element.Length;
+        });
+    }else{
+        let address= 0;
+        obj["error"].forEach(element => {
+            alert(element.Message);
         });
     }
 }

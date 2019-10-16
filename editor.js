@@ -60,9 +60,6 @@ function onLoad() {
     openLoadFile();
   });
 
-  document.querySelector('#btnAsen').addEventListener('click', () => {
-    jsonParseToMemoryMap(json);
-  });
 };
 
 /**
