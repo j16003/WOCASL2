@@ -463,8 +463,11 @@ function stackHexSet(address,value){
 function stackScrollset(address){
     let table = document.getElementById('Stacktable');
     let stack_Area = document.getElementById('stack_area');
-    let position = table.rows[address].offsetTop;
+    address = 0xFFFF-address;
+    let r_end = 200;
+    let position = table.rows[r_end-address].offsetTop;
     $(stack_Area).scrollTop(position);
+    
 }
 
 // stackAllSet Stacktableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
