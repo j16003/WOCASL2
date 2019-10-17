@@ -1,4 +1,5 @@
-let demoData = '{"result":"OK","code" :[{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"PRG","Index":0,"Address":0},"Token":{"Literal":"START"}},{"Code":4624,"Addr":4,"AddrLabel":"A","Op":18,"Length":2,"Token":{"Literal":"LAD"}},{"Code":5153,"Addr":0,"AddrLabel":"","Op":20,"Length":1,"Token":{"Literal":"LD"}},{"Code":0,"Addr":10,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"A","Index":1,"Address":4},"Token":{"Literal":"DC"}}]}';
+let demoData = '{"result":"OK","code" :[{"Code":4368,"Addr":10,"AddrLabel":"","Op":17,"Length":2,"Token":{"Literal":"ST"}}]}'
+
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
 --------------------------------------------------*/
@@ -7,6 +8,8 @@ jQuery でプログラム的にテーブルを作成する
 // rows  :500
 // cells :6
 $(document).ready(function () {
+    //bootstrapのtooltipの初期化
+        $('[data-toggle="tooltip"]').tooltip();
     var r_end = 500;  // 行数
     var c_end = 7;  // 列数 
     memory_Area = document.getElementById('memory_area');
@@ -30,7 +33,7 @@ $(document).ready(function () {
             }else if(c == 5){
                 $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
             }else{
-                $('<td hidden>LAD</td>').appendTo(trJQ_r);
+                $('<td> </td>').appendTo(trJQ_r);
 
             }            
        }
@@ -170,7 +173,14 @@ function registerBinSet(address,value){
 function registerScrollset(address){
     let table = document.getElementById('Registertable');
     let register_Area = document.getElementById('register_area');
-    let position = table.rows[address].offsetTop;
+    let position;
+    if(address >= 0 && address <= 8){
+        position = table.rows[address+2].offsetTop
+    }else if(address == 9){
+        position = table.rows[address-8].offsetTop
+    }else{
+        position = table.rows[address+1].offsetTop
+    }
     $(register_Area).scrollTop(position);
 }
 
@@ -179,11 +189,18 @@ function registerScrollset(address){
 // address  :  Registertableの番地
 // value    :  値
 function registerAllSet(address,value){
-    let table = document.getElementById('Registertable');
-    registerHexSet(address,value);
-    registerUdecSet(address,value);
-    registerSdecSet(address,value);
-    registerBinSet(address,value);
+    let adr = parseInt(address, 10);
+    if(address >= 0 && address <= 8){
+        adr += 2;
+    }else if(address == 9){
+        adr -= 8;
+    }else{
+        adr += 1;
+    }
+    registerHexSet(adr,value);
+    registerUdecSet(adr,value);
+    registerSdecSet(adr,value);
+    registerBinSet(adr,value);
 }
 
 // registerHexGet Registertableの16進数の値を取得する
@@ -192,6 +209,13 @@ function registerAllSet(address,value){
 // 戻り値
 // string   :  値
 function registerHexGet(address){
+    if(address >= 0 && address <= 8){
+        address += 2;
+    }else if(address == 9){
+        address -= 8;
+    }else{
+        address += 1;
+    }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 1 ].firstChild.data;
     v = parseInt(v.replace('#',''), 16);
@@ -204,18 +228,41 @@ function registerHexGet(address){
 // 戻り値
 // string   :  値
 function registerUdecGet(address){
+    let adr = parseInt(address,10);
+    if(address >= 0 && address <= 8){
+        adr += 2;
+    }else if(address == 9){
+        adr -= 8;
+    }else{
+        adr += 1;
+    }
     let table = document.getElementById('Registertable');
-    var v = table.rows[ address ].cells[ 2 ].firstChild.data;
+    var v = table.rows[ adr ].cells[ 2 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
-
+// prUdecGet PrograCounter get value 
+// 戻り値
+// int   :  値
+function prUdecGet(){
+    return registerUdecGet(9);
+}
+function prValueSet(value){
+    registerAllSet(9,value);
+}
 // registerSdecGet Registertableの符号あり10進数の値を取得する
 // 引数 
 // address  :  Registertableの番地
 // 戻り値
 // string   :  値
 function registerSdecGet(address){
+    if(address >= 0 && address <= 8){
+        address += 2;
+    }else if(address == 9){
+        address -= 8;
+    }else{
+        address += 1;
+    }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 3 ].firstChild.data;
     v = parseInt(v, 10);
@@ -228,6 +275,13 @@ function registerSdecGet(address){
 // 戻り値
 // string   :  値
 function registerBinGet(address){
+    if(address >= 0 && address <= 8){
+        address += 2;
+    }else if(address == 9){
+        address -= 8;
+    }else{
+        address += 1;
+    }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 4 ].firstChild.data;
     v = parseInt(v.replace(/ /g,''), 2);
@@ -308,9 +362,7 @@ function memoryAllSet(address,value){
 // string   :  値
 function memoryHexGet(address){
     let table = document.getElementById('Memorytable');
-    var v = table.rows[ address ].cells[ 2 ].firstChild.data;
-    v = parseInt(v.replace('#',''), 16);
-    return v
+    return table.rows[ address ].cells[ 2 ].firstChild.data;
 }
 
 // memoryUdecGet Memorytableの符号なし10進数の値を取得する
@@ -347,6 +399,14 @@ function memoryBinGet(address){
     var v = table.rows[ address ].cells[ 5 ].firstChild.data;
     v = parseInt(v.replace(/ /g,''), 2);
     return v
+}
+
+// memoryLiteralGet MemorytableのLiteralの値を取得
+// 引数 
+// address  :  Memorytableの番地
+function memoryLiteralGet(address){
+    let table = document.getElementById('Memorytable');
+    return table.rows[ address ].cells[ 6 ].firstChild.data
 }
 
 // toOverflowFlagSet Overflow Flagを設定する
@@ -582,7 +642,15 @@ function memoryTableRowColorSet(address,color){
 // color    :  値
 function registerTableRowColorSet(address,color){
     let table = document.getElementById('Registertable');
-    table.rows[address].style.backgroundColor=color;
+    if(address >= 0 && address <= 8){
+        table.rows[address+2].style.backgroundColor=color;
+    }else if(address == 9){
+        table.rows[address-8].style.backgroundColor=color;
+    }else if(address == 10){
+        table.rows[address+1].style.backgroundColor=color;
+    }else{
+        table.rows[address+2].style.backgroundColor=color;
+    }
 }
 
 // stackTableRowColorSet Stacktableの行の色を変更する
