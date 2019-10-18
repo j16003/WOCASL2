@@ -1,4 +1,4 @@
-let demoData = '{"result":"OK","code" :[{"Code":4368,"Addr":10,"AddrLabel":"","Op":17,"Length":2,"Token":{"Literal":"ST"}}]}'
+let demoData = '{"result":"OK","code" :[{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"PRG","Index":0,"Address":0},"Token":{"Literal":"START"}},{"Code":4112,"Addr":13,"AddrLabel":"A","Op":16,"Length":2,"Token":{"Literal":"LD"}},{"Code":4128,"Addr":14,"AddrLabel":"B","Op":16,"Length":2,"Token":{"Literal":"LD"}},{"Code":9234,"Addr":0,"AddrLabel":"","Op":36,"Length":1,"Token":{"Literal":"ADDA"}},{"Code":4368,"Addr":16,"AddrLabel":"ANS","Op":17,"Length":2,"Token":{"Literal":"ST"}},{"Code":8208,"Addr":15,"AddrLabel":"C","Op":32,"Length":2,"Token":{"Literal":"ADDA"}},{"Code":4368,"Addr":17,"AddrLabel":"ANSS","Op":17,"Length":2,"Token":{"Literal":"ST"}},{"Code":33024,"Addr":0,"AddrLabel":"","Op":129,"Length":1,"Token":{"Literal":"RET"}},{"Code":0,"Addr":2,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"A","Index":1,"Address":13},"Token":{"Literal":"DC"}},{"Code":0,"Addr":4,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"B","Index":2,"Address":14},"Token":{"Literal":"DC"}},{"Code":0,"Addr":9,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"C","Index":3,"Address":15},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"ANS","Index":4,"Address":16},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"ANSS","Index":5,"Address":17},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Token":{"Literal":"END"}}]}'
 
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
@@ -108,8 +108,8 @@ function toHex(v) {
 // 戻り値
 // string   :  値
 function toSdecOver(v){
-    if(v > 32767 || v < -32768){
-        v = v % 32767 - v;
+    if(v >= 32767 || v <= -32768){
+        v = v % 32767 - v;   
     }
     if(v > 0){
         v = '+' + v;
@@ -123,9 +123,9 @@ function toSdecOver(v){
 // 戻り値
 // v        :  値
 function toUdecOver(v){
-    if(v > 65535){
+    if(v >= 65535){
         v = (v - 1) % 65535;
-    }else if(v < 0){
+    }else if(v <= 0){
         v = 65535 + (v + 1)%65535;
     }
     return v
@@ -248,6 +248,10 @@ function prUdecGet(){
     return registerUdecGet(9);
 }
 function prValueSet(value){
+    let pr = prUdecGet();
+    memoryTableRowColorSet(pr,"#FFFFFF");
+    memoryTableRowColorSet(value,"#FF0000");
+    memoryScrollset(value);
     registerAllSet(9,value);
 }
 // registerSdecGet Registertableの符号あり10進数の値を取得する
@@ -256,15 +260,16 @@ function prValueSet(value){
 // 戻り値
 // string   :  値
 function registerSdecGet(address){
+    let adr = parseInt(address,10);
     if(address >= 0 && address <= 8){
-        address += 2;
+        adr += 2;
     }else if(address == 9){
-        address -= 8;
+        adr -= 8;
     }else{
-        address += 1;
+        adr += 1;
     }
     let table = document.getElementById('Registertable');
-    var v = table.rows[ address ].cells[ 3 ].firstChild.data;
+    var v = table.rows[ adr ].cells[ 3 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -423,6 +428,28 @@ function overflowFlagSet(value){
     }
 }
 
+// ofSdecFlagSet Overflow FlagをSdecの数字の範囲を判定して設定する
+// 引数 
+// value        :  値
+function ofSdecFlagSet(value){
+    if(value <= 32767 || value >= -32768){
+        overflowFlagSet(0);
+    }else{
+        overflowFlagSet(1);
+    }
+}
+
+// ofUdecFlagSet Overflow FlagをUdecの数字の範囲を判定して設定する
+// 引数 
+// value        :  値
+function ofUdecFlagSet(value){
+    if(value <= 65535 || value >= 0){
+        overflowFlagSet(0);
+    }else{
+        overflowFlagSet(1);
+    }
+}
+
 // toOverflowFlagGet RegistertableのOverflow Flagの値を取得する
 // 戻り値
 // string   :  値
@@ -438,7 +465,7 @@ function overflowFlagGet(){
 // v        :  値
 function signFlagSet(value){
     let table = document.getElementById('Registertable');
-    if(value == 0){
+    if(value >= 0){
         table.rows[ 13 ].cells[ 5 ].firstChild.data = 0;
         table.rows[ 13 ].cells[ 2 ].firstChild.data = '正';
     }else{

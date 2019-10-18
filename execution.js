@@ -11,13 +11,15 @@ function onLoadExe() {
         execute();
     });
 }
+
 function assembleMemoryRegister() {
     let register = document.getElementById('Registertable');
     let memory = document.getElementById('Memorytable');
     let stack = document.getElementById('Stacktable');
     
 }
-function LAD(pr){
+
+function cometLAD(pr){
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -25,21 +27,27 @@ function LAD(pr){
     registerAllSet(r1,addr+registerUdecGet(r2));
     return 2;
 }
+
 function cometLD(pr){
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
     let op=opcode[1]+opcode[2];
-
+    overflowFlagSet(0);
     if(op == '10'){
         let addr = memoryUdecGet(pr+1);
         registerAllSet(r1,memoryUdecGet(addr+registerUdecGet(r2)));
+        zeroFlagSet(memoryUdecGet(addr+registerUdecGet(r2)));
+        signFlagSet(memoryUdecGet(addr+registerUdecGet(r2)));
         return 2;
     }else{
         registerAllSet(r1,registerUdecGet(r2));
+        zeroFlagSet(registerUdecGet(r2));
+        signFlagSet(registerUdecGet(r2));
         return 1;
     }
 }
+
 function cometST(pr){
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
@@ -48,25 +56,136 @@ function cometST(pr){
     memoryAllSet(addr+registerUdecGet(r2),registerUdecGet(r1));
     return 2;
 }
+
+function cometADDA(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '20'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerSdecGet(r1) + memorySdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        ofSdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerSdecGet(r1) + registerSdecGet(r2);
+        registerAllSet(r1,ans);
+        ofSdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
+function cometSUBA(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '21'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        ofSdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerSdecGet(r1) - registerSdecGet(r2);
+        registerAllSet(r1,ans);
+        ofSdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
+function cometADDL(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '22'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerUdecGet(r1) + memoryUdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        ofUdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerUdecGet(r1) + registerUdecGet(r2);
+        registerAllSet(r1,ans);
+        ofUdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
+function cometSUBL(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '23'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerUdecGet(r1) - memoryUdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        ofUdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerUdecGet(r1) - registerUdecGet(r2);
+        registerAllSet(r1,ans);
+        ofUdecFlagSet(ans);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
 let beforePC=0;
 function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
     let length;
-    memoryTableRowColorSet(beforePC,"#FFFFFF");
-    memoryTableRowColorSet(pr,"#FF0000");
-    memoryScrollset(pr);
+    
     beforePC=pr;
     switch (literal){
         case "LD":
             length = cometLD(pr);
             break;
         case "LAD":
-            length = LAD(pr);
+            length = cometLAD(pr);
             break;
         case "ST":
             length = cometST(pr);
             break;
+        case "ADDA":
+            length = cometADDA(pr);
+            break;
+        case "SUBA":
+            length = cometSUBA(pr);
+            break;
+        case "ADDL":
+            length = cometADDL(pr);
+            break;
+        case "SUBL":
+            length = cometSUBL(pr);
+            break;     
         default:
             length = 1;
         break;
