@@ -42,6 +42,7 @@ body {
   display: table-cell;
   background-color: white;
   padding: 0px 0px 20px 0px;
+  height: 100%;
 }
 
 #input_txt {
@@ -62,7 +63,7 @@ body {
   height: 50%;
   text-align: center;
   background-color: white;
-  overflow-y: auto;
+  overflow-y: scroll;
   /**scrollbar-width: none;**/
 }
 
@@ -71,7 +72,7 @@ body {
   height: 50%;
   text-align: center;
   background-color: white;
-  overflow-y: auto;
+  overflow-y: scroll;
   /**scrollbar-width: none;**/
 }
 
@@ -103,7 +104,7 @@ body {
 
 #Memorytable{
   width: 100%;
-  height: 100%;
+  height: 50%;
 }
 
 #Stacktable td {
