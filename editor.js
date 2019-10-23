@@ -7,7 +7,7 @@ let footerArea = null;
 
 
 let currentPath = '';
-let editor = null;
+var editor = null;
 
 window.addEventListener('DOMContentLoaded', onLoad);
 
@@ -23,7 +23,7 @@ function onLoad() {
   footerArea = document.getElementById('footer_fixed');
 
   editor = ace.edit('input_txt');
-  editor.getSession().setMode('ace/mode/javascript');
+  //editor.getSession().setMode('ace/mode/javascript');
   editor.setTheme('ace/theme/twilight');
 
   // ドラッグ&ドロップ関連処理

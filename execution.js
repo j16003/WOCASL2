@@ -4,9 +4,25 @@ function onLoadExe() {
     footerArea = document.getElementById('footer_fixed');
     // 「アセンブル」ボタンの制御
     document.querySelector('#btnAssemble').addEventListener('click', () => {
-        assembleMemoryRegister();
+        //メモリレジスタスタック初期化
+        initMemoryRegister();
+        $.ajax({
+            url: 'https://fast-river-46694.herokuapp.com/GCASL',
+            type: 'POST',
+            dataType: 'json',
+            // フォーム要素の内容をハッシュ形式に変換
+            data:{
+                'code' : editor.getValue(),
+            }
+          })
+          .done(function(data) {
+            ajaxJsonToMemoryMap(data);
+          })
+          .fail(function() {
+              // 通信失敗時の処理を記述
+          });
     });
-    // 「アセンブル」ボタンの制御
+    // 「ステップ実行」ボタンの制御
     document.querySelector('#btnStepExecution').addEventListener('click', () => {
         execute();
     });
