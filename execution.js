@@ -2,6 +2,10 @@ window.addEventListener('DOMContentLoaded', onLoadExe);
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
+    // 「リセット」ボタンの制御
+    document.querySelector('#btnReset').addEventListener('click', () => {
+        initMemoryRegister();
+    });
     // 「アセンブル」ボタンの制御
     document.querySelector('#btnAssemble').addEventListener('click', () => {
         //メモリレジスタスタック初期化
@@ -28,12 +32,6 @@ function onLoadExe() {
     });
 }
 
-function assembleMemoryRegister() {
-    let register = document.getElementById('Registertable');
-    let memory = document.getElementById('Memorytable');
-    let stack = document.getElementById('Stacktable');
-    
-}
 
 function cometLAD(pr){
     let opcode = memoryHexGet(pr);
@@ -173,7 +171,58 @@ function cometSUBL(pr){
     }
 }
 
+function cometAND(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '30'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerUdecGet(r1) & memoryUdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        overflowFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerUdecGet(r1) & registerUdecGet(r2);
+        registerAllSet(r1,ans);
+        overflowFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
+function cometOR(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '31'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerUdecGet(r1) | memoryUdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        overflowFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerUdecGet(r1) | registerUdecGet(r2);
+        registerAllSet(r1,ans);
+        overflowFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
 let beforePC=0;
+
 function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
@@ -201,7 +250,13 @@ function execute(){
             break;
         case "SUBL":
             length = cometSUBL(pr);
-            break;     
+            break;
+        case "AND":
+            length = cometAND(pr);
+            break;  
+        case "OR":
+            length = cometOR(pr);
+            break;        
         default:
             length = 1;
         break;

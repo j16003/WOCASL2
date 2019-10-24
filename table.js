@@ -1,4 +1,3 @@
-let demoData = '{"result":"OK","code" :[{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"PRG","Index":0,"Address":0},"Token":{"Literal":"START"}},{"Code":4112,"Addr":13,"AddrLabel":"A","Op":16,"Length":2,"Token":{"Literal":"LD"}},{"Code":4128,"Addr":14,"AddrLabel":"B","Op":16,"Length":2,"Token":{"Literal":"LD"}},{"Code":9234,"Addr":0,"AddrLabel":"","Op":36,"Length":1,"Token":{"Literal":"ADDA"}},{"Code":4368,"Addr":16,"AddrLabel":"ANS","Op":17,"Length":2,"Token":{"Literal":"ST"}},{"Code":8208,"Addr":15,"AddrLabel":"C","Op":32,"Length":2,"Token":{"Literal":"ADDA"}},{"Code":4368,"Addr":17,"AddrLabel":"ANSS","Op":17,"Length":2,"Token":{"Literal":"ST"}},{"Code":33024,"Addr":0,"AddrLabel":"","Op":129,"Length":1,"Token":{"Literal":"RET"}},{"Code":0,"Addr":2,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"A","Index":1,"Address":13},"Token":{"Literal":"DC"}},{"Code":0,"Addr":4,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"B","Index":2,"Address":14},"Token":{"Literal":"DC"}},{"Code":0,"Addr":9,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"C","Index":3,"Address":15},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"ANS","Index":4,"Address":16},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"ANSS","Index":5,"Address":17},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Token":{"Literal":"END"}}]}'
 
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
@@ -41,7 +40,6 @@ $(document).ready(function () {
        }
     }
     $(memory_Area).append(tableJQ);
-    jsonParseToMemoryMap(demoData);
     var r_end = stackTableMaxRow;
     tableJQ = $('<table id="Stacktable">');
     for (var r = 0; r < (r_end + 1); r++) {
@@ -467,12 +465,13 @@ function overflowFlagGet(){
     return v
 }
 
-// toSignFlagSet Sign Flagを設定する
+// SignFlagSet Sign Flagを設定する
 // 引数 
 // v        :  値
 function signFlagSet(value){
     let table = document.getElementById('Registertable');
-    if(value >= 0){
+    value = value & 0x8000;
+    if(value == 0){
         table.rows[ 13 ].cells[ 5 ].firstChild.data = 0;
         table.rows[ 13 ].cells[ 2 ].firstChild.data = '正';
     }else{
@@ -644,9 +643,12 @@ function ajaxJsonToMemoryMap(obj){
         });
         alert("OK");
     }else{
-        let address= 0;
-        obj["error"].forEach(element => {
-            alert(element.Message);
+        let erroraddress= 0;
+
+        alert(obj["error"]);
+        let jsonparseerror = JSON.parse(obj["error"]);
+        jsonparseerror.forEach(element => {
+            alert(element.Line+"行目 "+element.Message);
         });
     }
 }
@@ -724,6 +726,7 @@ function stackTableRowColorSet(address,color){
     table.rows[r_end-address].style.backgroundColor=color;
 }
 
+// initMemoryRegister 全てのテーブルの値、色、スクロールのリセット
 function initMemoryRegister(){
     for(var i = 0 ; i < memoryTableMaxRow ; i++){
         memoryAllSet(i,0);
@@ -732,7 +735,7 @@ function initMemoryRegister(){
     }
     for(i = 0 ; i < stackTableMaxRow ; i++){
         stackAllSet(i,0);
-        //stackTableRowColorSet(i,"#FFFFFF");
+        stackTableRowColorSet(0xFFFF-i,"#FFFFFF");
     }
     for(i = 0 ; i < 10 ; i++){
         registerAllSet(i,0);
@@ -740,7 +743,7 @@ function initMemoryRegister(){
     }
     memoryScrollset(0);
     registerScrollset(0);
-    stackScrollset(stackTableMaxRow);
+    stackScrollset(0xFFFF);
     registerAllSet(10,65535);
     zeroFlagSet(0);
     signFlagSet(0);
