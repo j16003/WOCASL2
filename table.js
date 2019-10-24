@@ -7,10 +7,12 @@ jQuery でプログラム的にテーブルを作成する
 // create table
 // rows  :500
 // cells :6
+const memoryTableMaxRow = 500;
+const stackTableMaxRow = 200;
 $(document).ready(function () {
     //bootstrapのtooltipの初期化
         $('[data-toggle="tooltip"]').tooltip();
-    var r_end = 500;  // 行数
+    var r_end = memoryTableMaxRow;  // 行数
     var c_end = 7;  // 列数 
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
@@ -40,7 +42,7 @@ $(document).ready(function () {
     }
     $(memory_Area).append(tableJQ);
     jsonParseToMemoryMap(demoData);
-    var r_end = 200;
+    var r_end = stackTableMaxRow;
     tableJQ = $('<table id="Stacktable">');
     for (var r = 0; r < (r_end + 1); r++) {
         var r000 = toHex(65537 - ((r_end + 2) - r));
@@ -108,11 +110,15 @@ function toHex(v) {
 // 戻り値
 // string   :  値
 function toSdecOver(v){
-    if(v >= 32767 || v <= -32768){
-        v = v % 32767 - v;   
-    }
-    if(v > 0){
+    v = v&0xFFFF;
+    if(v > 0 &&v <= 0x7FFF){
         v = '+' + v;
+    }
+    else{
+        v = ((~v+1)&0xFFFF);
+        if(v >0){
+            v='-'+v;
+        }
     }
     return v
 }
@@ -123,9 +129,10 @@ function toSdecOver(v){
 // 戻り値
 // v        :  値
 function toUdecOver(v){
-    if(v >= 65535){
+    v=v&0xFFFF;
+    if(v > 65535){
         v = (v - 1) % 65535;
-    }else if(v <= 0){
+    }else if(v < 0){
         v = 65535 + (v + 1)%65535;
     }
     return v
@@ -421,10 +428,10 @@ function overflowFlagSet(value){
     let table = document.getElementById('Registertable');
     if(value == 0){
         table.rows[ 13 ].cells[ 4 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 0 ].firstChild.data = '〇';
+        table.rows[ 13 ].cells[ 1 ].firstChild.data = '〇';
     }else{
         table.rows[ 13 ].cells[ 4 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 0 ].firstChild.data = '☆';
+        table.rows[ 13 ].cells[ 1 ].firstChild.data = '☆';
     }
 }
 
@@ -551,7 +558,7 @@ function stackScrollset(address){
     let table = document.getElementById('Stacktable');
     let stack_Area = document.getElementById('stack_area');
     address = 0xFFFF-address;
-    let r_end = 200;
+    let r_end = stackTableMaxRow;
     let position = table.rows[r_end-address].offsetTop;
     $(stack_Area).scrollTop(position);
     
@@ -617,14 +624,40 @@ function stackBinGet(address){
     return v
 }
 
+function ajaxJsonToMemoryMap(obj){
+    
+    if(obj["result"]==undefined){
+        alert("Result is undefined");
+    }else if(obj["result"]=="OK"){
+        let address= 0;
+        let jsonparse = JSON.parse(obj["code"]);
+        jsonparse.forEach(element => {
+            memoryAllSet(address,element.Code);
+            memoryLiteralSet(address,element.Token.Literal);
+            if(element.Token.Literal=="DC"){
+                memoryAllSet(address,element.Addr); 
+            }
+            if(element.Length == 2){
+                memoryAllSet(address+1,element.Addr); 
+            }
+            address += element.Length;
+        });
+        alert("OK");
+    }else{
+        let address= 0;
+        obj["error"].forEach(element => {
+            alert(element.Message);
+        });
+    }
+}
 // jsonParseToMemoryMap memorytableにjsonファイルの値を読み込む
 // 引数 
 // json  :  文字列
 function jsonParseToMemoryMap(json){
     let mox = json;
     mox.replace(/\\n/g, "\\n")  
-    .replace(/\\'/g, "\\'")
-    .replace(/\//g, '\\"')
+    .replace(/\\'/g, "")
+    .replace(/\//g, "")
     .replace(/\\&/g, "\\&")
     .replace(/\\r/g, "\\r")
     .replace(/\\t/g, "\\t")
@@ -686,8 +719,32 @@ function registerTableRowColorSet(address,color){
 // color    :  値
 function stackTableRowColorSet(address,color){
     address = 0xFFFF-address;
-    let r_end = 200;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
     table.rows[r_end-address].style.backgroundColor=color;
+}
+
+function initMemoryRegister(){
+    for(var i = 0 ; i < memoryTableMaxRow ; i++){
+        memoryAllSet(i,0);
+        memoryLiteralSet(i,"");
+        memoryTableRowColorSet(i,"#FFFFFF");
+    }
+    for(i = 0 ; i < stackTableMaxRow ; i++){
+        stackAllSet(i,0);
+        //stackTableRowColorSet(i,"#FFFFFF");
+    }
+    for(i = 0 ; i < 10 ; i++){
+        registerAllSet(i,0);
+        registerTableRowColorSet(i,"#FFFFFF");
+    }
+    memoryScrollset(0);
+    registerScrollset(0);
+    stackScrollset(stackTableMaxRow);
+    registerAllSet(10,65535);
+    zeroFlagSet(0);
+    signFlagSet(0);
+    ofSdecFlagSet(0);
+    ofSdecFlagSet(0);
 }
 
