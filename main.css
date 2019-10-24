@@ -16,7 +16,7 @@ body {
 
 #header_fixed {
   position: fixed;
-  height: 12%;
+  height: auto;
   width: 100%;
 }
 
@@ -51,17 +51,17 @@ body {
 
 #register_area {
   display: block;
-  height: 50%;
+  height: auto;
   text-align: center;
   background-color: white;
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
   padding: 0px 0px 0px 0px;
   /**scrollbar-width: none;**/
 }
 
 #memory_area {
   display: block;
-  height: 50%;
+  height: 52%;
   text-align: center;
   background-color: white;
   overflow-y: scroll;

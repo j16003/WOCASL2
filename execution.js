@@ -51,11 +51,14 @@ function cometLD(pr){
     if(op == '10'){
         let addr = memoryUdecGet(pr+1);
         registerAllSet(r1,memoryUdecGet(addr+registerUdecGet(r2)));
+        overflowFlagSet(0);
+        
         zeroFlagSet(memoryUdecGet(addr+registerUdecGet(r2)));
         signFlagSet(memoryUdecGet(addr+registerUdecGet(r2)));
         return 2;
     }else{
         registerAllSet(r1,registerUdecGet(r2));
+        overflowFlagSet(0);
         zeroFlagSet(registerUdecGet(r2));
         signFlagSet(registerUdecGet(r2));
         return 1;
@@ -151,22 +154,25 @@ function cometSUBL(pr){
     let r1 = opcode[3];
     let r2 = opcode[4];
     let op=opcode[1]+opcode[2];
-    let ans = 0; 
+    let ans = 0;
+    let ans2 = 0; 
 
     if(op == '23'){
         let addr = memoryUdecGet(pr+1);
         ans = registerUdecGet(r1) - memoryUdecGet(addr+registerUdecGet(r2));
+        ans2 = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
         registerAllSet(r1,ans);
-        ofUdecFlagSet(ans);
-        zeroFlagSet(ans);
-        signFlagSet(ans);
+        ofUdecFlagSet(ans2);
+        zeroFlagSet(ans2);
+        signFlagSet(ans2);
         return 2;
     }else{
         ans = registerUdecGet(r1) - registerUdecGet(r2);
+        ans2 = registerSdecGet(r1) - registerSdecGet(r2);
         registerAllSet(r1,ans);
-        ofUdecFlagSet(ans);
-        zeroFlagSet(ans);
-        signFlagSet(ans);
+        ofUdecFlagSet(ans2);
+        zeroFlagSet(ans2);
+        signFlagSet(ans2);
         return 1;
     }
 }
@@ -221,6 +227,80 @@ function cometOR(pr){
     }
 }
 
+function cometXOR(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '32'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerUdecGet(r1) ^ memoryUdecGet(addr+registerUdecGet(r2));
+        registerAllSet(r1,ans);
+        overflowFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerUdecGet(r1) ^ registerUdecGet(r2);
+        registerAllSet(r1,ans);
+        overflowFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
+function cometCPA(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+
+    if(op == '40'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
+        ofSdecFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 2;
+    }else{
+        ans = registerSdecGet(r1) - registerSdecGet(r2);
+        ofSdecFlagSet(0);
+        zeroFlagSet(ans);
+        signFlagSet(ans);
+        return 1;
+    }
+}
+
+function cometCPL(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let op=opcode[1]+opcode[2];
+    let ans = 0; 
+    let ans2 = 0;
+
+    if(op == '41'){
+        let addr = memoryUdecGet(pr+1);
+        ans = registerUdecGet(r1) - memoryUdecGet(addr+registerUdecGet(r2));
+        ans2 = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
+        ofUdecFlagSet(0);
+        zeroFlagSet(ans2);
+        signFlagSet(ans2);
+        return 2;
+    }else{
+        ans = registerUdecGet(r1) - registerUdecGet(r2);
+        ans2 = registerSdecGet(r1) - registerSdecGet(r2);
+        ofUdecFlagSet(0);
+        zeroFlagSet(ans2);
+        signFlagSet(ans2);
+        return 1;
+    }
+}
+
 let beforePC=0;
 
 function execute(){
@@ -256,7 +336,16 @@ function execute(){
             break;  
         case "OR":
             length = cometOR(pr);
-            break;        
+            break; 
+        case "XOR":
+            length = cometXOR(pr);
+            break; 
+        case "CPA":
+            length = cometCPA(pr);
+            break;
+        case "CPL":
+            length = cometCPL(pr);
+            break; 
         default:
             length = 1;
         break;

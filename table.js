@@ -180,11 +180,11 @@ function registerScrollset(address){
     let register_Area = document.getElementById('register_area');
     let position;
     if(address >= 0 && address <= 8){
-        position = table.rows[address+2].offsetTop
-    }else if(address == 9){
+        position = table.rows[address+3].offsetTop
+    }else if(address == 9||address == 10){
         position = table.rows[address-8].offsetTop
-    }else{
-        position = table.rows[address+1].offsetTop
+    }else if(address == 11){
+        position = table.rows[address-11].offsetTop
     }
     $(register_Area).scrollTop(position);
 }
@@ -196,11 +196,9 @@ function registerScrollset(address){
 function registerAllSet(address,value){
     let adr = parseInt(address, 10);
     if(address >= 0 && address <= 8){
-        adr += 2;
-    }else if(address == 9){
+        adr += 3;
+    }else if(address == 9||address == 10){
         adr -= 8;
-    }else{
-        adr += 1;
     }
     registerHexSet(adr,value);
     registerUdecSet(adr,value);
@@ -215,11 +213,9 @@ function registerAllSet(address,value){
 // string   :  値
 function registerHexGet(address){
     if(address >= 0 && address <= 8){
-        address += 2;
-    }else if(address == 9){
+        address += 3;
+    }else if(address == 9||address == 10){
         address -= 8;
-    }else{
-        address += 1;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 1 ].firstChild.data;
@@ -235,11 +231,9 @@ function registerHexGet(address){
 function registerUdecGet(address){
     let adr = parseInt(address,10);
     if(address >= 0 && address <= 8){
-        adr += 2;
-    }else if(address == 9){
+        adr += 3;
+    }else if(address == 9||address == 10){
         adr -= 8;
-    }else{
-        adr += 1;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ adr ].cells[ 2 ].firstChild.data;
@@ -266,12 +260,10 @@ function prValueSet(value){
 // string   :  値
 function registerSdecGet(address){
     let adr = parseInt(address,10);
-    if(address >= 0 && address <= 8){
-        adr += 2;
-    }else if(address == 9){
+    if(address >= 1 && address <= 8){
+        adr += 3;
+    }else if(address == 9||address == 10){
         adr -= 8;
-    }else{
-        adr += 1;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ adr ].cells[ 3 ].firstChild.data;
@@ -287,10 +279,8 @@ function registerSdecGet(address){
 function registerBinGet(address){
     if(address >= 0 && address <= 8){
         address += 2;
-    }else if(address == 9){
+    }else if(address == 9||address == 10){
         address -= 8;
-    }else{
-        address += 1;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 4 ].firstChild.data;
@@ -423,13 +413,13 @@ function memoryLiteralGet(address){
 // 引数 
 // v        :  値
 function overflowFlagSet(value){
-    let table = document.getElementById('Registertable');
+    let table = document.getElementById('Flagtable');
     if(value == 0){
-        table.rows[ 13 ].cells[ 4 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 1 ].firstChild.data = '〇';
+        table.rows[ 1 ].cells[ 4 ].firstChild.data = 0;
+        table.rows[ 1 ].cells[ 1 ].firstChild.data = '〇';
     }else{
-        table.rows[ 13 ].cells[ 4 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 1 ].firstChild.data = '☆';
+        table.rows[ 1 ].cells[ 4 ].firstChild.data = 1;
+        table.rows[ 1 ].cells[ 1 ].firstChild.data = '☆';
     }
 }
 
@@ -459,8 +449,8 @@ function ofUdecFlagSet(value){
 // 戻り値
 // string   :  値
 function overflowFlagGet(){
-    let table = document.getElementById('Registertable');
-    var v = table.rows[ 13 ].cells[ 4 ].firstChild.data;
+    let table = document.getElementById('Flagtable');
+    var v = table.rows[ 1 ].cells[ 4 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -469,14 +459,14 @@ function overflowFlagGet(){
 // 引数 
 // v        :  値
 function signFlagSet(value){
-    let table = document.getElementById('Registertable');
+    let table = document.getElementById('Flagtable');
     value = value & 0x8000;
     if(value == 0){
-        table.rows[ 13 ].cells[ 5 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 2 ].firstChild.data = '正';
+        table.rows[ 1 ].cells[ 5 ].firstChild.data = 0;
+        table.rows[ 1 ].cells[ 2 ].firstChild.data = '正';
     }else{
-        table.rows[ 13 ].cells[ 5 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 2 ].firstChild.data = '負';
+        table.rows[ 1 ].cells[ 5 ].firstChild.data = 1;
+        table.rows[ 1 ].cells[ 2 ].firstChild.data = '負';
     }
 }
 
@@ -484,8 +474,8 @@ function signFlagSet(value){
 // 戻り値
 // string   :  値
 function signFlagGet(){
-    let table = document.getElementById('Registertable');
-    var v = table.rows[ 13 ].cells[ 5 ].firstChild.data;
+    let table = document.getElementById('Flagtable');
+    var v = table.rows[ 1 ].cells[ 5 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -494,13 +484,13 @@ function signFlagGet(){
 // 引数 
 // v        :  値
 function zeroFlagSet(value){
-    let table = document.getElementById('Registertable');
-    if(value == 0){
-        table.rows[ 13 ].cells[ 6 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 3 ].firstChild.data = 'NonZ';
+    let table = document.getElementById('Flagtable');
+    if(value){
+        table.rows[ 1 ].cells[ 6 ].firstChild.data = 0;
+        table.rows[ 1 ].cells[ 3 ].firstChild.data = 'NonZ';
     }else{
-        table.rows[ 13 ].cells[ 6 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 3 ].firstChild.data = 'Zero';
+        table.rows[ 1 ].cells[ 6 ].firstChild.data = 1;
+        table.rows[ 1 ].cells[ 3 ].firstChild.data = 'Zero';
     }
 }
 
@@ -508,8 +498,8 @@ function zeroFlagSet(value){
 // 戻り値
 // string   :  値
 function zeroFlagGet(){
-    let table = document.getElementById('Registertable');
-    var v = table.rows[ 13 ].cells[ 6 ].firstChild.data;
+    let table = document.getElementById('Flagtable');
+    var v = table.rows[ 1 ].cells[ 6 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -705,13 +695,9 @@ function memoryTableRowColorSet(address,color){
 function registerTableRowColorSet(address,color){
     let table = document.getElementById('Registertable');
     if(address >= 0 && address <= 8){
-        table.rows[address+2].style.backgroundColor=color;
-    }else if(address == 9){
+        table.rows[address+3].style.backgroundColor=color;
+    }else if(address == 9||address == 10){
         table.rows[address-8].style.backgroundColor=color;
-    }else if(address == 10){
-        table.rows[address+1].style.backgroundColor=color;
-    }else{
-        table.rows[address+2].style.backgroundColor=color;
     }
 }
 
@@ -742,10 +728,12 @@ function initMemoryRegister(){
         registerTableRowColorSet(i,"#FFFFFF");
     }
     memoryScrollset(0);
-    registerScrollset(0);
+    registerScrollset(11);
     stackScrollset(0xFFFF);
     registerAllSet(10,65535);
-    zeroFlagSet(0);
+    registerTableRowColorSet(9,"#00BCD4");
+    registerTableRowColorSet(10,"#EEBCD4");
+    zeroFlagSet(1);
     signFlagSet(0);
     ofSdecFlagSet(0);
     ofSdecFlagSet(0);
