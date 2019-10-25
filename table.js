@@ -127,13 +127,12 @@ function toSdecOver(v){
 // 戻り値
 // v        :  値
 function toUdecOver(v){
-    v=v&0xFFFF;
     if(v > 65535){
         v = (v - 1) % 65535;
     }else if(v < 0){
         v = 65535 + (v + 1)%65535;
     }
-    return v
+    return v&0xFFFF
 }
 
 // registerHexSet Registertableの16進数の値を書き換える
@@ -179,12 +178,12 @@ function registerScrollset(address){
     let table = document.getElementById('Registertable');
     let register_Area = document.getElementById('register_area');
     let position;
-    if(address >= 0 && address <= 8){
+    if(address >= 0 && address <= 7){
         position = table.rows[address+3].offsetTop
-    }else if(address == 9||address == 10){
-        position = table.rows[address-8].offsetTop
-    }else if(address == 11){
-        position = table.rows[address-11].offsetTop
+    }else if(address == 8||address == 9){
+        position = table.rows[address-7].offsetTop
+    }else if(address == 10){
+        position = table.rows[address-10].offsetTop
     }
     $(register_Area).scrollTop(position);
 }
@@ -195,10 +194,10 @@ function registerScrollset(address){
 // value    :  値
 function registerAllSet(address,value){
     let adr = parseInt(address, 10);
-    if(address >= 0 && address <= 8){
+    if(address >= 0 && address <= 7){
         adr += 3;
-    }else if(address == 9||address == 10){
-        adr -= 8;
+    }else if(address == 8||address == 9){
+        adr -= 7;
     }
     registerHexSet(adr,value);
     registerUdecSet(adr,value);
@@ -212,10 +211,10 @@ function registerAllSet(address,value){
 // 戻り値
 // string   :  値
 function registerHexGet(address){
-    if(address >= 0 && address <= 8){
+    if(address >= 0 && address <= 7){
         address += 3;
-    }else if(address == 9||address == 10){
-        address -= 8;
+    }else if(address == 8||address == 9){
+        address -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 1 ].firstChild.data;
@@ -230,10 +229,10 @@ function registerHexGet(address){
 // string   :  値
 function registerUdecGet(address){
     let adr = parseInt(address,10);
-    if(address >= 0 && address <= 8){
+    if(address >= 0 && address <= 7){
         adr += 3;
-    }else if(address == 9||address == 10){
-        adr -= 8;
+    }else if(address == 8||address == 9){
+        adr -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ adr ].cells[ 2 ].firstChild.data;
@@ -244,14 +243,14 @@ function registerUdecGet(address){
 // 戻り値
 // int   :  値
 function prUdecGet(){
-    return registerUdecGet(9);
+    return registerUdecGet(8);
 }
 function prValueSet(value){
     let pr = prUdecGet();
     memoryTableRowColorSet(pr,"#FFFFFF");
     memoryTableRowColorSet(value,"#FF0000");
     memoryScrollset(value);
-    registerAllSet(9,value);
+    registerAllSet(8,value);
 }
 // registerSdecGet Registertableの符号あり10進数の値を取得する
 // 引数 
@@ -260,10 +259,10 @@ function prValueSet(value){
 // string   :  値
 function registerSdecGet(address){
     let adr = parseInt(address,10);
-    if(address >= 1 && address <= 8){
+    if(address >= 0 && address <= 7){
         adr += 3;
-    }else if(address == 9||address == 10){
-        adr -= 8;
+    }else if(address == 8||address == 9){
+        adr -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ adr ].cells[ 3 ].firstChild.data;
@@ -277,10 +276,10 @@ function registerSdecGet(address){
 // 戻り値
 // string   :  値
 function registerBinGet(address){
-    if(address >= 0 && address <= 8){
-        address += 2;
-    }else if(address == 9||address == 10){
-        address -= 8;
+    if(address >= 0 && address <= 7){
+        address += 3;
+    }else if(address == 8||address == 9){
+        address -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 4 ].firstChild.data;
@@ -427,7 +426,7 @@ function overflowFlagSet(value){
 // 引数 
 // value        :  値
 function ofSdecFlagSet(value){
-    if(value <= 32767 || value >= -32768){
+    if(value <= 32767 && value >= -32768){
         overflowFlagSet(0);
     }else{
         overflowFlagSet(1);
@@ -438,7 +437,7 @@ function ofSdecFlagSet(value){
 // 引数 
 // value        :  値
 function ofUdecFlagSet(value){
-    if(value <= 65535 || value >= 0){
+    if(value <= 65535 && value >= 0){
         overflowFlagSet(0);
     }else{
         overflowFlagSet(1);
@@ -694,10 +693,10 @@ function memoryTableRowColorSet(address,color){
 // color    :  値
 function registerTableRowColorSet(address,color){
     let table = document.getElementById('Registertable');
-    if(address >= 0 && address <= 8){
+    if(address >= 0 && address <= 7){
         table.rows[address+3].style.backgroundColor=color;
-    }else if(address == 9||address == 10){
-        table.rows[address-8].style.backgroundColor=color;
+    }else if(address == 8||address == 9){
+        table.rows[address-7].style.backgroundColor=color;
     }
 }
 
@@ -730,9 +729,9 @@ function initMemoryRegister(){
     memoryScrollset(0);
     registerScrollset(11);
     stackScrollset(0xFFFF);
-    registerAllSet(10,65535);
-    registerTableRowColorSet(9,"#00BCD4");
-    registerTableRowColorSet(10,"#EEBCD4");
+    registerAllSet(9,65535);
+    registerTableRowColorSet(8,"#00BCD4");
+    registerTableRowColorSet(9,"#EEBCD4");
     zeroFlagSet(1);
     signFlagSet(0);
     ofSdecFlagSet(0);
