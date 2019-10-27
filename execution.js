@@ -26,12 +26,27 @@ function onLoadExe() {
               // 通信失敗時の処理を記述
           });
     });
+    // 「実行」ボタンの制御
+    document.querySelector('#btnExecution').addEventListener('click', () => {
+        //let literal = memoryLiteralGet(pr);
+        for(i = 3;i != execute();){
+            execute();
+        }
+    });
     // 「ステップ実行」ボタンの制御
     document.querySelector('#btnStepExecution').addEventListener('click', () => {
         execute();
     });
+    // 「ステップバック」ボタンの制御
+    document.querySelector('#btnStepBack').addEventListener('click', () => {
+        //execute();
+    });
 }
 
+function cometSTART(){
+    zeroFlagSet(1);
+    return 1;
+}
 
 function cometLAD(pr){
     let opcode = memoryHexGet(pr);
@@ -336,12 +351,11 @@ function cometSRA(pr){
     sign = registerSdecGet(r1) & 0x8000;
     if(sign == 0x8000){
         ans = ans | 0x80000000;
-        ans = registerSdecGet(r1) >> (addr+registerUdecGet(r2)+16);
     }else{
         ans = ans & 0x0000FFFF;
-        ans = registerSdecGet(r1) >> (addr+registerUdecGet(r2)+16);
     }
-    if((registerSdecGet(r1) >>> (addr+registerUdecGet(r2)+15)) & 0x0001 == 0x0001){
+    ans = registerSdecGet(r1) >> (addr+registerUdecGet(r2));
+    if((registerSdecGet(r1) >>> (addr+registerUdecGet(r2)-1)) & 0x0001 == 0x0001){
         overflowFlagSet(1);
     }else{
         overflowFlagSet(0);
@@ -361,6 +375,9 @@ function execute(){
 
     beforePC=pr;
     switch (literal){
+        case "START":
+            length = cometSTART();
+            break;
         case "LD":
             length = cometLD(pr);
             break;
@@ -403,6 +420,10 @@ function execute(){
         case "SRA":
             length = cometSRA(pr);
             break;
+        case "END":
+            length = 0;
+            pr = 0;
+            return 3;
         default:
             length = 1;
         break;
