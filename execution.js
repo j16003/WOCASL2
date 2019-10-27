@@ -366,6 +366,48 @@ function cometSRA(pr){
     return 2;
 }
 
+function cometSLL(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let ans = 0;
+    let addr = memoryUdecGet(pr+1);
+
+    ans = registerSdecGet(r1) << (addr+registerUdecGet(r2));
+    if((ans & 0x10000) == 0x10000){
+        overflowFlagSet(1);
+    }else{
+        overflowFlagSet(0);
+    }
+    ans = ans & 0xFFFF;
+    registerAllSet(r1,ans);
+    zeroFlagSet(ans);
+    signFlagSet(ans);
+    return 2;
+}
+
+function cometSRL(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let r2 = opcode[4];
+    let ans = 0;
+    let addr = memoryUdecGet(pr+1);
+
+    ans = registerSdecGet(r1) & 0x0000FFFF;
+    alert(ans);
+    ans = ans >>> (addr+registerUdecGet(r2));
+    alert(ans);
+    if((registerSdecGet(r1) >>> (addr+registerUdecGet(r2)-1)) & 0x0001 == 0x0001){
+        overflowFlagSet(1);
+    }else{
+        overflowFlagSet(0);
+    }
+    registerAllSet(r1,ans);
+    zeroFlagSet(ans);
+    signFlagSet(ans);
+    return 2;
+}
+
 let beforePC=0;
 
 function execute(){
@@ -419,6 +461,12 @@ function execute(){
             break;
         case "SRA":
             length = cometSRA(pr);
+            break;
+        case "SLL":
+            length = cometSLL(pr);
+            break;
+        case "SRL":
+            length = cometSRL(pr);
             break;
         case "END":
             length = 0;
