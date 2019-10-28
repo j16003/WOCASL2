@@ -347,11 +347,28 @@ function memoryScrollset(address){
 // address  :  Memorytableの番地
 // value    :  値
 function memoryAllSet(address,value){
-    let table = document.getElementById('Memorytable');
+    
     memoryHexSet(address,value);
     memoryUdecSet(address,value);
     memorySdecSet(address,value);
     memoryBinSet(address,value);
+}
+
+// memoryLabelSet Memorytableのラベルを書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryLabelSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 1 ].firstChild.data = value + ":";
+}
+
+// memoryLabelGet Memorytableのラベルを取得
+// 引数 
+// address  :  Memorytableの番地
+function memoryLabelGet(address){
+    let table = document.getElementById('Memorytable');
+    return table.rows[ address ].cells[ 1 ].firstChild.data;
 }
 
 // memoryHexGet Memorytableの16進数の値を取得する
@@ -622,6 +639,9 @@ function ajaxJsonToMemoryMap(obj){
         jsonparse.forEach(element => {
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
+            if(element.Label != undefined){
+                memoryLabelSet(address,element.Label.Label);
+            }
             if(element.Token.Literal=="DC"){
                 memoryAllSet(address,element.Addr); 
             }
@@ -662,6 +682,9 @@ function jsonParseToMemoryMap(json){
         obj["code"].forEach(element => {
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
+            if(element.Label != undefined){
+                memoryLabelSet(address,element.Label.Label);
+            }
             if(element.Token.Literal=="DC"){
                 memoryAllSet(address,element.Addr); 
             }

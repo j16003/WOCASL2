@@ -43,10 +43,6 @@ function onLoadExe() {
     });
 }
 
-function cometSTART(){
-    zeroFlagSet(1);
-    return 1;
-}
 
 function cometLAD(pr){
     let opcode = memoryHexGet(pr);
@@ -394,9 +390,7 @@ function cometSRL(pr){
     let addr = memoryUdecGet(pr+1);
 
     ans = registerSdecGet(r1) & 0x0000FFFF;
-    alert(ans);
     ans = ans >>> (addr+registerUdecGet(r2));
-    alert(ans);
     if((registerSdecGet(r1) >>> (addr+registerUdecGet(r2)-1)) & 0x0001 == 0x0001){
         overflowFlagSet(1);
     }else{
@@ -405,6 +399,52 @@ function cometSRL(pr){
     registerAllSet(r1,ans);
     zeroFlagSet(ans);
     signFlagSet(ans);
+    return 2;
+}
+
+function cometJUMP(pr){
+    let opcode = memoryHexGet(pr);
+    let r2 = opcode[4];
+    let addr = memoryUdecGet(pr+1);
+    let address = addr+registerUdecGet(r2);
+    
+    memoryScrollset(address);
+    
+    return address-pr;
+}
+
+function cometJPL(pr){
+    if(signFlagGet() == 0 && zeroFlagGet() == 0){
+        return cometJUMP(pr);
+    }
+    return 2;
+}
+
+function cometJMI(pr){
+    if(signFlagGet() == 1){
+        return cometJUMP(pr);
+    }
+    return 2;
+}
+
+function cometJNZ(pr){
+    if(zeroFlagGet() == 0){
+        return cometJUMP(pr);
+    }
+    return 2;
+}
+
+function cometJZE(pr){
+    if(zeroFlagGet() == 1){
+        return cometJUMP(pr);
+    }
+    return 2;
+}
+
+function cometJOV(pr){
+    if(overflowFlagGet() == 1){
+        return cometJUMP(pr);
+    }
     return 2;
 }
 
@@ -417,9 +457,6 @@ function execute(){
 
     beforePC=pr;
     switch (literal){
-        case "START":
-            length = cometSTART();
-            break;
         case "LD":
             length = cometLD(pr);
             break;
@@ -468,13 +505,32 @@ function execute(){
         case "SRL":
             length = cometSRL(pr);
             break;
+        case "JUMP":
+            length = cometJUMP(pr);
+            break;
+        case "JPL":
+            length = cometJPL(pr);
+            break;
+        case "JMI":
+            length = cometJMI(pr);
+            break;
+        case "JNZ":
+            length = cometJNZ(pr);
+            break;
+        case "JZE":
+            length = cometJZE(pr);
+            break;
+        case "JOV":
+            length = cometJOV(pr);
+            break;
         case "END":
             length = 0;
             pr = 0;
             return 3;
         default:
+            //NOP命令
             length = 1;
         break;
     }
-    prValueSet(length+pr);
+    prValueSet(length+ prUdecGet());
 }
