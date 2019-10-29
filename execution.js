@@ -20,6 +20,7 @@ function onLoadExe() {
             }
           })
           .done(function(data) {
+            console.log(data);
             ajaxJsonToMemoryMap(data);
           })
           .fail(function() {
@@ -407,7 +408,10 @@ function cometJUMP(pr){
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
     let address = addr+registerUdecGet(r2);
-    
+    if(address > memoryTableMaxRow){
+        errorModal("実行時エラー：<br>分岐命令で異常な値を検知しました。</br>"+pr+"行目の命令");
+        return 0;
+    }
     memoryScrollset(address);
     
     return address-pr;
@@ -448,6 +452,86 @@ function cometJOV(pr){
     return 2;
 }
 
+function cometPUSH(pr){
+    let opcode = memoryHexGet(pr);
+    let r2 = opcode[4];
+    let addr = memoryUdecGet(pr+1);
+    let address = addr+registerUdecGet(r2);
+    let sp = registerUdecGet(9);
+    sp -= 1;
+    stackAllSet(sp,address);
+    registerAllSet(9,sp);
+    
+    
+    return 2;
+}
+
+function cometPOP(pr){
+    let opcode = memoryHexGet(pr);
+    let r1 = opcode[3];
+    let sp = registerUdecGet(9);
+    let val = stackUdecGet(sp);
+
+    if(sp != 0xFFFF){
+        sp += 1;
+        registerAllSet(9,sp);
+        registerAllSet(r1,val);
+    }else if(sp == 0xFFFE){
+        sp += sp;
+    }else{
+        errorModal("実行時エラー：<br>スタックポインタが0xFFFFのためPOPできません<br>動作を終了します");
+        return 0;
+    }
+    
+    return 1;
+}
+
+function cometCALL(pr){
+    let opcode = memoryHexGet(pr);
+    let r2 = opcode[4];
+    let addr = memoryUdecGet(pr+1);
+    let address = addr+registerUdecGet(r2);
+    let sp = registerUdecGet(9);
+    sp -= 1;
+    stackAllSet(sp,pr+2);
+    registerAllSet(9,sp);
+    
+    return address-pr;
+}
+
+function cometRET(pr){
+    let opcode = memoryHexGet(pr);
+    let addr = memoryUdecGet(pr+1);
+    let sp = registerUdecGet(9);
+    let address =stackUdecGet(sp)
+    
+    if(sp != 0xFFFF){
+        registerAllSet(9,sp+1);
+    }else if(sp == 0xFFFE){
+        sp += sp
+    }else{
+        infoModal("プログラムが終了しました");
+        return 0x10000;
+    }
+    return address-pr;
+}
+
+function cometSVC(pr){
+    let adr = memoryHexGet(pr+1);
+    alert(adr);
+    switch(adr){
+        case "#703A":
+
+            break;
+        case "#02AB":
+
+            break;
+        default://IN,OUT以外はNOP
+            break;
+    }
+    return 2;
+}
+
 let beforePC=0;
 
 function execute(){
@@ -458,6 +542,7 @@ function execute(){
     beforePC=pr;
     switch (literal){
         case "LD":
+            $('#inputModal').modal('toggle');
             length = cometLD(pr);
             break;
         case "LAD":
@@ -523,6 +608,26 @@ function execute(){
         case "JOV":
             length = cometJOV(pr);
             break;
+        case "PUSH":
+            length = cometPUSH(pr);
+            break;
+        case "POP":
+            length = cometPOP(pr);
+            break;
+        case "CALL":
+            length = cometCALL(pr);
+            break;
+        case "SVC":
+            length = cometSVC(pr);
+            break;
+        case "RET":
+            length = cometRET(pr);
+            if(length == 0x10000){
+                length = 0;
+                pr = 0;
+                return 3;
+            }
+            break;
         case "END":
             length = 0;
             pr = 0;
@@ -532,5 +637,5 @@ function execute(){
             length = 1;
         break;
     }
-    prValueSet(length+ prUdecGet());
+    prValueSet(abs(length+ prUdecGet()));
 }

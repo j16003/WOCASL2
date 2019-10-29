@@ -243,7 +243,7 @@ function registerUdecGet(address){
 // 戻り値
 // int   :  値
 function prUdecGet(){
-    return registerUdecGet(8);
+    return parseInt(registerUdecGet(8),10);
 }
 function prValueSet(value){
     let pr = prUdecGet();
@@ -525,35 +525,43 @@ function zeroFlagGet(){
 // address  :  Stacktableの番地
 // value    :  値
 function stackHexSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 2 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 1 ].firstChild.data = toHex(value);
 }
 
 // stackUdecSet Stacktableの符号なし10進数の値を書き換える
 // 引数 
 // address  :  Stacktableの番地
 // value    :  値
-function stackHexSet(address,value){
+function stackUdecSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 3 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 2 ].firstChild.data = toUdecOver(value);
 }
 
 // stackSdecSet Stacktableの符号あり10進数の値を書き換える
 // 引数 
 // address  :  Stacktableの番地
 // value    :  値
-function stackHexSet(address,value){
+function stackSdecSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 4 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 3 ].firstChild.data = toSdecOver(value);
 }
 
-// stackSdecSet Stacktableの16進数の値を書き換える
+// stackSdecSet Stacktableの2進数の値を書き換える
 // 引数 
 // address  :  Stacktableの番地
 // value    :  値
-function stackHexSet(address,value){
+function stackBinSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 5 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 4 ].firstChild.data = toBin(value);
 }
 
 // stackScrollset Stacktableの要素位置にスクロールを設定する
@@ -574,11 +582,10 @@ function stackScrollset(address){
 // address  :  Memorytableの番地
 // value    :  値
 function stackAllSet(address,value){
-    let table = document.getElementById('Stacktable');
-    memoryHexSet(address,value);
-    memoryUdecSet(address,value);
-    memorySdecSet(address,value);
-    memoryBinSet(address,value);
+    stackHexSet(address,value);
+    stackUdecSet(address,value);
+    stackSdecSet(address,value);
+    stackBinSet(address,value);
 }
 
 // stackHexGet Stacktableの16進数の値を取得する
@@ -587,8 +594,10 @@ function stackAllSet(address,value){
 // 戻り値
 // string   :  値
 function stackHexGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 2 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 1 ].firstChild.data;
     v = parseInt(v.replace('#',''), 16);
     return v
 }
@@ -599,8 +608,10 @@ function stackHexGet(address){
 // 戻り値
 // string   :  値
 function stackUdecGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 3 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 2 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -610,9 +621,11 @@ function stackUdecGet(address){
 // address  :  Stacktableの番地
 // 戻り値
 // string   :  値
-function stackUdecGet(address){
+function stackSdecGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 4 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 3 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -623,12 +636,17 @@ function stackUdecGet(address){
 // 戻り値
 // string   :  値
 function stackBinGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 5 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 4 ].firstChild.data;
     v = parseInt(v.replace(/ /g,''), 2);
     return v
 }
 
+// ajaxJsonToMemoryMap memorytableにバイナリを読み込む
+// 引数 
+// obj  :  data type:json
 function ajaxJsonToMemoryMap(obj){
     
     if(obj["result"]==undefined){
@@ -636,7 +654,10 @@ function ajaxJsonToMemoryMap(obj){
     }else if(obj["result"]=="OK"){
         let address= 0;
         let jsonparse = JSON.parse(obj["code"]);
+        let message = "";
+
         jsonparse.forEach(element => {
+
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
             if(element.Label != undefined){
@@ -650,17 +671,17 @@ function ajaxJsonToMemoryMap(obj){
             }
             address += element.Length;
         });
-        alert("OK");
+        successModal("アセンブル成功");
     }else{
-        let erroraddress= 0;
-
-        alert(obj["error"]);
         let jsonparseerror = JSON.parse(obj["error"]);
         jsonparseerror.forEach(element => {
-            alert(element.Line+"行目 "+element.Message);
+            message = element.Line+"行目</br>"+element.Message+" <br> ";
+            errorModal(message);
+            
         });
     }
 }
+
 // jsonParseToMemoryMap memorytableにjsonファイルの値を読み込む
 // 引数 
 // json  :  文字列
@@ -742,7 +763,7 @@ function initMemoryRegister(){
         memoryTableRowColorSet(i,"#FFFFFF");
     }
     for(i = 0 ; i < stackTableMaxRow ; i++){
-        stackAllSet(i,0);
+        stackAllSet(0xFFFF-i,0);
         stackTableRowColorSet(0xFFFF-i,"#FFFFFF");
     }
     for(i = 0 ; i < 10 ; i++){
@@ -761,3 +782,35 @@ function initMemoryRegister(){
     ofSdecFlagSet(0);
 }
 
+// errorModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function errorModal(message){
+    if(Math.random()*100%100<1){
+        message=message+'<img src="losecat.jpg"  alt="losecat" class="img-fluid">';
+    }
+    $('#errorModal').find('.modal-title').text("Error");
+    $('#errorModal').find('.modal-body').html(message);
+    $('#errorModal').modal('show');
+}
+
+// successModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function successModal(message){
+    if(Math.random()*100%100<1){
+        message=message+'<img src="successcat.jpg"  alt="successcat" class="img-fluid">';
+    }
+    $('#successModal').find('.modal-title').text("Success");
+    $('#successModal').find('.modal-body').html(message);
+    $('#successModal').modal('show');
+}
+
+// infoModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function infoModal(message){
+    $('#infoModal').find('.modal-title').text("Information");
+    $('#infoModal').find('.modal-body').html(message);
+    $('#infoModal').modal('show');
+}
