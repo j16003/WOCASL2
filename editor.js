@@ -1,4 +1,4 @@
-const fs = require('fs');
+//const fs = require('fs');
 //const {BrowserWindow, dialog} = require('electron').remote;
 
 let inputArea = null;
@@ -22,9 +22,12 @@ function onLoad() {
   // フッター領域
   footerArea = document.getElementById('footer_fixed');
 
+  
+
+  
   editor = ace.edit('input_txt');
   //editor.getSession().setMode('ace/mode/javascript');
-  editor.setTheme('ace/theme/twilight');
+  editor.setTheme('ace/theme/eclipse');
   
   var val = localStorage["caslcode"];
   if(val != undefined){
