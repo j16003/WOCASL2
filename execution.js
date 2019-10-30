@@ -11,7 +11,7 @@ function onLoadExe() {
         //メモリレジスタスタック初期化
         initMemoryRegister();
         $.ajax({
-            url: 'https://fast-river-46694.herokuapp.com/GCASL',
+            url: 'http://localhost:8080/GCASL',
             type: 'POST',
             dataType: 'json',
             // フォーム要素の内容をハッシュ形式に変換
@@ -24,6 +24,7 @@ function onLoadExe() {
             ajaxJsonToMemoryMap(data);
           })
           .fail(function() {
+              alert("通信失敗");
               // 通信失敗時の処理を記述
           });
     });
