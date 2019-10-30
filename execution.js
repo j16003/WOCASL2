@@ -521,6 +521,7 @@ function cometSVC(pr){
     alert(adr);
     switch(adr){
         case "#703A":
+                $('#inputModal').modal('show');
 
             break;
         case "#02AB":

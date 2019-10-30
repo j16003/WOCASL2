@@ -758,6 +758,7 @@ function stackTableRowColorSet(address,color){
 // initMemoryRegister 全てのテーブルの値、色、スクロールのリセット
 function initMemoryRegister(){
     for(var i = 0 ; i < memoryTableMaxRow ; i++){
+        memoryLabelSet(i,i);
         memoryAllSet(i,0);
         memoryLiteralSet(i,"");
         memoryTableRowColorSet(i,"#FFFFFF");
@@ -789,6 +790,9 @@ function errorModal(message){
     if(Math.random()*100%100<1){
         message=message+'<img src="losecat.jpg"  alt="losecat" class="img-fluid">';
     }
+    $('#errorModal').on('shown.bs.modal',function(){
+        $('#okButton').trigger('focus');
+    })
     $('#errorModal').find('.modal-title').text("Error");
     $('#errorModal').find('.modal-body').html(message);
     $('#errorModal').modal('show');
@@ -801,6 +805,9 @@ function successModal(message){
     if(Math.random()*100%100<1){
         message=message+'<img src="successcat.jpg"  alt="successcat" class="img-fluid">';
     }
+    $('#successModal').on('shown.bs.modal',function(){
+        $('#okButton2').trigger('focus');
+    })
     $('#successModal').find('.modal-title').text("Success");
     $('#successModal').find('.modal-body').html(message);
     $('#successModal').modal('show');
@@ -810,7 +817,11 @@ function successModal(message){
 // 引数 
 // message    :  値
 function infoModal(message){
+    $('#infoModal').on('shown.bs.modal',function(){
+        $('#okButton3').trigger('focus');
+    })
     $('#infoModal').find('.modal-title').text("Information");
     $('#infoModal').find('.modal-body').html(message);
     $('#infoModal').modal('show');
 }
+
