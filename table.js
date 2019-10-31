@@ -792,6 +792,7 @@ function errorModal(message){
     }
     $('#errorModal').on('shown.bs.modal',function(){
         $('#okButton').trigger('focus');
+        
     })
     $('#errorModal').find('.modal-title').text("Error");
     $('#errorModal').find('.modal-body').html(message);

@@ -519,11 +519,21 @@ function cometRET(pr){
 
 function cometSVC(pr){
     let adr = memoryHexGet(pr+1);
-    alert(adr);
     switch(adr){
         case "#703A":
-                $('#inputModal').modal('show');
+            let opcode1 = registerUdecGet(1);
+            let opcode2 = registerUdecGet(2);
+            
+            $('#inputModal').modal('show');
+            $('#inputModal').on('hide.bs.modal',function(e){
+                let inputdata = $('#input').val();
+                let inputlength = inputdata.length;
 
+                memoryAllSet(opcode2,inputlength);
+                for(let i = 0;i < inputlength;i++){
+                    memoryAllSet(opcode1+i,inputdata[i]);
+                }
+            });
             break;
         case "#02AB":
 
@@ -640,4 +650,204 @@ function execute(){
         break;
     }
     prValueSet(abs(length+ prUdecGet()));
+}
+
+function wordcode(value){
+    switch(value){
+        case " ":
+            return 0x0020;
+        case "!":
+            return 0x0021;
+        case "\"":
+            return 0x0022;
+        case "#":
+            return 0x0023;
+        case "$":
+            return 0x0024;
+        case "%":
+            return 0x0025;
+        case "&":
+            return 0x0026;
+        case "\'":
+            return 0x0027;
+        case "(":
+            return 0x0028;
+        case ")":
+            return 0x0029; 
+        case "*":
+            return 0x002A;
+        case "+":
+            return 0x002B;
+        case ",":
+            return 0x002C;
+        case "-":
+            return 0x002D;
+        case ".":
+            return 0x002E;
+        case "/":
+            return 0x002F;
+        case "0":
+            return 0x0030;
+        case "1":
+            return 0x0031;
+        case "2":
+            return 0x0032;
+        case "3":
+            return 0x0033;
+        case "4":
+            return 0x0034;
+        case "5":
+            return 0x0035;
+        case "6":
+            return 0x0036;
+        case "7":
+            return 0x0037;
+        case "8":
+            return 0x0038;
+        case "9":
+            return 0x0039;
+        case ":":
+            return 0x003A;
+        case ";":
+            return 0x003B;
+        case "<":
+            return 0x003C;
+        case "=":
+            return 0x003D;
+        case ">":
+            return 0x003E;
+        case "?":
+            return 0x003F;
+        case "@":
+            return 0x0041;
+        case "A":
+            return 0x0042;
+        case "B":
+            return 0x0043;
+        case "C":
+            return 0x0044;
+        case "D":
+            return 0x0045;
+        case "E":
+            return 0x0046;
+        case "F":
+            return 0x0047;
+        case "G":
+            return 0x0048;
+        case "H":
+            return 0x0049;
+        case "I":
+            return 0x0049;
+        case "J":
+            return 0x004A;
+        case "K":
+            return 0x004B;
+        case "L":
+            return 0x004C;
+        case "M":
+            return 0x004D;
+        case "N":
+            return 0x004E;
+        case "O":
+            return 0x004F;
+        case "P":
+            return 0x0050;
+        case "Q":
+            return 0x0051;
+        case "R":
+            return 0x0052;
+        case "S":
+            return 0x0053;
+        case "T":
+            return 0x0054;
+        case "U":
+            return 0x0055;
+        case "V":
+            return 0x0056;
+        case "W":
+            return 0x0057;
+        case "X":
+            return 0x0058;
+        case "Y":
+            return 0x0059;
+        case "Z":
+            return 0x005A;
+        case "[":
+            return 0x005B;
+        case "\\":
+            return 0x005C;
+        case "]":
+            return 0x005D;
+        case "^":
+            return 0x005E;
+        case "_":
+            return 0x005F;
+        case "`":
+            return 0x0060;
+        case "a":
+            return 0x0061;
+        case "b":
+            return 0x0062;
+        case "c":
+            return 0x0063;
+        case "d":
+            return 0x0064;
+        case "e":
+            return 0x0065;
+        case "f":
+            return 0x0066;
+        case "g":
+            return 0x0067;
+        case "h":
+            return 0x0068;
+        case "i":
+            return 0x0069;
+        case "j":
+            return 0x006A;
+        case "k":
+            return 0x006B;
+        case "l":
+            return 0x006C;
+        case "m":
+            return 0x006D;
+        case "n":
+            return 0x006E;
+        case "o":
+            return 0x006F;
+        case "p":
+            return 0x0070;
+        case "q":
+            return 0x0071;
+        case "r":
+            return 0x0072;
+        case "s":
+            return 0x0073;
+        case "t":
+            return 0x0074;
+        case "u":
+            return 0x0075;
+        case "v":
+            return 0x0076;
+        case "w":
+            return 0x0077;
+        case "x":
+            return 0x0078;
+        case "y":
+            return 0x0079;
+        case "z":
+            return 0x007A;
+        case "{":
+            return 0x007B;
+        case "|":
+            return 0x007C;
+        case "}":
+            return 0x007D;
+        case "~":
+            return 0x007E;
+        case "":
+            return 0x007F;
+        default:
+            errorModal("文字コードに存在しない文字です");
+        break;
+    }
 }
