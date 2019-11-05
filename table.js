@@ -12,7 +12,7 @@ $(document).ready(function () {
     //bootstrapのtooltipの初期化
         $('[data-toggle="tooltip"]').tooltip();
     var r_end = memoryTableMaxRow;  // 行数
-    var c_end = 7;  // 列数 
+    var c_end = 8;  // 列数 
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
     var tableJQ = $('<table id="Memorytable">');
@@ -33,6 +33,9 @@ $(document).ready(function () {
                 $('<td>0</td>').appendTo(trJQ_r);
             }else if(c == 5){
                 $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
+            }else if (c==7){
+                $('<td hidden> </td>').appendTo(trJQ_r);
+
             }else{
                 $('<td> </td>').appendTo(trJQ_r);
 
@@ -251,6 +254,7 @@ function prValueSet(value){
     memoryTableRowColorSet(value,"#FF0000");
     memoryScrollset(value);
     registerAllSet(8,value);
+    selectLine(memoryLineGet(pr));
 }
 // registerSdecGet Registertableの符号あり10進数の値を取得する
 // 引数 
@@ -363,6 +367,15 @@ function memoryLabelSet(address,value){
     table.rows[ address ].cells[ 1 ].firstChild.data = value + ":";
 }
 
+// memoryLineSet Memorytableのラインを書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryLineSet(address,value){
+    let table = document.getElementById('Memorytable');
+    table.rows[ address ].cells[ 7 ].firstChild.data = value;
+}
+
 // memoryLabelGet Memorytableのラベルを取得
 // 引数 
 // address  :  Memorytableの番地
@@ -423,6 +436,14 @@ function memoryBinGet(address){
 function memoryLiteralGet(address){
     let table = document.getElementById('Memorytable');
     return table.rows[ address ].cells[ 6 ].firstChild.data
+}
+
+// memoryLineGet Memorytableのラインを取得
+// 引数 
+// address  :  Memorytableの番地
+function memoryLineGet(address){
+    let table = document.getElementById('Memorytable');
+    return parseInt( table.rows[ address ].cells[ 7 ].firstChild.data)-1;
 }
 
 // toOverflowFlagSet Overflow Flagを設定する
@@ -660,6 +681,7 @@ function ajaxJsonToMemoryMap(obj){
 
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
+            memoryLineSet(address,element.Token.Line);
             if(element.Label != undefined){
                 memoryLabelSet(address,element.Label.Label);
             }

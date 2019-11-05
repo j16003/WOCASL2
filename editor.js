@@ -37,6 +37,7 @@ function onLoad() {
     console.log(e);
     localStorage["caslcode"]=editor.getValue();
   })
+  
 
   // ドラッグ&ドロップ関連処理
   // イベントの伝搬を止めて、アプリケーションのHTMLとファイルが差し替わらないようにする
@@ -76,6 +77,13 @@ function onLoad() {
   });
 
 };
+
+//行を選択します
+function selectLine(value){
+  editor.selection.moveCursorToPosition({row:value,column:0});
+  editor.selection.selectLine();
+}
+
 
 /**
  * ファイルを開きます。

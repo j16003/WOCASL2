@@ -20,9 +20,10 @@ function onLoadExe() {
             }
           })
           .done(function(data) {
-            console.log(data);
             ajaxJsonToMemoryMap(data);
-          })
+            editor.selection.moveCursorToPosition({row:0,column:0});
+            alert(editor.session);
+        })
           .fail(function() {
               alert("通信失敗");
               // 通信失敗時の処理を記述
