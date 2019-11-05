@@ -532,6 +532,8 @@ function cometSVC(pr){
                 memoryAllSet(opcode2,inputlength);
                 for(let i = 0;i < inputlength;i++){
                     memoryAllSet(opcode1+i,inputdata[i]);
+                    alert(wordcode(inputdata[i]));
+                    memoryHexset(opcode+i,wordcode(inputdata[i]));
                 }
             });
             break;
@@ -554,7 +556,6 @@ function execute(){
     beforePC=pr;
     switch (literal){
         case "LD":
-            $('#inputModal').modal('toggle');
             length = cometLD(pr);
             break;
         case "LAD":
