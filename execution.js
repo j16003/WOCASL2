@@ -519,26 +519,28 @@ function cometRET(pr){
 
 function cometSVC(pr){
     let adr = memoryHexGet(pr+1);
+    let opcode1 = registerUdecGet(1);
+    let opcode2 = registerUdecGet(2);
     switch(adr){
         case "#703A":
-            let opcode1 = registerUdecGet(1);
-            let opcode2 = registerUdecGet(2);
-            
             $('#inputModal').modal('show');
             $('#inputModal').on('hide.bs.modal',function(e){
                 let inputdata = $('#input').val();
                 let inputlength = inputdata.length;
 
                 memoryAllSet(opcode2,inputlength);
-                for(let i = 0;i < inputlength;i++){
-                    memoryAllSet(opcode1+i,inputdata[i]);
-                    alert(wordcode(inputdata[i]));
-                    memoryHexset(opcode+i,wordcode(inputdata[i]));
+                for(let i = 0;i < inputlength && i<=256 ;i++){
+                    memoryLabelSet(opcode1+i,memoryLabelGet(opcode1+i)+'  "'+inputdata[i]+'"');
+                    memoryAllSet(opcode1+i,wordcode(inputdata[i]));
                 }
             });
             break;
         case "#02AB":
-
+            let word = "";
+            for(let i = opcode1,index = 0 ; i < opcode1 + memoryUdecGet(opcode2) && index <= 256 ; i++,index++){
+                word = word + hexToWord(memoryUdecGet(i));
+            }
+            infoModal(word);
             break;
         default://IN,OUT以外はNOP
             break;
@@ -651,6 +653,203 @@ function execute(){
         break;
     }
     prValueSet(abs(length+ prUdecGet()));
+}
+
+function hexToWord(value){
+    switch(value){
+        case 0x0020:
+            return " ";
+        case 0x0021:
+            return "!";
+        case 0x0022:
+            return "\"";
+        case 0x0023:
+            return "#";
+        case 0x0024:
+            return "$";
+        case 0x0025:
+            return "%";
+        case 0x0026:
+            return "&";
+        case 0x0027:
+            return "\'";
+        case 0x0028:
+            return "(";
+        case 0x0029:
+            return ")"; 
+        case 0x002A:
+            return "*";
+        case 0x002B:
+            return "+";
+        case 0x002C:
+            return ",";
+        case 0x002D:
+            return "-";
+        case 0x002E:
+            return ".";
+        case 0x002F:
+            return "/";
+        case 0x0030:
+            return "0";
+        case 0x0031:
+            return "1";
+        case 0x0032:
+            return "2";
+        case 0x0033:
+            return "3";
+        case 0x0034:
+            return "4";
+        case 0x0035:
+            return "5";
+        case 0x0036:
+            return "6";
+        case 0x0037:
+            return "7";
+        case 0x0038:
+            return "8";
+        case 0x0039:
+            return "9";
+        case 0x003A:
+            return ":";
+        case 0x003B:
+            return ";";
+        case 0x003C:
+            return "<";
+        case 0x003D:
+            return "=";
+        case 0x003E:
+            return ">";
+        case 0x003F:
+            return "?";
+        case 0x0041:
+            return "@";
+        case 0x0042:
+            return "A";
+        case 0x0043:
+            return "B";
+        case 0x0044:
+            return "C";
+        case 0x0045:
+            return "D";
+        case 0x0046:
+            return "E";
+        case 0x0047:
+            return "F";
+        case 0x0048:
+            return "G";
+        case 0x0049:
+            return "H";
+        case 0x0049:
+            return "I";
+        case 0x004A:
+            return "J";
+        case 0x004B:
+            return "K";
+        case 0x004C:
+            return "L";
+        case 0x004D:
+            return "M";
+        case 0x004E:
+            return "N";
+        case 0x004F:
+            return "O";
+        case 0x0050:
+            return "P";
+        case 0x0051:
+            return "Q";
+        case 0x0052:
+            return "R";
+        case 0x0053:
+            return "S";
+        case 0x0054:
+            return "T";
+        case 0x0055:
+            return "U";
+        case 0x0056:
+            return "V";
+        case 0x0057:
+            return "W";
+        case 0x0058:
+            return "X";
+        case 0x0059:
+            return "Y";
+        case 0x005A:
+            return "Z";
+        case 0x005B:
+            return "[";
+        case 0x005C:
+            return "\\";
+        case 0x005D:
+            return "]";
+        case 0x005E:
+            return "^";
+        case 0x005F:
+            return "_";
+        case 0x0060:
+            return "`";
+        case 0x0061:
+            return "a";
+        case 0x0062:
+            return "b";
+        case 0x0063:
+            return "c";
+        case 0x0064:
+            return "d";
+        case 0x0065:
+            return "e";
+        case 0x0066:
+            return "f";
+        case 0x0067:
+            return "g";
+        case 0x0068:
+            return "h";
+        case 0x0069:
+            return "i";
+        case 0x006A:
+            return "j";
+        case 0x006B:
+            return "k";
+        case 0x006C:
+            return "l";
+        case 0x006D:
+            return "m";
+        case 0x006E:
+            return "n";
+        case 0x006F:
+            return "o";
+        case 0x0070:
+            return "p";
+        case 0x0071:
+            return "q";
+        case 0x0072:
+            return "r";
+        case 0x0073:
+            return "s";
+        case 0x0074:
+            return "t";
+        case 0x0075:
+            return "u";
+        case 0x0076:
+            return "v";
+        case 0x0077:
+            return "w";
+        case 0x0078:
+            return "x";
+        case 0x0079:
+            return "y";
+        case 0x007A:
+            return "z";
+        case 0x007B:
+            return "{";
+        case 0x007C:
+            return "|";
+        case 0x007D:
+            return "}";
+        case 0x007E:
+            return "~";
+        default:
+            return "";
+    }
 }
 
 function wordcode(value){
@@ -849,6 +1048,6 @@ function wordcode(value){
             return 0x007F;
         default:
             errorModal("文字コードに存在しない文字です");
-        break;
+            return 0;
     }
 }

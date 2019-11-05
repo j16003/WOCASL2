@@ -822,7 +822,7 @@ function infoModal(message){
         $('#okButton3').trigger('focus');
     })
     $('#infoModal').find('.modal-title').text("Information");
-    $('#infoModal').find('.modal-body').html(message);
+    $('#infoModal').find('.modal-body').text((message));
     $('#infoModal').modal('show');
 }
 
