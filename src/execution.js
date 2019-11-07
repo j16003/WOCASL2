@@ -21,6 +21,7 @@ function onLoadExe() {
           })
           .done(function(data) {
             ajaxJsonToMemoryMap(data);
+            prValueSet(0);
             editor.selection.moveCursorToPosition({row:0,column:0});
         })
           .fail(function() {

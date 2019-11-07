@@ -24,7 +24,7 @@ $(document).ready(function () {
             if(c == 0){
                 $('<td>' + r000 + '</td>').appendTo(trJQ_r);
             }else if(c == 1){
-                $('<td>' +  r + ':' + '</td>').appendTo(trJQ_r);
+                $('<td>' +  r + '</td>').appendTo(trJQ_r);
             }else if(c == 2){
                 $('<td>#0000</td>').appendTo(trJQ_r);
             }else if(c == 3){
@@ -74,7 +74,9 @@ $(document).ready(function () {
         
         memoryAllSet(registerUdecGet(2),inputlength);
         for(let i = 0;i < inputlength && i<=256 ;i++){
-            memoryLabelSet(registerUdecGet(1)+i,memoryLabelGet(registerUdecGet(1)+i)+'  "'+inputdata[i]+'"');
+            if($.isNumeric(memoryLabelGet(registerUdecGet(1)+i))){
+                memoryLabelSet(registerUdecGet(1)+i,'"'+inputdata[i]+'"');
+            }
             memoryAllSet(registerUdecGet(1)+i,wordcode(inputdata[i]));
         }
     });
@@ -380,7 +382,11 @@ function memoryAllSet(address,value){
 // value    :  値
 function memoryLabelSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 1 ].firstChild.data = value + ":";
+    if($.isNumeric(value)){
+        table.rows[ address ].cells[ 1 ].firstChild.data = value;
+    }else{
+        table.rows[ address ].cells[ 1 ].firstChild.data = value+":";
+    }
 }
 
 // memoryLineSet Memorytableのラインを書き換える

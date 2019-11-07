@@ -33,6 +33,7 @@ body {
 #input_area {
   display: table-cell;
   background-color: white;
+  width: 20%;
 }
 
 #input_txt {
@@ -72,6 +73,7 @@ body {
   position: relative;
   display: table-cell;
   vertical-align: top;
+  width: 30%;
   padding: 0px 0px 0px 0px;
 }
 
