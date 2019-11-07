@@ -34,7 +34,6 @@ function onLoad() {
     editor.setValue(val,0);
   }
   editor.on("change",function(e){
-    console.log(e);
     localStorage["caslcode"]=editor.getValue();
   })
   
@@ -80,7 +79,7 @@ function onLoad() {
 
 //行を選択します
 function selectLine(value){
-  editor.selection.moveCursorToPosition({row:value,column:0});
+  editor.selection.moveCursorToPosition({row:value-1,column:0});
   editor.selection.selectLine();
 }
 

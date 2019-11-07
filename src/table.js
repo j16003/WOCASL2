@@ -263,11 +263,11 @@ function prUdecGet(){
 }
 function prValueSet(value){
     let pr = prUdecGet();
+    selectLine(memoryLineGet(value));
     memoryTableRowColorSet(pr,"#FFFFFF");
     memoryTableRowColorSet(value,"#FF0000");
     memoryScrollset(value);
     registerAllSet(8,value);
-    selectLine(memoryLineGet(pr));
 }
 // registerSdecGet Registertableの符号あり10進数の値を取得する
 // 引数 
@@ -346,7 +346,9 @@ function memoryBinSet(address,value){
 // value    :  値
 function memoryLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 6 ].firstChild.data = value;
+    if(address >= 0 && address < memoryTableMaxRow){
+        table.rows[ address ].cells[ 6 ].firstChild.data = value;
+    }
 }
 
 // memoryScrollset Memorytableの要素位置にスクロールを設定する
@@ -369,11 +371,15 @@ function memoryScrollset(address){
 // address  :  Memorytableの番地
 // value    :  値
 function memoryAllSet(address,value){
+    if(address >= 0 && address < memoryTableMaxRow){
+        memoryHexSet(address,value);
+        memoryUdecSet(address,value);
+        memorySdecSet(address,value);
+        memoryBinSet(address,value);
+    }else{
+        errorModal("メモリの最大数"+memoryTableMaxRow+"を超えました");
+    }
     
-    memoryHexSet(address,value);
-    memoryUdecSet(address,value);
-    memorySdecSet(address,value);
-    memoryBinSet(address,value);
 }
 
 // memoryLabelSet Memorytableのラベルを書き換える
@@ -395,7 +401,9 @@ function memoryLabelSet(address,value){
 // value    :  値
 function memoryLineSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 7 ].firstChild.data = value;
+    if(address >= 0 && address < memoryTableMaxRow){
+        table.rows[ address ].cells[ 7 ].firstChild.data = value;
+    }
 }
 
 // memoryLabelGet Memorytableのラベルを取得
@@ -465,7 +473,7 @@ function memoryLiteralGet(address){
 // address  :  Memorytableの番地
 function memoryLineGet(address){
     let table = document.getElementById('Memorytable');
-    return parseInt( table.rows[ address ].cells[ 7 ].firstChild.data)-1;
+    return parseInt( table.rows[ address ].cells[ 7 ].firstChild.data);
 }
 
 // toOverflowFlagSet Overflow Flagを設定する
@@ -700,7 +708,6 @@ function ajaxJsonToMemoryMap(obj){
         let message = "";
 
         jsonparse.forEach(element => {
-
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
             memoryLineSet(address,element.Token.Line);
@@ -716,52 +723,22 @@ function ajaxJsonToMemoryMap(obj){
             address += element.Length;
         });
         successModal("アセンブル成功");
+        if(obj["warning"]){
+            let jsonparsewarning = JSON.parse(obj["warning"]);
+            jsonparsewarning.forEach(element => {
+            selectLine(parseInt(element.Line));
+            message = element.Line+"行目</br>"+element.Message+" <br> ";
+            
+            warModal(message);
+            
+            });    
+        }
     }else{
         let jsonparseerror = JSON.parse(obj["error"]);
         jsonparseerror.forEach(element => {
             message = element.Line+"行目</br>"+element.Message+" <br> ";
             errorModal(message);
-            
-        });
-    }
-}
-
-// jsonParseToMemoryMap memorytableにjsonファイルの値を読み込む
-// 引数 
-// json  :  文字列
-function jsonParseToMemoryMap(json){
-    let mox = json;
-    mox.replace(/\\n/g, "\\n")  
-    .replace(/\\'/g, "")
-    .replace(/\//g, "")
-    .replace(/\\&/g, "\\&")
-    .replace(/\\r/g, "\\r")
-    .replace(/\\t/g, "\\t")
-    .replace(/\\b/g, "\\b")
-    .replace(/\\f/g, "\\f");
-    obj = JSON.parse(mox);
-    if(obj["result"]==undefined){
-        alert("Result is undefined");
-    }else if(obj["result"]=="OK"){
-        let address= 0;
-        obj["code"].forEach(element => {
-            memoryAllSet(address,element.Code);
-            memoryLiteralSet(address,element.Token.Literal);
-            if(element.Label != undefined){
-                memoryLabelSet(address,element.Label.Label);
-            }
-            if(element.Token.Literal=="DC"){
-                memoryAllSet(address,element.Addr); 
-            }
-            if(element.Length == 2){
-                memoryAllSet(address+1,element.Addr); 
-            }
-            address += element.Length;
-        });
-    }else{
-        let address= 0;
-        obj["error"].forEach(element => {
-            alert(element.Message);
+            selectLine(parseInt(element.Line));
         });
     }
 }
@@ -870,3 +847,14 @@ function infoModal(message){
     $('#infoModal').modal('show');
 }
 
+// warModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function warModal(message){
+    $('#warModal').on('shown.bs.modal',function(){
+        $('#okButton4').trigger('focus');
+    })
+    $('#warModal').find('.modal-title').text("Warning");
+    $('#warModal').find('.modal-body').html((message));
+    $('#warModal').modal('show');
+}
