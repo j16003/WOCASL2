@@ -11,7 +11,7 @@ function onLoadExe() {
         //メモリレジスタスタック初期化
         initMemoryRegister();
         $.ajax({
-            url: 'http://localhost:8080/GCASL',
+            url: 'https://fast-river-46694.herokuapp.com/GCASL',
             type: 'POST',
             dataType: 'json',
             // フォーム要素の内容をハッシュ形式に変換
