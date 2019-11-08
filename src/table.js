@@ -32,9 +32,9 @@ $(document).ready(function () {
         //5
         $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
         //6
-        $('<td></td>').appendTo(trJQ_r);
+        $('<td> </td>').appendTo(trJQ_r);
         //7
-        $('<td hidden></td>').appendTo(trJQ_r);
+        $('<td hidden> </td>').appendTo(trJQ_r);
     }
     $(memory_Area).append(tableJQ);
     var r_end = stackTableMaxRow;
