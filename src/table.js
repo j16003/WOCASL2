@@ -1,4 +1,3 @@
-let demoData = '{"result":"OK","code" :[{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"PRG","Index":0,"Address":0},"Token":{"Literal":"START"}},{"Code":4112,"Addr":13,"AddrLabel":"A","Op":16,"Length":2,"Token":{"Literal":"LD"}},{"Code":4128,"Addr":14,"AddrLabel":"B","Op":16,"Length":2,"Token":{"Literal":"LD"}},{"Code":9234,"Addr":0,"AddrLabel":"","Op":36,"Length":1,"Token":{"Literal":"ADDA"}},{"Code":4368,"Addr":16,"AddrLabel":"ANS","Op":17,"Length":2,"Token":{"Literal":"ST"}},{"Code":8208,"Addr":15,"AddrLabel":"C","Op":32,"Length":2,"Token":{"Literal":"ADDA"}},{"Code":4368,"Addr":17,"AddrLabel":"ANSS","Op":17,"Length":2,"Token":{"Literal":"ST"}},{"Code":33024,"Addr":0,"AddrLabel":"","Op":129,"Length":1,"Token":{"Literal":"RET"}},{"Code":0,"Addr":2,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"A","Index":1,"Address":13},"Token":{"Literal":"DC"}},{"Code":0,"Addr":4,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"B","Index":2,"Address":14},"Token":{"Literal":"DC"}},{"Code":0,"Addr":9,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"C","Index":3,"Address":15},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"ANS","Index":4,"Address":16},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Label":{"Label":"ANSS","Index":5,"Address":17},"Token":{"Literal":"DC"}},{"Code":0,"Addr":0,"AddrLabel":"","Op":0,"Length":1,"Token":{"Literal":"END"}}]}'
 
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
@@ -13,7 +12,7 @@ $(document).ready(function () {
     //bootstrapのtooltipの初期化
         $('[data-toggle="tooltip"]').tooltip();
     var r_end = memoryTableMaxRow;  // 行数
-    var c_end = 7;  // 列数 
+    var c_end = 8;  // 列数 
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
     var tableJQ = $('<table id="Memorytable">');
@@ -25,7 +24,7 @@ $(document).ready(function () {
             if(c == 0){
                 $('<td>' + r000 + '</td>').appendTo(trJQ_r);
             }else if(c == 1){
-                $('<td>' +  r + ':' + '</td>').appendTo(trJQ_r);
+                $('<td>' +  r + '</td>').appendTo(trJQ_r);
             }else if(c == 2){
                 $('<td>#0000</td>').appendTo(trJQ_r);
             }else if(c == 3){
@@ -34,6 +33,9 @@ $(document).ready(function () {
                 $('<td>0</td>').appendTo(trJQ_r);
             }else if(c == 5){
                 $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
+            }else if (c==7){
+                $('<td hidden> </td>').appendTo(trJQ_r);
+
             }else{
                 $('<td> </td>').appendTo(trJQ_r);
 
@@ -41,7 +43,6 @@ $(document).ready(function () {
        }
     }
     $(memory_Area).append(tableJQ);
-    jsonParseToMemoryMap(demoData);
     var r_end = stackTableMaxRow;
     tableJQ = $('<table id="Stacktable">');
     for (var r = 0; r < (r_end + 1); r++) {
@@ -66,6 +67,19 @@ $(document).ready(function () {
     let stacktable = document.getElementById('Stacktable');
     let stackPosition = stacktable.rows[r_end].offsetTop;
     $(stack_Area).scrollTop(stackPosition);
+    //input Modal hide Event
+    $('#inputModal').on('hide.bs.modal',function(e){
+        let inputdata = $('#input').val();;
+        let inputlength = inputdata.length;
+        
+        memoryAllSet(registerUdecGet(2),inputlength);
+        for(let i = 0;i < inputlength && i<=256 ;i++){
+            if($.isNumeric(memoryLabelGet(registerUdecGet(1)+i))){
+                memoryLabelSet(registerUdecGet(1)+i,'"'+inputdata[i]+'"');
+            }
+            memoryAllSet(registerUdecGet(1)+i,wordcode(inputdata[i]));
+        }
+    });
 });
 
 // toBin 2進数に変換する
@@ -129,13 +143,12 @@ function toSdecOver(v){
 // 戻り値
 // v        :  値
 function toUdecOver(v){
-    v=v&0xFFFF;
     if(v > 65535){
         v = (v - 1) % 65535;
     }else if(v < 0){
         v = 65535 + (v + 1)%65535;
     }
-    return v
+    return v&0xFFFF
 }
 
 // registerHexSet Registertableの16進数の値を書き換える
@@ -181,12 +194,12 @@ function registerScrollset(address){
     let table = document.getElementById('Registertable');
     let register_Area = document.getElementById('register_area');
     let position;
-    if(address >= 0 && address <= 8){
-        position = table.rows[address+2].offsetTop
-    }else if(address == 9){
-        position = table.rows[address-8].offsetTop
-    }else{
-        position = table.rows[address+1].offsetTop
+    if(address >= 0 && address <= 7){
+        position = table.rows[address+3].offsetTop
+    }else if(address == 8||address == 9){
+        position = table.rows[address-7].offsetTop
+    }else if(address == 10){
+        position = table.rows[address-10].offsetTop
     }
     $(register_Area).scrollTop(position);
 }
@@ -197,12 +210,10 @@ function registerScrollset(address){
 // value    :  値
 function registerAllSet(address,value){
     let adr = parseInt(address, 10);
-    if(address >= 0 && address <= 8){
-        adr += 2;
-    }else if(address == 9){
-        adr -= 8;
-    }else{
-        adr += 1;
+    if(address >= 0 && address <= 7){
+        adr += 3;
+    }else if(address == 8||address == 9){
+        adr -= 7;
     }
     registerHexSet(adr,value);
     registerUdecSet(adr,value);
@@ -216,12 +227,10 @@ function registerAllSet(address,value){
 // 戻り値
 // string   :  値
 function registerHexGet(address){
-    if(address >= 0 && address <= 8){
-        address += 2;
-    }else if(address == 9){
-        address -= 8;
-    }else{
-        address += 1;
+    if(address >= 0 && address <= 7){
+        address += 3;
+    }else if(address == 8||address == 9){
+        address -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 1 ].firstChild.data;
@@ -236,12 +245,10 @@ function registerHexGet(address){
 // string   :  値
 function registerUdecGet(address){
     let adr = parseInt(address,10);
-    if(address >= 0 && address <= 8){
-        adr += 2;
-    }else if(address == 9){
-        adr -= 8;
-    }else{
-        adr += 1;
+    if(address >= 0 && address <= 7){
+        adr += 3;
+    }else if(address == 8||address == 9){
+        adr -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ adr ].cells[ 2 ].firstChild.data;
@@ -252,14 +259,15 @@ function registerUdecGet(address){
 // 戻り値
 // int   :  値
 function prUdecGet(){
-    return registerUdecGet(9);
+    return parseInt(registerUdecGet(8),10);
 }
 function prValueSet(value){
     let pr = prUdecGet();
+    selectLine(memoryLineGet(value));
     memoryTableRowColorSet(pr,"#FFFFFF");
     memoryTableRowColorSet(value,"#FF0000");
     memoryScrollset(value);
-    registerAllSet(9,value);
+    registerAllSet(8,value);
 }
 // registerSdecGet Registertableの符号あり10進数の値を取得する
 // 引数 
@@ -268,12 +276,10 @@ function prValueSet(value){
 // string   :  値
 function registerSdecGet(address){
     let adr = parseInt(address,10);
-    if(address >= 0 && address <= 8){
-        adr += 2;
-    }else if(address == 9){
-        adr -= 8;
-    }else{
-        adr += 1;
+    if(address >= 0 && address <= 7){
+        adr += 3;
+    }else if(address == 8||address == 9){
+        adr -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ adr ].cells[ 3 ].firstChild.data;
@@ -287,12 +293,10 @@ function registerSdecGet(address){
 // 戻り値
 // string   :  値
 function registerBinGet(address){
-    if(address >= 0 && address <= 8){
-        address += 2;
-    }else if(address == 9){
-        address -= 8;
-    }else{
-        address += 1;
+    if(address >= 0 && address <= 7){
+        address += 3;
+    }else if(address == 8||address == 9){
+        address -= 7;
     }
     let table = document.getElementById('Registertable');
     var v = table.rows[ address ].cells[ 4 ].firstChild.data;
@@ -342,7 +346,9 @@ function memoryBinSet(address,value){
 // value    :  値
 function memoryLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 6 ].firstChild.data = value;
+    if(address >= 0 && address < memoryTableMaxRow){
+        table.rows[ address ].cells[ 6 ].firstChild.data = value;
+    }
 }
 
 // memoryScrollset Memorytableの要素位置にスクロールを設定する
@@ -351,6 +357,11 @@ function memoryLiteralSet(address,value){
 function memoryScrollset(address){
     let table = document.getElementById('Memorytable');
     let memory_Area = document.getElementById('memory_area');
+    if(address-5 >=0){
+        address-=5;
+    }else{
+        address=0;
+    }
     let position = table.rows[address].offsetTop;
     $(memory_Area).scrollTop(position);
 }
@@ -360,11 +371,47 @@ function memoryScrollset(address){
 // address  :  Memorytableの番地
 // value    :  値
 function memoryAllSet(address,value){
+    if(address >= 0 && address < memoryTableMaxRow){
+        memoryHexSet(address,value);
+        memoryUdecSet(address,value);
+        memorySdecSet(address,value);
+        memoryBinSet(address,value);
+    }else{
+        errorModal("メモリの最大数"+memoryTableMaxRow+"を超えました");
+    }
+    
+}
+
+// memoryLabelSet Memorytableのラベルを書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryLabelSet(address,value){
     let table = document.getElementById('Memorytable');
-    memoryHexSet(address,value);
-    memoryUdecSet(address,value);
-    memorySdecSet(address,value);
-    memoryBinSet(address,value);
+    if($.isNumeric(value)){
+        table.rows[ address ].cells[ 1 ].firstChild.data = value;
+    }else{
+        table.rows[ address ].cells[ 1 ].firstChild.data = value+":";
+    }
+}
+
+// memoryLineSet Memorytableのラインを書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryLineSet(address,value){
+    let table = document.getElementById('Memorytable');
+    if(address >= 0 && address < memoryTableMaxRow){
+        table.rows[ address ].cells[ 7 ].firstChild.data = value;
+    }
+}
+
+// memoryLabelGet Memorytableのラベルを取得
+// 引数 
+// address  :  Memorytableの番地
+function memoryLabelGet(address){
+    let table = document.getElementById('Memorytable');
+    return table.rows[ address ].cells[ 1 ].firstChild.data;
 }
 
 // memoryHexGet Memorytableの16進数の値を取得する
@@ -421,17 +468,25 @@ function memoryLiteralGet(address){
     return table.rows[ address ].cells[ 6 ].firstChild.data
 }
 
+// memoryLineGet Memorytableのラインを取得
+// 引数 
+// address  :  Memorytableの番地
+function memoryLineGet(address){
+    let table = document.getElementById('Memorytable');
+    return parseInt( table.rows[ address ].cells[ 7 ].firstChild.data);
+}
+
 // toOverflowFlagSet Overflow Flagを設定する
 // 引数 
 // v        :  値
 function overflowFlagSet(value){
-    let table = document.getElementById('Registertable');
+    let table = document.getElementById('Flagtable');
     if(value == 0){
-        table.rows[ 13 ].cells[ 4 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 1 ].firstChild.data = '〇';
+        table.rows[ 1 ].cells[ 4 ].firstChild.data = 0;
+        table.rows[ 1 ].cells[ 1 ].firstChild.data = '〇';
     }else{
-        table.rows[ 13 ].cells[ 4 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 1 ].firstChild.data = '☆';
+        table.rows[ 1 ].cells[ 4 ].firstChild.data = 1;
+        table.rows[ 1 ].cells[ 1 ].firstChild.data = '☆';
     }
 }
 
@@ -439,7 +494,7 @@ function overflowFlagSet(value){
 // 引数 
 // value        :  値
 function ofSdecFlagSet(value){
-    if(value <= 32767 || value >= -32768){
+    if(value <= 32767 && value >= -32768){
         overflowFlagSet(0);
     }else{
         overflowFlagSet(1);
@@ -450,7 +505,7 @@ function ofSdecFlagSet(value){
 // 引数 
 // value        :  値
 function ofUdecFlagSet(value){
-    if(value <= 65535 || value >= 0){
+    if(value <= 65535 && value >= 0){
         overflowFlagSet(0);
     }else{
         overflowFlagSet(1);
@@ -461,23 +516,24 @@ function ofUdecFlagSet(value){
 // 戻り値
 // string   :  値
 function overflowFlagGet(){
-    let table = document.getElementById('Registertable');
-    var v = table.rows[ 13 ].cells[ 4 ].firstChild.data;
+    let table = document.getElementById('Flagtable');
+    var v = table.rows[ 1 ].cells[ 4 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
 
-// toSignFlagSet Sign Flagを設定する
+// SignFlagSet Sign Flagを設定する
 // 引数 
 // v        :  値
 function signFlagSet(value){
-    let table = document.getElementById('Registertable');
-    if(value >= 0){
-        table.rows[ 13 ].cells[ 5 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 2 ].firstChild.data = '正';
+    let table = document.getElementById('Flagtable');
+    value = value & 0x8000;
+    if(value == 0){
+        table.rows[ 1 ].cells[ 5 ].firstChild.data = 0;
+        table.rows[ 1 ].cells[ 2 ].firstChild.data = '正';
     }else{
-        table.rows[ 13 ].cells[ 5 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 2 ].firstChild.data = '負';
+        table.rows[ 1 ].cells[ 5 ].firstChild.data = 1;
+        table.rows[ 1 ].cells[ 2 ].firstChild.data = '負';
     }
 }
 
@@ -485,8 +541,8 @@ function signFlagSet(value){
 // 戻り値
 // string   :  値
 function signFlagGet(){
-    let table = document.getElementById('Registertable');
-    var v = table.rows[ 13 ].cells[ 5 ].firstChild.data;
+    let table = document.getElementById('Flagtable');
+    var v = table.rows[ 1 ].cells[ 5 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -495,13 +551,13 @@ function signFlagGet(){
 // 引数 
 // v        :  値
 function zeroFlagSet(value){
-    let table = document.getElementById('Registertable');
-    if(value == 0){
-        table.rows[ 13 ].cells[ 6 ].firstChild.data = 0;
-        table.rows[ 13 ].cells[ 3 ].firstChild.data = 'NonZ';
+    let table = document.getElementById('Flagtable');
+    if(value){
+        table.rows[ 1 ].cells[ 6 ].firstChild.data = 0;
+        table.rows[ 1 ].cells[ 3 ].firstChild.data = 'NonZ';
     }else{
-        table.rows[ 13 ].cells[ 6 ].firstChild.data = 1;
-        table.rows[ 13 ].cells[ 3 ].firstChild.data = 'Zero';
+        table.rows[ 1 ].cells[ 6 ].firstChild.data = 1;
+        table.rows[ 1 ].cells[ 3 ].firstChild.data = 'Zero';
     }
 }
 
@@ -509,8 +565,8 @@ function zeroFlagSet(value){
 // 戻り値
 // string   :  値
 function zeroFlagGet(){
-    let table = document.getElementById('Registertable');
-    var v = table.rows[ 13 ].cells[ 6 ].firstChild.data;
+    let table = document.getElementById('Flagtable');
+    var v = table.rows[ 1 ].cells[ 6 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -520,35 +576,43 @@ function zeroFlagGet(){
 // address  :  Stacktableの番地
 // value    :  値
 function stackHexSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 2 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 1 ].firstChild.data = toHex(value);
 }
 
 // stackUdecSet Stacktableの符号なし10進数の値を書き換える
 // 引数 
 // address  :  Stacktableの番地
 // value    :  値
-function stackHexSet(address,value){
+function stackUdecSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 3 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 2 ].firstChild.data = toUdecOver(value);
 }
 
 // stackSdecSet Stacktableの符号あり10進数の値を書き換える
 // 引数 
 // address  :  Stacktableの番地
 // value    :  値
-function stackHexSet(address,value){
+function stackSdecSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 4 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 3 ].firstChild.data = toSdecOver(value);
 }
 
-// stackSdecSet Stacktableの16進数の値を書き換える
+// stackSdecSet Stacktableの2進数の値を書き換える
 // 引数 
 // address  :  Stacktableの番地
 // value    :  値
-function stackHexSet(address,value){
+function stackBinSet(address,value){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    table.rows[ address ].cells[ 5 ].firstChild.data = toHex(value);
+    table.rows[ r_end-address ].cells[ 4 ].firstChild.data = toBin(value);
 }
 
 // stackScrollset Stacktableの要素位置にスクロールを設定する
@@ -569,11 +633,10 @@ function stackScrollset(address){
 // address  :  Memorytableの番地
 // value    :  値
 function stackAllSet(address,value){
-    let table = document.getElementById('Stacktable');
-    memoryHexSet(address,value);
-    memoryUdecSet(address,value);
-    memorySdecSet(address,value);
-    memoryBinSet(address,value);
+    stackHexSet(address,value);
+    stackUdecSet(address,value);
+    stackSdecSet(address,value);
+    stackBinSet(address,value);
 }
 
 // stackHexGet Stacktableの16進数の値を取得する
@@ -582,8 +645,10 @@ function stackAllSet(address,value){
 // 戻り値
 // string   :  値
 function stackHexGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 2 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 1 ].firstChild.data;
     v = parseInt(v.replace('#',''), 16);
     return v
 }
@@ -594,8 +659,10 @@ function stackHexGet(address){
 // 戻り値
 // string   :  値
 function stackUdecGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 3 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 2 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -605,9 +672,11 @@ function stackUdecGet(address){
 // address  :  Stacktableの番地
 // 戻り値
 // string   :  値
-function stackUdecGet(address){
+function stackSdecGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 4 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 3 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -618,12 +687,17 @@ function stackUdecGet(address){
 // 戻り値
 // string   :  値
 function stackBinGet(address){
+    address = 0xFFFF-address;
+    let r_end = stackTableMaxRow;
     let table = document.getElementById('Stacktable');
-    var v = table.rows[ address ].cells[ 5 ].firstChild.data;
+    var v = table.rows[ r_end-address ].cells[ 4 ].firstChild.data;
     v = parseInt(v.replace(/ /g,''), 2);
     return v
 }
 
+// ajaxJsonToMemoryMap memorytableにバイナリを読み込む
+// 引数 
+// obj  :  data type:json
 function ajaxJsonToMemoryMap(obj){
     
     if(obj["result"]==undefined){
@@ -631,9 +705,15 @@ function ajaxJsonToMemoryMap(obj){
     }else if(obj["result"]=="OK"){
         let address= 0;
         let jsonparse = JSON.parse(obj["code"]);
+        let message = "";
+
         jsonparse.forEach(element => {
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
+            memoryLineSet(address,element.Token.Line);
+            if(element.Label != undefined){
+                memoryLabelSet(address,element.Label.Label);
+            }
             if(element.Token.Literal=="DC"){
                 memoryAllSet(address,element.Addr); 
             }
@@ -642,47 +722,23 @@ function ajaxJsonToMemoryMap(obj){
             }
             address += element.Length;
         });
-        alert("OK");
+        successModal("アセンブル成功");
+        if(obj["warning"]){
+            let jsonparsewarning = JSON.parse(obj["warning"]);
+            jsonparsewarning.forEach(element => {
+            selectLine(parseInt(element.Line));
+            message = element.Line+"行目</br>"+element.Message+" <br> ";
+            
+            warModal(message);
+            
+            });    
+        }
     }else{
-        let address= 0;
-        obj["error"].forEach(element => {
-            alert(element.Message);
-        });
-    }
-}
-// jsonParseToMemoryMap memorytableにjsonファイルの値を読み込む
-// 引数 
-// json  :  文字列
-function jsonParseToMemoryMap(json){
-    let mox = json;
-    mox.replace(/\\n/g, "\\n")  
-    .replace(/\\'/g, "")
-    .replace(/\//g, "")
-    .replace(/\\&/g, "\\&")
-    .replace(/\\r/g, "\\r")
-    .replace(/\\t/g, "\\t")
-    .replace(/\\b/g, "\\b")
-    .replace(/\\f/g, "\\f");
-    obj = JSON.parse(mox);
-    if(obj["result"]==undefined){
-        alert("Result is undefined");
-    }else if(obj["result"]=="OK"){
-        let address= 0;
-        obj["code"].forEach(element => {
-            memoryAllSet(address,element.Code);
-            memoryLiteralSet(address,element.Token.Literal);
-            if(element.Token.Literal=="DC"){
-                memoryAllSet(address,element.Addr); 
-            }
-            if(element.Length == 2){
-                memoryAllSet(address+1,element.Addr); 
-            }
-            address += element.Length;
-        });
-    }else{
-        let address= 0;
-        obj["error"].forEach(element => {
-            alert(element.Message);
+        let jsonparseerror = JSON.parse(obj["error"]);
+        jsonparseerror.forEach(element => {
+            message = element.Line+"行目</br>"+element.Message+" <br> ";
+            errorModal(message);
+            selectLine(parseInt(element.Line));
         });
     }
 }
@@ -702,14 +758,10 @@ function memoryTableRowColorSet(address,color){
 // color    :  値
 function registerTableRowColorSet(address,color){
     let table = document.getElementById('Registertable');
-    if(address >= 0 && address <= 8){
-        table.rows[address+2].style.backgroundColor=color;
-    }else if(address == 9){
-        table.rows[address-8].style.backgroundColor=color;
-    }else if(address == 10){
-        table.rows[address+1].style.backgroundColor=color;
-    }else{
-        table.rows[address+2].style.backgroundColor=color;
+    if(address >= 0 && address <= 7){
+        table.rows[address+3].style.backgroundColor=color;
+    }else if(address == 8||address == 9){
+        table.rows[address-7].style.backgroundColor=color;
     }
 }
 
@@ -724,27 +776,86 @@ function stackTableRowColorSet(address,color){
     table.rows[r_end-address].style.backgroundColor=color;
 }
 
+// initMemoryRegister 全てのテーブルの値、色、スクロールのリセット
 function initMemoryRegister(){
     for(var i = 0 ; i < memoryTableMaxRow ; i++){
+        memoryLabelSet(i,i);
         memoryAllSet(i,0);
         memoryLiteralSet(i,"");
         memoryTableRowColorSet(i,"#FFFFFF");
     }
     for(i = 0 ; i < stackTableMaxRow ; i++){
-        stackAllSet(i,0);
-        //stackTableRowColorSet(i,"#FFFFFF");
+        stackAllSet(0xFFFF-i,0);
+        stackTableRowColorSet(0xFFFF-i,"#FFFFFF");
     }
     for(i = 0 ; i < 10 ; i++){
         registerAllSet(i,0);
         registerTableRowColorSet(i,"#FFFFFF");
     }
     memoryScrollset(0);
-    registerScrollset(0);
-    stackScrollset(stackTableMaxRow);
-    registerAllSet(10,65535);
-    zeroFlagSet(0);
+    registerScrollset(11);
+    stackScrollset(0xFFFF);
+    registerAllSet(9,65535);
+    registerTableRowColorSet(8,"#00BCD4");
+    registerTableRowColorSet(9,"#EEBCD4");
+    zeroFlagSet(1);
     signFlagSet(0);
     ofSdecFlagSet(0);
     ofSdecFlagSet(0);
+}
+
+// errorModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function errorModal(message){
+    if(Math.random()*100%100<1){
+        message=message+'<img src="losecat.jpg"  alt="losecat" class="img-fluid">';
+    }
+    $('#errorModal').on('shown.bs.modal',function(){
+        $('#okButton').trigger('focus');
+        
+    })
+    $('#errorModal').find('.modal-title').text("Error");
+    $('#errorModal').find('.modal-body').html(message);
+    $('#errorModal').modal('show');
+}
+
+// successModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function successModal(message){
+    if(Math.random()*100%100<1){
+        message=message+'<img src="successcat.jpg"  alt="successcat" class="img-fluid">';
+    }
+    $('#successModal').on('shown.bs.modal',function(){
+        $('#okButton2').trigger('focus');
+    })
+    $('#successModal').find('.modal-title').text("Success");
+    $('#successModal').find('.modal-body').html(message);
+    $('#successModal').modal('show');
+}
+
+// infoModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function infoModal(message){
+    $('#infoModal').on('shown.bs.modal',function(){
+        $('#okButton3').trigger('focus');
+    })
+    $('#infoModal').find('.modal-title').text("Information");
+    $('#infoModal').find('.modal-body').text((message));
+    $('#infoModal').modal('show');
+}
+
+// warModal Modalを利用してアラートの表示
+// 引数 
+// message    :  値
+function warModal(message){
+    $('#warModal').on('shown.bs.modal',function(){
+        $('#okButton4').trigger('focus');
+    })
+    $('#warModal').find('.modal-title').text("Warning");
+    $('#warModal').find('.modal-body').html((message));
+    $('#warModal').modal('show');
 }
 

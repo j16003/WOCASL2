@@ -1,4 +1,4 @@
-const fs = require('fs');
+//const fs = require('fs');
 //const {BrowserWindow, dialog} = require('electron').remote;
 
 let inputArea = null;
@@ -22,9 +22,21 @@ function onLoad() {
   // フッター領域
   footerArea = document.getElementById('footer_fixed');
 
+  
+
+  
   editor = ace.edit('input_txt');
   //editor.getSession().setMode('ace/mode/javascript');
-  editor.setTheme('ace/theme/twilight');
+  editor.setTheme('ace/theme/eclipse');
+  
+  var val = localStorage["caslcode"];
+  if(val != undefined){
+    editor.setValue(val,0);
+  }
+  editor.on("change",function(e){
+    localStorage["caslcode"]=editor.getValue();
+  })
+  
 
   // ドラッグ&ドロップ関連処理
   // イベントの伝搬を止めて、アプリケーションのHTMLとファイルが差し替わらないようにする
@@ -53,14 +65,24 @@ function onLoad() {
 
   // 「読み込む」ボタンの制御
   document.querySelector('#btnLoad').addEventListener('click', () => {
-    openLoadFile();
+    //openLoadFile();
+    btnStepExecution.disabled = true;
   });
   // 「保存する」ボタンの制御
   document.querySelector('#btnSave').addEventListener('click', () => {
-    openLoadFile();
+    //openLoadFile();
+    btnStepExecution.disabled = false;
+
   });
 
 };
+
+//行を選択します
+function selectLine(value){
+  editor.selection.moveCursorToPosition({row:value-1,column:0});
+  editor.selection.selectLine();
+}
+
 
 /**
  * ファイルを開きます。
