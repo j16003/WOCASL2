@@ -6,11 +6,11 @@ jQuery でプログラム的にテーブルを作成する
 // create table
 // rows  :500
 // cells :6
-const memoryTableMaxRow = 500;
+const memoryTableMaxRow = 0x1000;
 const stackTableMaxRow = 200;
 $(document).ready(function () {
     //bootstrapのtooltipの初期化
-        $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
     var r_end = memoryTableMaxRow;  // 行数
     var c_end = 8;  // 列数 
     memory_Area = document.getElementById('memory_area');
@@ -19,28 +19,22 @@ $(document).ready(function () {
     for (var r = 0; r < r_end; r++) {
         var r000 = toHex(r);
         var trJQ_r = $('<tr></tr>').appendTo(tableJQ);
-        for (var c = 0; c < c_end; c++) {
-            var c000 = c;
-            if(c == 0){
-                $('<td>' + r000 + '</td>').appendTo(trJQ_r);
-            }else if(c == 1){
-                $('<td>' +  r + '</td>').appendTo(trJQ_r);
-            }else if(c == 2){
-                $('<td>#0000</td>').appendTo(trJQ_r);
-            }else if(c == 3){
-                $('<td>0</td>').appendTo(trJQ_r);
-            }else if(c == 4){
-                $('<td>0</td>').appendTo(trJQ_r);
-            }else if(c == 5){
-                $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
-            }else if (c==7){
-                $('<td hidden> </td>').appendTo(trJQ_r);
-
-            }else{
-                $('<td> </td>').appendTo(trJQ_r);
-
-            }            
-       }
+        //0
+        $('<td>' + r000 + '</td>').appendTo(trJQ_r);
+        //1
+        $('<td>' +  r + '</td>').appendTo(trJQ_r);
+        //2
+        $('<td>#0000</td>').appendTo(trJQ_r);
+        //3
+        $('<td>0</td>').appendTo(trJQ_r);
+        //4
+        $('<td>0</td>').appendTo(trJQ_r);
+        //5
+        $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
+        //6
+        $('<td></td>').appendTo(trJQ_r);
+        //7
+        $('<td hidden></td>').appendTo(trJQ_r);
     }
     $(memory_Area).append(tableJQ);
     var r_end = stackTableMaxRow;
@@ -49,7 +43,6 @@ $(document).ready(function () {
         var r000 = toHex(65537 - ((r_end + 2) - r));
         var trJQ_r = $('<tr></tr>').appendTo(tableJQ);
         for (var c = 0; c < c_end; c++) {
-            var c000 = c;
             if(c == 0){
                 $('<td>' + r000 + '</td>').appendTo(trJQ_r);
             }else if(c == 1){
@@ -80,6 +73,21 @@ $(document).ready(function () {
             memoryAllSet(registerUdecGet(1)+i,wordcode(inputdata[i]));
         }
     });
+
+});
+
+//page load and resize Events
+$(window).on('load resize', function(){
+        let headerHeight = $('#header_fixed').height();
+        let scrennheight = document.body.clientHeight - headerHeight;
+        if($('#register_area').height() < scrennheight/2){
+            $('#memory_area').height(scrennheight/2+(scrennheight/2-$('#register_area').height()));
+        }else{
+            $('#memory_area').height(scrennheight-$('#register_area').height());
+        }
+        $('#input_area').height(scrennheight);
+        $('#stack_area').height(scrennheight/2-$('#flag_area').height());
+        $('#comet_area').height(scrennheight/2);
 });
 
 // toBin 2進数に変換する
