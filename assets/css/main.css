@@ -33,12 +33,7 @@ body {
 #input_area {
   display: table-cell;
   background-color: white;
-<<<<<<< HEAD:main.css
-  padding: 0px 0px 20px 0px;
-  height: 100%;
-=======
   width: 25%;
->>>>>>> 96c368b14d5979ddae4ba2a5361867cd336221ac:assets/css/main.css
 }
 
 #input_txt {
