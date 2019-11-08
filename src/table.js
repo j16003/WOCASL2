@@ -858,3 +858,4 @@ function warModal(message){
     $('#warModal').find('.modal-body').html((message));
     $('#warModal').modal('show');
 }
+

@@ -462,7 +462,9 @@ function cometPUSH(pr){
     sp -= 1;
     stackAllSet(sp,address);
     registerAllSet(9,sp);
-    
+    stackTableRowColorSet(sp,'#00FF00');
+    stackTableRowColorSet(sp+1,'#FFFFFF');
+
     
     return 2;
 }
@@ -477,6 +479,8 @@ function cometPOP(pr){
         sp += 1;
         registerAllSet(9,sp);
         registerAllSet(r1,val);
+        stackTableRowColorSet(sp,'#66FFFF');
+        stackTableRowColorSet(sp-1,'#FFFFFF');
     }else if(sp == 0xFFFE){
         sp += sp;
     }else{
