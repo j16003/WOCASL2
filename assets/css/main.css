@@ -119,7 +119,7 @@ body {
 
 #flag_area {
   display: block;
-  height: 8%;
+  height: auto;
   text-align: center;
   background-color: white;
   /**scrollbar-width: none;**/
