@@ -551,7 +551,7 @@ function execute(){
     let literal = memoryLiteralGet(pr);
     let length;
 
-    beforePC=pr;
+    beforePC = pr;
     switch (literal){
         case "LD":
             length = cometLD(pr);
