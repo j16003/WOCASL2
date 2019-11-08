@@ -55,12 +55,7 @@ body {
   height: auto;
   text-align: center;
   background-color: white;
-<<<<<<< HEAD:main.css
   overflow-y: scroll;
-=======
-  /*overflow-y: scroll;*/
-  padding: 0px 0px 0px 0px;
->>>>>>> 96c368b14d5979ddae4ba2a5361867cd336221ac:assets/css/main.css
   /**scrollbar-width: none;**/
 }
 
