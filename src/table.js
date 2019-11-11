@@ -8,6 +8,8 @@ jQuery でプログラム的にテーブルを作成する
 // cells :6
 const memoryTableMaxRow = 0x500;
 const stackTableMaxRow = 200;
+//StepBackControler
+var StepBackControler;
 $(document).ready(function () {
     //bootstrapのtooltipの初期化
     $('[data-toggle="tooltip"]').tooltip();
@@ -66,12 +68,15 @@ $(document).ready(function () {
         let inputlength = inputdata.length;
         
         memoryAllSet(registerUdecGet(2),inputlength);
+        let mem = new Array();
         for(let i = 0;i < inputlength && i<=256 ;i++){
+            mem.push(new Pair(registerUdecGet(1)+i,memoryUdecGet(registerUdecGet(1)+i)));
             if($.isNumeric(memoryLabelGet(registerUdecGet(1)+i))){
                 memoryLabelSet(registerUdecGet(1)+i,'"'+inputdata[i]+'"');
             }
             memoryAllSet(registerUdecGet(1)+i,wordcode(inputdata[i]));
         }
+        StepBackControler.setStep(new StepStruct(mem));
         if(cometExecute != null){
             cometExecuteStart();
         }
@@ -387,12 +392,26 @@ function memoryAllSet(address,value){
         memoryUdecSet(address,value);
         memorySdecSet(address,value);
         memoryBinSet(address,value);
+        memoryLabelLiteralSet(address,value);
     }else{
         errorModal("メモリの最大数"+memoryTableMaxRow+"を超えました");
     }
     
 }
-
+// memoryLabelSet Memorytableのラベルを書き換える
+// 引数 
+// address  :  Memorytableの番地
+// value    :  値
+function memoryLabelLiteralSet(address,value){
+    let table = document.getElementById('Memorytable');
+    if($.isNumeric(table.rows[ address ].cells[ 1 ].firstChild.data) || table.rows[ address ].cells[ 1 ].firstChild.data[0] == '"'){
+        if(hexToWord(value)==""){
+            table.rows[ address ].cells[ 1 ].firstChild.data = parseInt(address);
+        }else{
+            table.rows[ address ].cells[ 1 ].firstChild.data = '"'+hexToWord(value)+'"';
+        }
+    }
+}
 // memoryLabelSet Memorytableのラベルを書き換える
 // 引数 
 // address  :  Memorytableの番地
@@ -814,6 +833,7 @@ function initMemoryRegister(){
     ofSdecFlagSet(0);
     ofSdecFlagSet(0);
     cometExecuteStop();
+    StepBackControler = new StepBackControl();
 }
 
 // errorModal Modalを利用してアラートの表示

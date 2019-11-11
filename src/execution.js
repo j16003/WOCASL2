@@ -2,6 +2,51 @@ window.addEventListener('DOMContentLoaded', onLoadExe);
 var cometExecute = null;
 //cpu cycle
 const COMETCYCLE = 100;
+class Pair{
+    constructor(first,second){
+        this.first = first;
+        this.second = second;
+    }
+}
+class StepStruct{
+    constructor(memory){
+        this.register = document.getElementById("Registertable").cloneNode(true);
+        this.memory = memory;
+        this.flag = document.getElementById("Flagtable").cloneNode(true);
+        this.stack = null;
+    }
+    setStack(stack){
+        this.stack=stack;
+    }
+}
+//stepBackControl
+class StepBackControl{
+    constructor(){
+        this.stepBackArray = new Array();
+    }
+    setStep(step){
+        this.stepBackArray.push(step);
+        //console.log(step);
+    }
+    removeStep(){
+        let struct = this.stepBackArray.pop();
+        let register = document.getElementById("Registertable");
+        for(var i=3;i<=9;i++){
+            registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
+        }
+        //alert(struct.register.rows);
+        prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
+        if(struct.stack != null){
+            registerAllSet(9,registerUdecGet(9)+struct.stack)
+        }
+        if(struct.memory != null){
+            struct.memory.forEach(element => {
+                memoryAllSet(element.first,element.second);
+            });
+        }
+
+    }
+}
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
@@ -45,7 +90,7 @@ function onLoadExe() {
     });
     // 「ステップバック」ボタンの制御
     document.querySelector('#btnStepBack').addEventListener('click', () => {
-        //execute();
+        StepBackControler.removeStep();
     });
     //
     document.querySelector('#btnStop').addEventListener('click', () => {
@@ -66,6 +111,9 @@ function cometExecuteStop(){
     }
 }
 function cometLAD(pr){
+    //
+    StepBackControler.setStep(new StepStruct(null));
+    
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -75,6 +123,9 @@ function cometLAD(pr){
 }
 
 function cometLD(pr){
+    //
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -102,11 +153,15 @@ function cometST(pr){
     let r1 = opcode[3];
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
+    let mem = Array(new Pair(addr+registerUdecGet(r2),memoryUdecGet(addr+registerUdecGet(r2))));
+    StepBackControler.setStep(new StepStruct (mem));
     memoryAllSet(addr+registerUdecGet(r2),registerUdecGet(r1));
     return 2;
 }
 
 function cometADDA(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -132,6 +187,8 @@ function cometADDA(pr){
 }
 
 function cometSUBA(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -157,6 +214,8 @@ function cometSUBA(pr){
 }
 
 function cometADDL(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -182,6 +241,8 @@ function cometADDL(pr){
 }
 
 function cometSUBL(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -210,6 +271,8 @@ function cometSUBL(pr){
 }
 
 function cometAND(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -235,6 +298,8 @@ function cometAND(pr){
 }
 
 function cometOR(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -260,6 +325,8 @@ function cometOR(pr){
 }
 
 function cometXOR(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -285,6 +352,8 @@ function cometXOR(pr){
 }
 
 function cometCPA(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -308,6 +377,8 @@ function cometCPA(pr){
 }
 
 function cometCPL(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -331,6 +402,8 @@ function cometCPL(pr){
 }
 
 function cometSLA(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -357,6 +430,8 @@ function cometSLA(pr){
 }
 
 function cometSRA(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -384,6 +459,8 @@ function cometSRA(pr){
 }
 
 function cometSLL(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -404,6 +481,8 @@ function cometSLL(pr){
 }
 
 function cometSRL(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let r2 = opcode[4];
@@ -424,6 +503,8 @@ function cometSRL(pr){
 }
 
 function cometJUMP(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
@@ -438,6 +519,7 @@ function cometJUMP(pr){
 }
 
 function cometJPL(pr){
+
     if(signFlagGet() == 0 && zeroFlagGet() == 0){
         return cometJUMP(pr);
     }
@@ -445,6 +527,7 @@ function cometJPL(pr){
 }
 
 function cometJMI(pr){
+
     if(signFlagGet() == 1){
         return cometJUMP(pr);
     }
@@ -452,6 +535,7 @@ function cometJMI(pr){
 }
 
 function cometJNZ(pr){
+
     if(zeroFlagGet() == 0){
         return cometJUMP(pr);
     }
@@ -459,6 +543,7 @@ function cometJNZ(pr){
 }
 
 function cometJZE(pr){
+
     if(zeroFlagGet() == 1){
         return cometJUMP(pr);
     }
@@ -466,6 +551,7 @@ function cometJZE(pr){
 }
 
 function cometJOV(pr){
+
     if(overflowFlagGet() == 1){
         return cometJUMP(pr);
     }
@@ -473,22 +559,26 @@ function cometJOV(pr){
 }
 
 function cometPUSH(pr){
+    let stepstruct = new StepStruct(null);
+    
     let opcode = memoryHexGet(pr);
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
     let address = addr+registerUdecGet(r2);
     let sp = registerUdecGet(9);
+    stepstruct.setStack(-1);
     sp -= 1;
     stackAllSet(sp,address);
     registerAllSet(9,sp);
     stackTableRowColorSet(sp,'#00FF00');
     stackTableRowColorSet(sp+1,'#FFFFFF');
-
-    
+    StepBackControler.setStep(stepstruct);
     return 2;
 }
 
 function cometPOP(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
     let sp = registerUdecGet(9);
@@ -511,6 +601,8 @@ function cometPOP(pr){
 }
 
 function cometCALL(pr){
+    StepBackControler.setStep(new StepStruct(null));
+
     let opcode = memoryHexGet(pr);
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
@@ -524,8 +616,7 @@ function cometCALL(pr){
 }
 
 function cometRET(pr){
-    let opcode = memoryHexGet(pr);
-    let addr = memoryUdecGet(pr+1);
+    StepBackControler.setStep(new StepStruct(null));
     let sp = registerUdecGet(9);
     let address =stackUdecGet(sp)
     
@@ -665,6 +756,7 @@ function execute(){
             return 3;
         default:
             //NOP命令
+            StepBackControler.setStep(new StepStruct(null));
             length = 1;
         break;
     }
