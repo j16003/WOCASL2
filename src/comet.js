@@ -160,13 +160,13 @@ const LinePatern = [
     //id 1
     [[0,39],[30,39]],
     //2
-    [[66,39],[130,39]],
+    [[66,39],[160,39]],
     //3
-    [[130,39],[150,39]],
+    [[160,39],[180,39]],
     //4
-    [[130,39],[130,79],[150,79]],
+    [[160,39],[160,79],[180,79]],
     //5
-    [[170,30],[170,10],[15,10],[15,69]],
+    [[200,30],[200,10],[15,10],[15,69]],
     //6
     [[15,69],[30,69]],
     //7
@@ -203,22 +203,22 @@ function setup(){
     MAR = new Block(30,30,36,18,"MAR");
     MARunder = new Block(30,60,36,18,"");
     MDR = new MDRBlock(38,120,36,18,"MDR");
-    PR = new Block(150,30,36,18,"PR");
-    SP = new Block(150,70,36,18,"SP");
+    PR = new Block(180,30,36,18,"PR");
+    SP = new Block(180,70,36,18,"SP");
     FR = new frBlock(100,170,"FR");
-    Opcode = new opcodeBlock(240,120,"");
-    r1 = new registerBlock(258,120,"");
-    r2 = new registerBlock(267,120,"");
-    adr = new addressBlock(280,120,"");
-    Decoder = new decoderBlock(230,100,"Decoder");
-    Controler = new controlerBlock(230,180,"Controler");
+    Opcode = new opcodeBlock(280,120,"");
+    r1 = new registerBlock(298,120,"");
+    r2 = new registerBlock(307,120,"");
+    adr = new addressBlock(320,120,"");
+    Decoder = new decoderBlock(270,100,"Decoder");
+    Controler = new controlerBlock(270,180,"Controler");
     for(var i = 0;i < 8;i++){
-        GR.push(new Block(140,114+18*i,36,18,""));
-        GRLabel.push(new Block(176,114+18*i,27,18,""));
+        GR.push(new Block(180,114+18*i,36,18,""));
+        GRLabel.push(new Block(216,114+18*i,27,18,""));
         GRLabel[i].setText("GR"+i);
     }
-    IRLabel.push(new Block(296-36,50,36,18,"IR"));
-    IRLabel.push(new Block(296,50,36,18,""));
+    IRLabel.push(new Block(326-36,50,36,18,"IR"));
+    IRLabel.push(new Block(326,50,36,18,""));
     for(var i=0;i<LinePatern.length;i++)
     COMETLine.push(new DefaultLine(i));
 
