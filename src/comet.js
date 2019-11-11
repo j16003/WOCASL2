@@ -87,7 +87,7 @@ function setup(){
     //alert(document.getElementById('canvas').clientHeight);
     //alert(document.getElementById('canvas').clientWidth);
 
-    let canvas = createCanvas($("#canvas").width()*2,$("#canvas").height()*2);
+    let canvas = createCanvas($("#comet_area").width()*2,$("#comet_area").height()*2);
     canvas.parent('canvas');
     MAR = new Block(30,30,36,18,"MAR");
     MARunder = new Block(30,60,36,18,"");
