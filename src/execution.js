@@ -29,14 +29,22 @@ class StepBackControl{
         //console.log(step);
     }
     removeStep(){
+        if(this.stepBackArray.length > 0){
+        
         let struct = this.stepBackArray.pop();
         let register = document.getElementById("Registertable");
         for(var i=3;i<=9;i++){
             registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
         }
-        //alert(struct.register.rows);
         prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
         if(struct.stack != null){
+            if(struct.stack > 0){
+                stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#00FF00');
+                stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+            }else{
+                stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#66FFFF');
+                stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+            }
             registerAllSet(9,registerUdecGet(9)+struct.stack)
         }
         if(struct.memory != null){
@@ -44,6 +52,7 @@ class StepBackControl{
                 memoryAllSet(element.first,element.second);
             });
         }
+    }
 
     }
 }
@@ -566,7 +575,7 @@ function cometPUSH(pr){
     let addr = memoryUdecGet(pr+1);
     let address = addr+registerUdecGet(r2);
     let sp = registerUdecGet(9);
-    stepstruct.setStack(-1);
+    stepstruct.setStack(1);
     sp -= 1;
     stackAllSet(sp,address);
     registerAllSet(9,sp);
@@ -577,7 +586,7 @@ function cometPUSH(pr){
 }
 
 function cometPOP(pr){
-    StepBackControler.setStep(new StepStruct(null));
+    let stepstruct = new StepStruct(null);
 
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
@@ -590,6 +599,8 @@ function cometPOP(pr){
         registerAllSet(r1,val);
         stackTableRowColorSet(sp,'#66FFFF');
         stackTableRowColorSet(sp-1,'#FFFFFF');
+        stepstruct.setStack(-1);
+        StepBackControler.setStep(stepstruct);
     }else if(sp == 0xFFFE){
         sp += sp;
     }else{
