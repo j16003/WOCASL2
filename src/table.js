@@ -582,6 +582,7 @@ function signFlagGet(){
 // v        :  値
 function zeroFlagSet(value){
     let table = document.getElementById('Flagtable');
+    //alert(value);
     if(value){
         table.rows[ 1 ].cells[ 6 ].firstChild.data = 0;
         table.rows[ 1 ].cells[ 3 ].firstChild.data = 'NonZ';

@@ -32,7 +32,7 @@ class StepBackControl{
         if(this.stepBackArray.length > 0){
         
         let struct = this.stepBackArray.pop();
-        let register = document.getElementById("Registertable");
+        let flagtable = document.getElementById("Flagtable");
         for(var i=3;i<=9;i++){
             registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
         }
@@ -52,10 +52,14 @@ class StepBackControl{
                 memoryAllSet(element.first,element.second);
             });
         }
+        for(var i=0;i<7;i++){
+            flagtable.rows[1].cells[i].firstChild.data = struct.flag.rows[1].cells[i].firstChild.data;
+        }
     }
 
     }
 }
+
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
@@ -81,7 +85,7 @@ function onLoadExe() {
             ajaxJsonToMemoryMap(data);
         })
           .fail(function() {
-              alert("通信失敗");
+            errorModal("通信失敗 </br>ネットワークに接続しているか確認してください。");
               // 通信失敗時の処理を記述
           });
     });
