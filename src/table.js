@@ -813,6 +813,7 @@ function initMemoryRegister(){
     signFlagSet(0);
     ofSdecFlagSet(0);
     ofSdecFlagSet(0);
+    cometExecuteStop();
 }
 
 // errorModal Modalを利用してアラートの表示
