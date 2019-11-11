@@ -1,4 +1,7 @@
 window.addEventListener('DOMContentLoaded', onLoadExe);
+var cometExecute = null;
+//cpu cycle
+const COMETCYCLE = 100;
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
@@ -31,9 +34,10 @@ function onLoadExe() {
     // 「実行」ボタンの制御
     document.querySelector('#btnExecution').addEventListener('click', () => {
         //let literal = memoryLiteralGet(pr);
-        for(i = 3;i != execute();){
+        /*for(i = 3;i != execute();){
             execute();
-        }
+        }*/
+        cometExecuteStart();
     });
     // 「ステップ実行」ボタンの制御
     document.querySelector('#btnStepExecution').addEventListener('click', () => {
@@ -43,9 +47,24 @@ function onLoadExe() {
     document.querySelector('#btnStepBack').addEventListener('click', () => {
         //execute();
     });
+    //
+    document.querySelector('#btnStop').addEventListener('click', () => {
+        cometExecuteStop();
+    });
+
 }
 
-
+function cometExecuteStart(){
+    cometExecuteStop();
+    cometExecute = setInterval(() => {
+        execute();
+    }, COMETCYCLE);
+}
+function cometExecuteStop(){
+    if(cometExecute != null){
+        clearInterval(cometExecute);
+    }
+}
 function cometLAD(pr){
     let opcode = memoryHexGet(pr);
     let r1 = opcode[3];
@@ -527,14 +546,15 @@ function cometSVC(pr){
     let opcode2 = registerUdecGet(2);
     switch(adr){
         case "#703A":
+            cometExecuteStop();
             $('#inputModal').modal('show');
-
             break;
         case "#02AB":
             let word = "";
             for(let i = opcode1,index = 0 ; i < opcode1 + memoryUdecGet(opcode2) && index <= 256 ; i++,index++){
                 word = word + hexToWord(memoryUdecGet(i));
             }
+            cometExecuteStop();
             infoModal(word);
             break;
         default://IN,OUT以外はNOP

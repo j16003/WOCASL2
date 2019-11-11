@@ -156,7 +156,24 @@
     <div id="comet_stack">
       <!--ディスプレイ表示-->
       <div id="comet_area">
-        <div id="canvas"></div>
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a href="#terminal_area" class="nav-link active" data-toggle="tab">ターミナル</a>
+          </li>
+          <li class="nav-item">
+            <a href="#cometcanvas" class="nav-link " data-toggle="tab">COMET2</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div id="terminal_area" class="tab-pane active">
+            
+            <div class="alert alert-dark" role="alert"></div>
+
+          </div>
+          <div id="cometcanvas" class="tab-panev">
+            <div id="canvas"></div>
+          </div>
+        </div>
       </div>
       <div id="flag_area">
         <table border="1" width="100%" id="Flagtable">

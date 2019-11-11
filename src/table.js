@@ -6,7 +6,7 @@ jQuery でプログラム的にテーブルを作成する
 // create table
 // rows  :500
 // cells :6
-const memoryTableMaxRow = 0x1000;
+const memoryTableMaxRow = 0x500;
 const stackTableMaxRow = 200;
 $(document).ready(function () {
     //bootstrapのtooltipの初期化
@@ -71,6 +71,9 @@ $(document).ready(function () {
                 memoryLabelSet(registerUdecGet(1)+i,'"'+inputdata[i]+'"');
             }
             memoryAllSet(registerUdecGet(1)+i,wordcode(inputdata[i]));
+        }
+        if(cometExecute != null){
+            cometExecuteStart();
         }
     });
 
