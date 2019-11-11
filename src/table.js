@@ -8,7 +8,8 @@ jQuery でプログラム的にテーブルを作成する
 // cells :6
 const memoryTableMaxRow = 0x500;
 const stackTableMaxRow = 200;
-var StepBackControlVar;
+//StepBackControler
+var StepBackControler;
 $(document).ready(function () {
     //bootstrapのtooltipの初期化
     $('[data-toggle="tooltip"]').tooltip();
@@ -75,7 +76,7 @@ $(document).ready(function () {
             }
             memoryAllSet(registerUdecGet(1)+i,wordcode(inputdata[i]));
         }
-        StepBackControlVar.setStep(new StepStruct(mem));
+        StepBackControler.setStep(new StepStruct(mem));
         if(cometExecute != null){
             cometExecuteStart();
         }
@@ -832,7 +833,7 @@ function initMemoryRegister(){
     ofSdecFlagSet(0);
     ofSdecFlagSet(0);
     cometExecuteStop();
-    StepBackControlVar = new StepBackControl();
+    StepBackControler = new StepBackControl();
 }
 
 // errorModal Modalを利用してアラートの表示
