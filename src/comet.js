@@ -49,6 +49,23 @@ class frBlock extends Block{
     }
 }
 
+class MDRBlock extends Block{
+    constructor(x,y,bwidth,bheight,label){
+        super(x,y,bwidth,bheight,label);
+        this.str = "FFFF";
+    }
+    setLabel(label){
+        this.label = label;
+    }
+    setText(str){
+        this.str = str;
+    }
+    setLabelPosition(x,y){
+        this.labelX = x+18;
+        this.labelY = y;
+    }
+}
+
 class opcodeBlock extends Block{
     constructor(x,y,label){
         super(x,y,36-18,18,label);
@@ -138,22 +155,35 @@ class controlerBlock extends Block{
         this.labelY = y;
     }
 }
-const LinePatern = new Array(
+
+const LinePatern = [
     //id 1
-    new Array(new Pair(90,90),new Pair(90,90)),
-    //id E2 
-    new Array(),
-);
+    [[0,39],[30,39]],
+    //2
+    [[66,39],[130,39]],
+    //3
+    [[130,39],[150,39]],
+    //4
+    [[130,39],[130,79],[150,79]],
+    //5
+    [[170,30],[170,10],[15,10],[15,69]],
+    //6
+    [[15,69],[30,69]],
+    //7
+    [[15,69],[15,109]],
+
+];
 
 
-class defaultLine{
+class DefaultLine{
     constructor(id){
         this.id = id;
     }
     draw(){
+        noFill();
         beginShape();
         LinePatern[this.id].forEach(element => {
-            vertex(element.first,element.second);
+            vertex(element[0],element[1]);
         });
         endShape();
     }
@@ -161,6 +191,7 @@ class defaultLine{
 
 let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
 let GR = [],GRLabel = [],IRLabel = [];
+let COMETLine = [];
 //$(document).ready(function () {}
 // setup comet2の初期描画
 function setup(){
@@ -171,10 +202,10 @@ function setup(){
     canvas.parent('canvas');
     MAR = new Block(30,30,36,18,"MAR");
     MARunder = new Block(30,60,36,18,"");
-    MDR = new Block(18,120,36,18,"MDR");
+    MDR = new MDRBlock(38,120,36,18,"MDR");
     PR = new Block(150,30,36,18,"PR");
     SP = new Block(150,70,36,18,"SP");
-    FR = new frBlock(80,170,"FR");
+    FR = new frBlock(100,170,"FR");
     Opcode = new opcodeBlock(240,120,"");
     r1 = new registerBlock(258,120,"");
     r2 = new registerBlock(267,120,"");
@@ -182,12 +213,17 @@ function setup(){
     Decoder = new decoderBlock(230,100,"Decoder");
     Controler = new controlerBlock(230,180,"Controler");
     for(var i = 0;i < 8;i++){
-        GR.push(new Block(120,114+18*i,36,18,""));
-        GRLabel.push(new Block(156,114+18*i,27,18,""));
+        GR.push(new Block(140,114+18*i,36,18,""));
+        GRLabel.push(new Block(176,114+18*i,27,18,""));
         GRLabel[i].setText("GR"+i);
     }
-    IRLabel.push(new Block(276-36,50,36,18,"IR"));
-    IRLabel.push(new Block(276,50,36,18,""));
+    IRLabel.push(new Block(296-36,50,36,18,"IR"));
+    IRLabel.push(new Block(296,50,36,18,""));
+    for(var i=0;i<LinePatern.length;i++)
+    COMETLine.push(new DefaultLine(i));
+
+
+
 }
 
 var inc = 0;
@@ -238,16 +274,19 @@ function draw(){
     endShape();
     //ALU
     beginShape();
-    vertex(10,170);
     vertex(30,170);
-    vertex(40,200);
     vertex(50,170);
+    vertex(60,200);
     vertex(70,170);
-    vertex(70,200);
+    vertex(90,170);
+    vertex(90,200);
+    vertex(70,220);
     vertex(50,220);
-    vertex(30,220);
-    vertex(10,200);
-    vertex(10,170);
+    vertex(30,200);
+    vertex(30,170);
     endShape();
+    COMETLine.forEach(element => {
+        element.draw();
+    });
 }
 
