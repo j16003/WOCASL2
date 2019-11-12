@@ -13,22 +13,15 @@ body {
 
 /** ヘッダーが34px、フッターが20px */
 
-
-
-#header_fixed {
-  position: fixed;
-  height: auto;
-  width: 100%;
+#header_fixed{
+  padding: 0px;
 }
-
-
-
 #input_leader {
   width: 100%;
   height: 88%;
   display: table;
   table-layout: fixed;
-  padding: 34px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
 }
 
 #input_area {

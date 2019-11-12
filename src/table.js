@@ -17,10 +17,10 @@ $(document).ready(function () {
     var c_end = 8;  // 列数 
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
-    var tableJQ = $('<table id="Memorytable">');
+    var tableJQ = $('<table id="Memorytable" class="table-hover">');
     for (var r = 0; r < r_end; r++) {
         var r000 = toHex(r);
-        var trJQ_r = $('<tr></tr>').appendTo(tableJQ);
+        var trJQ_r = $('<tr class="table-light"></tr>').appendTo(tableJQ);
         //0
         $('<td>' + r000 + '</td>').appendTo(trJQ_r);
         //1
@@ -280,8 +280,8 @@ function prUdecGet(){
 function prValueSet(value){
     let pr = prUdecGet();
     selectLine(memoryLineGet(value));
-    memoryTableRowColorSet(pr,"#FFFFFF");
-    memoryTableRowColorSet(value,"#FF0000");
+    memoryTableRowColorSet(pr,"light");
+    memoryTableRowColorSet(value,"primary");
     memoryScrollset(value);
     registerAllSet(8,value);
 }
@@ -779,8 +779,13 @@ function ajaxJsonToMemoryMap(obj){
 // address  :  Memorytableの番地
 // color    :  値
 function memoryTableRowColorSet(address,color){
-    let table = document.getElementById('Memorytable');
-    table.rows[address].style.backgroundColor=color;
+    //removeClass
+    let table = $("#Memorytable tr");
+    //let table = document.getElementById('Memorytable');
+    //table.rows[address].style.backgroundColor=color;
+    $(table[address]).removeClass();
+    $(table[address]).addClass("table-"+color);
+    //console.log();
 }
 
 // registerTableRowColorSet Registertableの行の色を変更する
@@ -809,11 +814,12 @@ function stackTableRowColorSet(address,color){
 
 // initMemoryRegister 全てのテーブルの値、色、スクロールのリセット
 function initMemoryRegister(){
+    //Memory PR Color Reset
+    memoryTableRowColorSet(prUdecGet(),"light");
     for(var i = 0 ; i < memoryTableMaxRow ; i++){
         memoryLabelSet(i,i);
         memoryAllSet(i,0);
         memoryLiteralSet(i,"");
-        memoryTableRowColorSet(i,"#FFFFFF");
     }
     for(i = 0 ; i < stackTableMaxRow ; i++){
         stackAllSet(0xFFFF-i,0);
