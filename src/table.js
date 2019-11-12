@@ -235,6 +235,7 @@ function registerAllSet(address,value){
     registerUdecSet(adr,value);
     registerSdecSet(adr,value);
     registerBinSet(adr,value);
+    registerCometSync(parseInt(address, 10));
 }
 
 // registerHexGet Registertableの16進数の値を取得する
@@ -284,6 +285,7 @@ function prValueSet(value){
     memoryTableRowColorSet(value,"primary");
     memoryScrollset(value);
     registerAllSet(8,value);
+    prCometSync(prUdecGet());
 }
 // registerSdecGet Registertableの符号あり10進数の値を取得する
 // 引数 

@@ -789,6 +789,7 @@ function execute(){
         break;
     }
     prValueSet(abs(length+ prUdecGet()));
+    redraw();
 }
 
 function hexToWord(value){
