@@ -71,10 +71,20 @@ function onLoad() {
   // 「保存する」ボタンの制御
   document.querySelector('#btnSave').addEventListener('click', () => {
     //openLoadFile();
-    btnStepExecution.disabled = false;
-
+    var content = editor.getValue();
+    var blob = new Blob([ content ], { "type" : "text/plain" });
+    if (window.navigator.msSaveBlob) { 
+      window.navigator.msSaveBlob(blob, "code.txt"); 
+      // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
+      window.navigator.msSaveOrOpenBlob(blob, "code.txt"); 
+    } else {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.target = '_blank';
+      a.download = 'code.txt';
+      a.click();                
+    }
   });
-
 };
 
 //行を選択します
