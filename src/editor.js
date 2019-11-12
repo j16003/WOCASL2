@@ -29,6 +29,12 @@ function onLoad() {
   //editor.getSession().setMode('ace/mode/javascript');
   editor.setTheme('ace/theme/eclipse');
   
+  editor.session.setMode("ace/mode/casl2");
+  editor.setOptions({
+    enableBasicAutocompletion: true,
+    enableSnippets: true,
+    enableLiveAutocompletion: true
+  });
   var val = localStorage["caslcode"];
   if(val != undefined){
     editor.setValue(val,0);
