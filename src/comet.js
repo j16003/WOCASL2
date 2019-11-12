@@ -7,7 +7,7 @@ class Block{
         this.bwidth = bwidth;
         this.bheight = bheight;
         this.label = label;
-        this.str = "FFFF";
+        this.str = "0000";
     }
     setLabel(label){
         this.label = label;
@@ -308,6 +308,8 @@ class DefaultLine{
 let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
 let GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
+var stringlabel = "0";
+
 //$(document).ready(function () {}
 // setup comet2の初期描画
 function setup(){
@@ -332,14 +334,13 @@ function setup(){
         GR.push(new Block(180,114+18*i,36,18,""));
         GRLabel.push(new Block(216,114+18*i,27,18,""));
         GRLabel[i].setText("GR"+i);
+        GR[i].setText(toHex(registerHexGet(i)));
     }
     IRLabel.push(new Block(326-36,30,36,18,"IR"));
     IRLabel.push(new Block(326,30,36,18,""));
     for(var i=0;i<LinePatern.length;i++)
     COMETLine.push(new DefaultLine(i));
-
-
-
+    noLoop();
 }
 
 var inc = 0;
@@ -355,7 +356,8 @@ function draw(){
         line(l*10,0,l*10,1000);
     }
     stroke(color(0,0,0));*/
-
+    text(str(frameCount),10,10);
+    text(stringlabel,100,10);
     MAR.draw();
     MARunder.draw();
     MDR.draw();
@@ -368,6 +370,7 @@ function draw(){
     r2.draw();
     Opcode.draw();
     adr.draw();
+    
     for(var i = 0;i < 8;i++){
         GR[i].draw();
         GRLabel[i].draw();
@@ -407,5 +410,16 @@ function draw(){
         //stroke(0, 0, 0);
     });
     noStroke();
+}
+
+function registerCometSync(address){
+    let registerval = registerHexGet(address);//.replace('#','');
+    GR[address].setText(toHex(registerval));
+}
+function mousePressed(){
+    console.log(GR[1]);
+    registerCometSync(1);
+    stringlabel=stringlabel+"0";
+    loop();
 }
 
