@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
   <link href="./assets/css/main.css" rel="stylesheet"/>
-
+  <link href="./assets/css/mdb.min.css" rel="stylesheet"/>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
@@ -26,9 +26,11 @@
 </head>
 
 <body>
+  <!--
   <div id="header_fixed">
+
     <div class="btn-group" role="group" aria-label="File">
-      <button type="button" class="btn-sm btn-primary" id="btnLoad" data-toggle="tooltip" data-placement="bottom" title="ファイル読み込み">
+      <button type="button" class="btn-sm.rounded-0 btn-primary" id="btnLoad" data-toggle="tooltip" data-placement="bottom" title="ファイル読み込み">
         <i class="fas fa-folder-open fa-lg"></i>
       </button>
       <button type="button" class="btn-sm btn-primary" id="btnSave" data-toggle="tooltip" data-placement="bottom" title="ファイルに保存">
@@ -55,6 +57,69 @@
       </button>
     </div>
   </div>
+  -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="header_fixed">
+    <a class="navbar-brand" href="#">
+      WOCASL2
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <button type="button" class="btn blue-gradient px-3" id="btnLoad" data-toggle="tooltip" data-placement="bottom" title="ファイル読み込み" >
+            <i class="fas fa-folder-open fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn purple-gradient px-3" id="btnSave" data-toggle="tooltip" data-placement="bottom" title="ファイルに保存">
+            <i class="fas fa-save fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <span class="navbar-text">CASL2</span>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-success px-3" id="btnReset" data-toggle="tooltip" data-placement="bottom" title="リセット">
+            <i class="fas fa-redo-alt fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-warning px-3" id="btnAssemble" data-toggle="tooltip" data-placement="bottom" title="アセンブル">
+            <i class="fas fa-microchip fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-purple px-3" id="btnStepBack" data-toggle="tooltip" data-placement="bottom" title="ステップバック" disabled>
+            <i class="fas fa-step-backward fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-primary px-3" id="btnExecution" data-toggle="tooltip" data-placement="bottom" title="実行する" disabled>
+            <i class="fas fa-play fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-cyan px-3" id="btnStepExecution" data-toggle="tooltip" data-placement="bottom" title="ステップ実行" disabled>
+            <i class="fas fa-step-forward fa-lg"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-danger px-3" id="btnStop" data-toggle="tooltip" data-placement="bottom" title="停止" disabled>
+            <i class="fas fa-stop fa-lg " aria-hidden="true"></i>
+          </button>
+        </li>
+      </ul>
+      <div class="collapse navbar-collapse">
+        <span class="navbar-text" style="padding:10px">COMET2</span>
+      </div>
+    </div>
+
+    <div class="btn-group" role="group" aria-label="Execution">
+
+
+
+      
+    </div>
+  </nav>
 <!--ここからメイン部分-->
 <!--一番外側のdiv-->
   <div id="input_leader">
@@ -70,7 +135,7 @@
        <div id="memory_area"></div>
       <!--レジスタ表示-->
       <div id="register_area">
-          <table border="1" width="100%" id="Registertable">
+          <table border="1" width="100%" id="Registertable" class="table-hover">
               <tr bgcolor="#A6B3FF">
                 <th>Name</th>
                 <th>Hex</th>
@@ -248,7 +313,7 @@
   <!--サクセス　Modal-->
   <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        <div class="modal-content text-warning bg-success">
+        <div class="modal-content text-white bg-success">
           <div class="modal-header">
             <h5 class="modal-title" id="successModalLabel"></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

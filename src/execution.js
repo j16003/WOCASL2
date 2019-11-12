@@ -60,12 +60,24 @@ class StepBackControl{
     }
 }
 
+
+// setEnableCaslButton CASL2の実行ボタンのdisableを設定
+// falseの場合、表示,trueの場合非表示
+// 引数 
+// flag        :  true,false
+function setEnableCaslButton(flag){
+    $("#btnStepBack").prop("disabled", flag);
+    $("#btnExecution").prop("disabled", flag);
+    $("#btnStepExecution").prop("disabled", flag);
+    $("#btnStop").prop("disabled", flag);
+}
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
     // 「リセット」ボタンの制御
     document.querySelector('#btnReset').addEventListener('click', () => {
         initMemoryRegister();
+        setEnableCaslButton(true);
     });
     // 「アセンブル」ボタンの制御
     document.querySelector('#btnAssemble').addEventListener('click', () => {
@@ -83,6 +95,7 @@ function onLoadExe() {
           .done(function(data) {
             prValueSet(0);
             ajaxJsonToMemoryMap(data);
+            setEnableCaslButton(false);
         })
           .fail(function() {
             errorModal("通信失敗 </br>ネットワークに接続しているか確認してください。");
