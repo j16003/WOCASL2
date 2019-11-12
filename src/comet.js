@@ -308,7 +308,6 @@ class DefaultLine{
 let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
 var GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
-var stringlabel = "0";
 
 //$(document).ready(function () {}
 // setup comet2の初期描画
@@ -359,7 +358,6 @@ function draw(){
     stroke(color(0,0,0));*/
 
     text(str(frameCount),10,10);
-    text(stringlabel,100,10);
     MAR.draw();
     MARunder.draw();
     MDR.draw();
