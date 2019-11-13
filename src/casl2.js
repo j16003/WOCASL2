@@ -38,11 +38,11 @@ define(function(require, exports, module) {
     
     var oop = require("../lib/oop");
     var TextMode = require("./text").Mode;
-    var AssemblyX86HighlightRules = require("./casl2_highlight_rules").AssemblyX86HighlightRules;
+    var CASL2HighlightRules = require("./casl2_highlight_rules").CASL2HighlightRules;
     var FoldMode = require("./folding/coffee").FoldMode;
     
     var Mode = function() {
-        this.HighlightRules = AssemblyX86HighlightRules;
+        this.HighlightRules = CASL2HighlightRules;
         this.foldingRules = new FoldMode();
         this.$behaviour = this.$defaultBehaviour;
     };

@@ -4,7 +4,7 @@ define("ace/mode/casl2_highlight_rules",["require","exports","module","ace/lib/o
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
-var AssemblyX86HighlightRules = function() {
+var CASL2HighlightRules = function() {
 
     this.$rules = { start: 
        [ { token: 'keyword.control.assembly',
@@ -61,14 +61,14 @@ var AssemblyX86HighlightRules = function() {
     this.normalizeRules();
 };
 
-AssemblyX86HighlightRules.metaData = { fileTypes: [ 'asm' ],
+CASL2HighlightRules.metaData = { fileTypes: [ 'asm' ],
       name: 'CASL2',
       scopeName: 'source.assembly' };
 
 
-oop.inherits(AssemblyX86HighlightRules, TextHighlightRules);
+oop.inherits(CASL2HighlightRules, TextHighlightRules);
 
-exports.AssemblyX86HighlightRules = AssemblyX86HighlightRules;
+exports.CASL2HighlightRules = CASL2HighlightRules;
 });
 
 define("ace/mode/folding/coffee",["require","exports","module","ace/lib/oop","ace/mode/folding/fold_mode","ace/range"], function(require, exports, module) {
@@ -163,11 +163,11 @@ define("ace/mode/casl2",["require","exports","module","ace/lib/oop","ace/mode/te
     
     var oop = require("../lib/oop");
     var TextMode = require("./text").Mode;
-    var AssemblyX86HighlightRules = require("./casl2_highlight_rules").AssemblyX86HighlightRules;
+    var CASL2HighlightRules = require("./casl2_highlight_rules").CASL2HighlightRules;
     var FoldMode = require("./folding/coffee").FoldMode;
     
     var Mode = function() {
-        this.HighlightRules = AssemblyX86HighlightRules;
+        this.HighlightRules = CASL2HighlightRules;
         this.foldingRules = new FoldMode();
         this.$behaviour = this.$defaultBehaviour;
     };

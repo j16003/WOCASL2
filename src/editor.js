@@ -21,20 +21,30 @@ function onLoad() {
   inputTxt = document.getElementById('input_txt');
   // フッター領域
   footerArea = document.getElementById('footer_fixed');
+  var langTools = ace.require("ace/ext/language_tools");
+  var staticWordCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        var wordList = ["LD", "LAD", "ST"];
+        callback(null, wordList.map(function(word) {
+            return {
+                caption: word,
+                value: word + " GR , Addr" ,
+                meta: "CASL2"
+            };
+        }));
 
-  
-
+    }
+}
   
   editor = ace.edit('input_txt');
   //editor.getSession().setMode('ace/mode/javascript');
-  editor.setTheme('ace/theme/eclipse');
-  
-  editor.session.setMode("ace/mode/casl2");
+  langTools.setCompleters([staticWordCompleter])
   editor.setOptions({
     enableBasicAutocompletion: true,
     enableSnippets: true,
     enableLiveAutocompletion: true
   });
+  editor.session.setMode("ace/mode/casl2");
   var val = localStorage["caslcode"];
   if(val != undefined){
     editor.setValue(val,0);
@@ -42,6 +52,7 @@ function onLoad() {
   editor.on("change",function(e){
     localStorage["caslcode"]=editor.getValue();
   })
+
   
 
   // ドラッグ&ドロップ関連処理
