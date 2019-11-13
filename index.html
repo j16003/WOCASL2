@@ -13,10 +13,10 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/mode-javascript.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/theme-twilight.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+  <script src="./src/ace.js"></script>
+  <script src="./src/mode-casl2.js"></script>
+  <script src="./src/ext-language_tools.js"></script>
+  <script src="https://github.com/processing/p5.js/releases/download/0.10.2/p5.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
   <script src="./src/editor.js"></script>
   <script src="./src/table.js"></script>
@@ -73,12 +73,11 @@
           <button type="button" class="btn blue-gradient px-3" id="btnLoad" data-toggle="tooltip" data-placement="bottom" title="ファイル読み込み" >
             <i class="fas fa-folder-open fa-lg"></i>
           </button>
-        </li>
-        <li class="nav-item">
           <button type="button" class="btn purple-gradient px-3" id="btnSave" data-toggle="tooltip" data-placement="bottom" title="ファイルに保存">
             <i class="fas fa-save fa-lg"></i>
           </button>
         </li>
+
         <li class="nav-item">
           <span class="navbar-text">CASL2</span>
         </li>
@@ -86,32 +85,22 @@
           <button type="button" class="btn btn-success px-3" id="btnReset" data-toggle="tooltip" data-placement="bottom" title="リセット">
             <i class="fas fa-redo-alt fa-lg"></i>
           </button>
-        </li>
-        <li class="nav-item">
           <button type="button" class="btn btn-warning px-3" id="btnAssemble" data-toggle="tooltip" data-placement="bottom" title="アセンブル">
             <i class="fas fa-microchip fa-lg"></i>
           </button>
-        </li>
-        <li class="nav-item">
           <button type="button" class="btn btn-purple px-3" id="btnStepBack" data-toggle="tooltip" data-placement="bottom" title="ステップバック" disabled>
             <i class="fas fa-step-backward fa-lg"></i>
           </button>
-        </li>
-        <li class="nav-item">
           <button type="button" class="btn btn-primary px-3" id="btnExecution" data-toggle="tooltip" data-placement="bottom" title="実行する" disabled>
             <i class="fas fa-play fa-lg"></i>
           </button>
-        </li>
-        <li class="nav-item">
           <button type="button" class="btn btn-cyan px-3" id="btnStepExecution" data-toggle="tooltip" data-placement="bottom" title="ステップ実行" disabled>
             <i class="fas fa-step-forward fa-lg"></i>
           </button>
-        </li>
-        <li class="nav-item">
           <button type="button" class="btn btn-danger px-3" id="btnStop" data-toggle="tooltip" data-placement="bottom" title="停止" disabled>
             <i class="fas fa-stop fa-lg " aria-hidden="true"></i>
           </button>
-        </li>
+          </li>
       </ul>
     </div>
   </nav>

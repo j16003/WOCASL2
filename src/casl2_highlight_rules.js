@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
-var AssemblyX86HighlightRules = function() {
+var CASL2HighlightRules = function() {
     // regexp must not have capturing parentheses. Use (?:) instead.
     // regexps are ordered -> the first match is used
 
@@ -99,12 +99,12 @@ var AssemblyX86HighlightRules = function() {
     this.normalizeRules();
 };
 
-AssemblyX86HighlightRules.metaData = { fileTypes: [ 'asm' ],
+CASL2HighlightRules.metaData = { fileTypes: [ 'asm' ],
       name: 'CASL2',
       scopeName: 'source.assembly' };
 
 
-oop.inherits(AssemblyX86HighlightRules, TextHighlightRules);
+oop.inherits(CASL2HighlightRules, TextHighlightRules);
 
-exports.AssemblyX86HighlightRules = AssemblyX86HighlightRules;
+exports.CASL2HighlightRules = CASL2HighlightRules;
 });

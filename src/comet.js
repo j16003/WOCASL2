@@ -306,9 +306,8 @@ class DefaultLine{
 }
 
 let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
-let GR = [],GRLabel = [],IRLabel = [];
+var GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
-var stringlabel = "0";
 
 //$(document).ready(function () {}
 // setup comet2の初期描画
@@ -345,6 +344,7 @@ function setup(){
 
 var inc = 0;
 function draw(){
+    background(255);
     //MAR.setText();
     /*for(let l = 0;l<=200;l++){
         if(l%5==0){
@@ -356,8 +356,8 @@ function draw(){
         line(l*10,0,l*10,1000);
     }
     stroke(color(0,0,0));*/
+
     text(str(frameCount),10,10);
-    text(stringlabel,100,10);
     MAR.draw();
     MARunder.draw();
     MDR.draw();
@@ -409,17 +409,20 @@ function draw(){
         element.draw();
         //stroke(0, 0, 0);
     });
-    noStroke();
+    //noStroke();
+    stroke(0, 0, 0);
+    strokeWeight(1);
 }
 
 function registerCometSync(address){
-    let registerval = registerHexGet(address);//.replace('#','');
-    GR[address].setText(toHex(registerval));
+    if(address >= 0 && address <= 7){
+        let registerval = registerHexGet(address);//.replace('#','');
+        GR[address].setText(toHex(registerval));
+    }
+}
+function prCometSync(value){
+    PR.setText(toHex(value));
 }
 function mousePressed(){
-    console.log(GR[1]);
-    registerCometSync(1);
-    stringlabel=stringlabel+"0";
-    loop();
 }
 
