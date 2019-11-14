@@ -654,6 +654,7 @@ function cometRET(pr){
         sp += sp
     }else{
         infoModal("プログラムが終了しました");
+        cometExecuteStop();
         return 0x10000;
     }
     return address-pr;
