@@ -78,7 +78,7 @@ $(document).ready(function () {
         }
         StepBackControler.setStep(new StepStruct(mem));
         if(cometExecute != null){
-            cometExecuteStart();
+            //cometExecuteStart();
         }
     });
 
