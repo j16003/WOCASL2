@@ -24,12 +24,17 @@ function onLoad() {
   var langTools = ace.require("ace/ext/language_tools");
   var staticWordCompleter = {
     getCompletions: function(editor, session, pos, prefix, callback) {
-        var wordList = ["LD", "LAD", "ST"];
+        var wordList = [
+          ["LD"," GR , GR"," LD GR , GR"],["LD ","GR , Addr","LD GR , Addr"],["LAD ","GR , Addr","LAD GR , Addr"],["ST"," GR , Addr"," GR,Addr [,x]"],["ADDA"," GR , GR"," ADDA GR , GR"],["ADDA ","GR , Addr","ADDA GR , Addr [,x]"],
+          ["ADDL"," GR , GR"," ADDL GR , GR"],["ADDL ","GR , Addr","ADDL GR , Addr [,x]"],["SUBA"," GR , Addr"," SUBA GR,Addr [,x]"],["SUBA"," GR , Addr","SUBA GR,Addr [,x]"],["SUBL"," GR , Addr"," SUBL GR,Addr [,x]"],["SUBL"," GR , Addr","SUBL GR,Addr [,x]"],
+          ["AND"," GR , GR"," AND GR , GR"],["AND "," GR , Addr","AND GR,Addr [,x]"],["OR"," GR , GR"," OR GR , GR"],["OR "," GR , Addr","OR GR,Addr [,x]"],
+          ["XOR"," GR , GR"," XOR GR , GR"],["XOR "," GR , Addr","XOR GR,Addr [,x]"]
+        ];
         callback(null, wordList.map(function(word) {
             return {
-                caption: word,
-                value: word + " GR , Addr" ,
-                meta: "CASL2"
+                caption: word[0],
+                value: word[0]+word[1],
+                meta: word[2]
             };
         }));
 
