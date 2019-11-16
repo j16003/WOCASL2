@@ -376,7 +376,6 @@ function memoryScrollset(address){
     let table = document.getElementById('Memorytable');
     let memory_Area = document.getElementById('memory_area');
     let offset = parseInt($("#memory_area").height()/$("#Memorytable tr").height()/2,10);
-    console.log(offset);
     if(address-offset >=0){
         address-=offset;
     }else{
