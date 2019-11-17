@@ -2,14 +2,24 @@
 /*------------------------------------------------
 jQuery でプログラム的にテーブルを作成する
 --------------------------------------------------*/
-// jQuery start
-// create table
-// rows  :500
-// cells :6
+
+
+/**
+ * COMETIIメモリーテーブルの最大サイズを定義
+ * @type {Number}
+ */
 const memoryTableMaxRow = 0x500;
+/**
+ * COMETIIスタックの最大サイズを定義
+ * @type {Number} 
+ */
 const stackTableMaxRow = 200;
-//StepBackControler
+/**
+ * StepBackコントローラを定義
+ * @type {Object} 
+ */
 var StepBackControler;
+
 $(document).ready(function () {
     //bootstrapのtooltipの初期化
     $('[data-toggle="tooltip"]').tooltip();
@@ -98,11 +108,13 @@ $(window).on('load resize', function(){
         $('#comet_area').height(scrennheight/2);
 });
 
-// toBin 2進数に変換する
-// 引数 
-// v        :  値
-// 戻り値
-// string   :  値
+
+/**
+ * 10進数から整形された2進数に変換する
+ * @param {number} v - 10進数引数
+ * @return {string} 2進数を返す
+ */
+
 function toBin(v) {
     if(v >= 0){
         v = (('0000000000000000' + v.toString(2).toUpperCase()).substr(-16));
@@ -120,11 +132,12 @@ function toBin(v) {
     return bin
 }
 
-// toHex 16進数に変換する
-// 引数 
-// v        :  値
-// 戻り値
-// string   :  値
+/**
+ *　toHex 16進数に変換する
+ *
+ * @param {number} v - 変換したい数値
+ * @returns {string} vを16進数に変化して整形して返す
+ */
 function toHex(v) {
     if(v >= 0){
         return '#' + (('0000' + v.toString(16).toUpperCase()).substr(-4));
@@ -134,11 +147,12 @@ function toHex(v) {
     }
 }
 
-// toSdecOver 符号あり10進数のオーバーフローを検知、整形する
-// 引数 
-// v        :  値
-// 戻り値
-// string   :  値
+/**
+ *
+ * 符号あり10進数のオーバーフローを検知、整形する
+ * @param {number} v - 変換したい数値
+ * @returns {string} 符号あり10進数に変換して返す
+ */
 function toSdecOver(v){
     v = v&0xFFFF;
     if(v > 0 &&v <= 0x7FFF){
