@@ -59,11 +59,16 @@ function onLoad() {
   });
   editor.session.setMode("ace/mode/casl2");
   var val = localStorage["caslcode"];
-  if(val != undefined){
+  /*if(val != undefined){
     editor.setValue(val,0);
+  }*/
+  
+  if(typeof val != "string"){
+    editor.setSession(sessionFromJSON(JSON.parse(val)));
   }
+  
   editor.on("change",function(e){
-    localStorage["caslcode"]=editor.getValue();
+    localStorage["caslcode"] = JSON.stringify(sessionToJSON(editor.session));
   })
 
   
@@ -236,3 +241,33 @@ function saveNewFile() {
     }
   );
 }
+var filterHistory = function(deltas){ 
+  return deltas.filter(function (d) {
+      return d.group != "fold";
+  });
+}
+
+sessionToJSON = function(session) {
+  return {
+      selection: session.selection.toJSON(),
+      value: session.getValue(),
+      history: {
+          undo: session.$undoManager.$undoStack.map(filterHistory),
+          redo: session.$undoManager.$redoStack.map(filterHistory)
+      },
+      scrollTop: session.getScrollTop(),
+      scrollLeft: session.getScrollLeft(),
+      options: session.getOptions()
+  }
+}
+sessionFromJSON = function(data) {
+  var session = require("ace/ace").createEditSession(data.value);
+  session.$undoManager.$doc = session; // workaround for a bug in ace
+  session.setOptions(data.options);
+  session.$undoManager.$undoStack = data.history.undo;
+  session.$undoManager.$redoStack = data.history.redo;
+  session.selection.fromJSON(data.selection);
+  session.setScrollTop(data.scrollTop);
+  session.setScrollLeft(data.scrollLeft);
+  return session;
+};
