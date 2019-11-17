@@ -28,14 +28,22 @@ function onLoad() {
           ["LD"," GR , GR"," LD GR , GR"],["LD ","GR , Addr","LD GR , Addr"],["LAD ","GR , Addr","LAD GR , Addr"],["ST"," GR , Addr"," GR,Addr [,x]"],["ADDA"," GR , GR"," ADDA GR , GR"],["ADDA ","GR , Addr","ADDA GR , Addr [,x]"],
           ["ADDL"," GR , GR"," ADDL GR , GR"],["ADDL ","GR , Addr","ADDL GR , Addr [,x]"],["SUBA"," GR , Addr"," SUBA GR,Addr [,x]"],["SUBA"," GR , Addr","SUBA GR,Addr [,x]"],["SUBL"," GR , Addr"," SUBL GR,Addr [,x]"],["SUBL"," GR , Addr","SUBL GR,Addr [,x]"],
           ["AND"," GR , GR"," AND GR , GR"],["AND "," GR , Addr","AND GR,Addr [,x]"],["OR"," GR , GR"," OR GR , GR"],["OR "," GR , Addr","OR GR,Addr [,x]"],
-          ["XOR"," GR , GR"," XOR GR , GR"],["XOR "," GR , Addr","XOR GR,Addr [,x]"]
+          ["XOR"," GR , GR"," XOR GR , GR"],["XOR "," GR , Addr","XOR GR,Addr [,x]"],
+          ["GR1","","Register"],["GR2","","Register"],["GR3","","Register"],["GR4","","Register"],["GR5","","Register"],["GR6","","Register"],["GR7","","Register"],
         ];
-        callback(null, wordList.map(function(word) {
+        var autoWord = [];
+        for(var i=0;i<wordList.length;i++){
+          if(prefix.slice(0,prefix.length)==wordList[i][0].slice(0,prefix.length)){
+            autoWord.push(wordList[i]);
+          }
+        }
+        callback(null, autoWord.map(function(word) {
             return {
                 caption: word[0],
                 value: word[0]+word[1],
-                meta: word[2]
+                meta: word[2],
             };
+          
         }));
 
     }
@@ -43,7 +51,7 @@ function onLoad() {
   
   editor = ace.edit('input_txt');
   //editor.getSession().setMode('ace/mode/javascript');
-  langTools.setCompleters([staticWordCompleter])
+  langTools.setCompleters([staticWordCompleter,langTools.textCompleter])
   editor.setOptions({
     enableBasicAutocompletion: true,
     enableSnippets: true,

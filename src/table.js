@@ -375,8 +375,9 @@ function memoryLiteralSet(address,value){
 function memoryScrollset(address){
     let table = document.getElementById('Memorytable');
     let memory_Area = document.getElementById('memory_area');
-    if(address-5 >=0){
-        address-=5;
+    let offset = parseInt($("#memory_area").height()/$("#Memorytable tr").height()/2,10);
+    if(address-offset >=0){
+        address-=offset;
     }else{
         address=0;
     }

@@ -291,17 +291,22 @@ const LinePatern = [
 ];
 
 
-class DefaultLine{
+class Cometp5Line{
     constructor(id){
         this.id = id;
+        this.color = "#000000";
     }
     draw(){
+        stroke(this.color);
         noFill();
         beginShape();
         LinePatern[this.id].forEach(element => {
             vertex(element[0],element[1]);
         });
         endShape();
+    }
+    setColor(col){
+        this.color = col;
     }
 }
 
@@ -338,7 +343,7 @@ function setup(){
     IRLabel.push(new Block(326-36,30,36,18,"IR"));
     IRLabel.push(new Block(326,30,36,18,""));
     for(var i=0;i<LinePatern.length;i++)
-    COMETLine.push(new DefaultLine(i));
+    COMETLine.push(new Cometp5Line(i));
     noLoop();
 }
 
