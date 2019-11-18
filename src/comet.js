@@ -1,5 +1,15 @@
 
+
 class Block{
+    /**
+     *Creates an instance of Block.
+     * @param {number} x - x座標
+     * @param {number} y
+     * @param {number} bwidth
+     * @param {number} bheight
+     * @param {string} label
+     * @memberof Block
+     */
     constructor(x,y,bwidth,bheight,label){
         this.x = x;
         this.y = y;
@@ -9,12 +19,31 @@ class Block{
         this.label = label;
         this.str = "0000";
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof Block
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof Block
+     */
     setText(str){
         this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof Block
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y+4;
@@ -24,10 +53,14 @@ class Block{
         rectMode(CORNER);
         rect(this.x, this.y,this.bwidth, this.bheight);
         textSize(9.6);
+        strokeWeight(0);
+        fill(0);
         textAlign(LEFT,CENTER);
         text(this.label,this.labelX,this.labelY-textSize());
         textAlign(CENTER,CENTER);
-        text(this.str,this.x+this.bwidth/2,this.y+textSize());
+        text(this.str,this.x,this.y,this.bwidth,this.bheight);
+        strokeWeight(1);
+        fill(255);
     }
 }
 
@@ -414,9 +447,8 @@ function draw(){
         element.draw();
         //stroke(0, 0, 0);
     });
+    fill(255);
     //noStroke();
-    stroke(0, 0, 0);
-    strokeWeight(1);
 }
 
 function registerCometSync(address){
