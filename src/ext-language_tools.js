@@ -1899,6 +1899,7 @@ var FilteredList = function(array, filterText) {
             item.matchMask = matchMask;
             item.exactMatch = penalty ? 0 : 1;
             item.$score = (item.score || 0) - penalty;
+            //local autocomplite casl2 order remove
             if(item.meta=="local" && caslWord[item.caption]){
                 continue;
             }
