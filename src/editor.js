@@ -72,8 +72,10 @@ function onLoad() {
 
   let sessionparse = null;
   try{
-    sessionparse = JSON.parse(val);
-    editor.setSession(sessionFromJSON(sessionparse));
+    if(val){
+      sessionparse = JSON.parse(val);
+      editor.setSession(sessionFromJSON(sessionparse));
+    }
   }catch(e){
     errorModal(e);
     window.localStorage.clear();
