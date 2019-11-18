@@ -113,6 +113,9 @@ $(window).on('load resize', function(){
  * 10進数から整形された2進数に変換する
  * @param {number} v - 10進数引数
  * @return {string} 2進数を返す
+ * @example 
+ * var result = tobin(2);
+ * // result = "0000 0000 0000 0010"
  */
 
 function toBin(v) {
@@ -151,7 +154,7 @@ function toHex(v) {
  *
  * 符号あり10進数のオーバーフローを検知、整形する
  * @param {number} v - 変換したい数値
- * @returns {string} 符号あり10進数に変換して返す
+ * @returns {string} 符号あり10進数に変換して返す(オーバーフローした場合は1周する)
  */
 function toSdecOver(v){
     v = v&0xFFFF;
@@ -167,11 +170,13 @@ function toSdecOver(v){
     return v
 }
 
-// toUdecOver 符号なし10進数のオーバーフローを検知、整形する
-// 引数 
-// v        :  値
-// 戻り値
-// v        :  値
+
+/**
+ * toUdecOver 符号なし10進数のオーバーフローを検知、整形する
+ * 
+ * @param {number} v - 変換したい数値
+ * @returns {number} - 符号なし10進数に変換して戻す(オーバーフローした場合は1周する)
+ */
 function toUdecOver(v){
     if(v > 65535){
         v = (v - 1) % 65535;
@@ -181,63 +186,60 @@ function toUdecOver(v){
     return v&0xFFFF
 }
 
-// registerHexSet Registertableの16進数の値を書き換える
-// 引数 
-// address  :  Registertableの番地
-// value    :  値
+
+/**
+ * registerHexSet Registertableの16進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @param {number} value - レジスタに入れたい値
+ */
 function registerHexSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 1 ].firstChild.data = toHex(value);
 }
 
-// registerUdecSet Registertableの符号なし10進数の値を書き換える
-// 引数 
-// address  :  Registertableの番地
-// value    :  値
+/**
+ * registerUdecSet Registertableの符号なし10進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @param {number} value - レジスタに入れたい値
+ */
 function registerUdecSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 2 ].firstChild.data = toUdecOver(value);
 }
 
-// registerSdecSet Registertableの符号あり10進数の値を書き換える
-// 引数 
-// address  :  Registertableの番地
-// value    :  値
+
+/**
+ * registerSdecSet Registertableの符号あり10進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @param {number} value - レジスタに入れたい値
+ */
 function registerSdecSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 3 ].firstChild.data = toSdecOver(value);
 }
 
-// registerBinSet Registertableの2進数の値を書き換える
-// 引数 
-// address  :  Registertableの番地
-// value    :  値
+/**
+ * registerBinSet Registertableの2進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @param {number} value - レジスタに入れたい値
+ */
 function registerBinSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 4 ].firstChild.data = toBin(value);
 }
 
-// registerScrollset Registertableの要素位置にスクロールを設定する
-// 引数 
-// address  :  Registertableの番地
-function registerScrollset(address){
-    let table = document.getElementById('Registertable');
-    let register_Area = document.getElementById('register_area');
-    let position;
-    if(address >= 0 && address <= 7){
-        position = table.rows[address+3].offsetTop
-    }else if(address == 8||address == 9){
-        position = table.rows[address-7].offsetTop
-    }else if(address == 10){
-        position = table.rows[address-10].offsetTop
-    }
-    $(register_Area).scrollTop(position);
-}
 
-// registerAllSet Registertableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
-// 引数 
-// address  :  Registertableの番地
-// value    :  値
+
+/**
+ * registerAllSet Registertableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @param {number} value - レジスタに入れたい値
+ */
 function registerAllSet(address,value){
     let adr = parseInt(address, 10);
     if(address >= 0 && address <= 7){
@@ -252,11 +254,12 @@ function registerAllSet(address,value){
     registerCometSync(parseInt(address, 10));
 }
 
-// registerHexGet Registertableの16進数の値を取得する
-// 引数 
-// address  :  Registertableの番地
-// 戻り値
-// string   :  値
+/**
+ * registerHexGet Registertableの16進数の値を取得する
+ *
+ * @param {number} address - 値を取得したいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @returns {String} - 16進数を返す
+ */
 function registerHexGet(address){
     if(address >= 0 && address <= 7){
         address += 3;
@@ -269,11 +272,13 @@ function registerHexGet(address){
     return v
 }
 
-// registerUdecGet Registertableの符号なし10進数の値を取得する
-// 引数 
-// address  :  Registertableの番地
-// 戻り値
-// string   :  値
+
+/**
+ * registerUdecGet Registertableの符号なし10進数の値を取得する
+ *
+ * @param {number} address - 値を取得したいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @returns {number} - 符号なし10進数を返す
+ */
 function registerUdecGet(address){
     let adr = parseInt(address,10);
     if(address >= 0 && address <= 7){
@@ -286,12 +291,20 @@ function registerUdecGet(address){
     v = parseInt(v, 10);
     return v
 }
-// prUdecGet PrograCounter get value 
-// 戻り値
-// int   :  値
+
+/**
+ * prUdecGet PrograCounter get value 
+ *
+ * @returns {number} - PRの値を符号なし10進数で返す
+ */
 function prUdecGet(){
     return parseInt(registerUdecGet(8),10);
 }
+/**
+ * prValueSet PR set value and color set and scroll set and comet sync
+ *
+ * @param {number} value - PRに設定したい値
+ */
 function prValueSet(value){
     let pr = prUdecGet();
     selectLine(memoryLineGet(value));
@@ -301,11 +314,13 @@ function prValueSet(value){
     registerAllSet(8,value);
     prCometSync(prUdecGet());
 }
-// registerSdecGet Registertableの符号あり10進数の値を取得する
-// 引数 
-// address  :  Registertableの番地
-// 戻り値
-// string   :  値
+
+/**
+ *
+ * Registertableの符号あり10進数の値を取得する
+ * @param {number} address
+ * @returns {string}
+ */
 function registerSdecGet(address){
     let adr = parseInt(address,10);
     if(address >= 0 && address <= 7){
@@ -847,7 +862,7 @@ function initMemoryRegister(){
         registerTableRowColorSet(i,"#FFFFFF");
     }
     memoryScrollset(0);
-    registerScrollset(11);
+   
     stackScrollset(0xFFFF);
     registerAllSet(9,65535);
     registerTableRowColorSet(8,"#00BCD4");
