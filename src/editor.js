@@ -70,7 +70,7 @@ function onLoad() {
   editor.session.setMode("ace/mode/casl2");
   var val = localStorage["caslcode"];
 
-  let sessionparse = "";
+  let sessionparse = null;
   try{
     sessionparse = JSON.parse(val);
     editor.setSession(sessionFromJSON(sessionparse));
@@ -78,7 +78,9 @@ function onLoad() {
     errorModal(e);
     window.localStorage.clear();
   }
-  editor.setSession(sessionFromJSON(sessionparse));
+  if(sessionparse!=null){
+    editor.setSession(sessionFromJSON(sessionparse));
+  }
   editor.on("change",function(e){
     localStorage["caslcode"] = JSON.stringify(sessionToJSON(editor.session));
     setEnableCaslButton(true);
