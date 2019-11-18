@@ -2,7 +2,6 @@
 //const {BrowserWindow, dialog} = require('electron').remote;
 
 let inputArea = null;
-let inputTxt = null;
 let footerArea = null;
 
 
@@ -133,6 +132,7 @@ function onLoad() {
 };
 
 //行を選択します
+
 function selectLine(value){
   editor.selection.moveCursorToPosition({row:value-1,column:0});
   editor.selection.selectLine();
