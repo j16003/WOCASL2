@@ -316,10 +316,10 @@ function prValueSet(value){
 }
 
 /**
- *
- * Registertableの符号あり10進数の値を取得する
- * @param {number} address
- * @returns {string}
+ * registerSdecGet Registertableの符号あり10進数の値を取得する
+ * 
+ * @param {number} address - 値を取得したいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @returns {number} - 符号あり10進数を返す
  */
 function registerSdecGet(address){
     let adr = parseInt(address,10);
@@ -334,11 +334,13 @@ function registerSdecGet(address){
     return v
 }
 
-// registerBinGet Registertableの2進数の値を取得する
-// 引数 
-// address  :  Registertableの番地
-// 戻り値
-// string   :  値
+
+/**
+ * registerBinGet Registertableの2進数の値を取得する
+ *
+ * @param {number} address - registerBinGet Registertableの2進数の値を取得する
+ * @returns {number} -  2進数を返す
+ */
 function registerBinGet(address){
     if(address >= 0 && address <= 7){
         address += 3;
@@ -351,46 +353,58 @@ function registerBinGet(address){
     return v
 }
 
-// memoryHexSet Memorytableの16進数の値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+/**
+ * memoryHexSet Memorytableの16進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに入れたい値
+ */
 function memoryHexSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 2 ].firstChild.data = toHex(value);
 }
-// memoryUdecSet Memorytableの符号なし10進数の値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+
+/**
+ * memoryUdecSet Memorytableの符号なし10進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに入れたい値
+ */
 function memoryUdecSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 3 ].firstChild.data = toUdecOver(value);
 }
 
-// memorySdecSet Memorytableの符号あり10進数の値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+/**
+ * memorySdecSet Memorytableの符号あり10進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに入れたい値
+ */
 function memorySdecSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 4 ].firstChild.data = toSdecOver(value);
 }
 
-// memoryBinSet Memorytableの2進数の値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+
+/**
+ * memoryBinSet Memorytableの2進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに入れたい値
+ */
 function memoryBinSet(address,value){
     let table = document.getElementById('Memorytable');
     table.rows[ address ].cells[ 5 ].firstChild.data = toBin(value);
     
 }
 
-// memoryLiteralSet MemorytableのLiteralの値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+/**
+ * memoryLiteralSet MemorytableのLiteralの値を書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに入れたい値
+ */
 function memoryLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
     if(address >= 0 && address < memoryTableMaxRow){
@@ -398,9 +412,12 @@ function memoryLiteralSet(address,value){
     }
 }
 
-// memoryScrollset Memorytableの要素位置にスクロールを設定する
-// 引数 
-// address  :  Memorytableの番地
+
+/**
+ * memoryScrollset Memorytableの要素位置にスクロールを設定する
+ *
+ * @param {number} address - 設定したいスクロールの位置をアドレスとして
+ */
 function memoryScrollset(address){
     let table = document.getElementById('Memorytable');
     let memory_Area = document.getElementById('memory_area');
