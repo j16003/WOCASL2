@@ -1457,7 +1457,6 @@ var Autocomplete = function() {
         this.popup.setData(this.completions.filtered, this.completions.filterText);
 
         editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
-        
         var renderer = editor.renderer;
         this.popup.setRow(this.autoSelect ? 0 : -1);
         if (!keepPopupPosition) {
@@ -1473,7 +1472,7 @@ var Autocomplete = function() {
             pos.top += rect.top - renderer.layerConfig.offset;
             pos.left += rect.left - editor.renderer.scrollLeft;
             pos.left += renderer.gutterWidth;
-
+            
             this.popup.show(pos, lineHeight);
         } else if (keepPopupPosition && !prefix) {
             this.detach();
@@ -1635,6 +1634,7 @@ var Autocomplete = function() {
             this.completions.setFilter(prefix);
             if (!this.completions.filtered.length)
                 return this.detach();
+            /*complite update*/
             if (this.completions.filtered.length == 1
             && this.completions.filtered[0].value == prefix
             && !this.completions.filtered[0].snippet)
@@ -1678,7 +1678,6 @@ var Autocomplete = function() {
                 return detachIfFinished();
             if (this.autoInsert && filtered.length == 1 && results.finished)
                 return this.insertMatch(filtered[0]);
-
             this.openPopup(this.editor, prefix, keepPopupPosition);
         }.bind(this));
     };
@@ -1833,6 +1832,7 @@ var FilteredList = function(array, filterText) {
     this.exactMatch = false;
 };
 (function(){
+    /* autocomplite filter*/
     this.setFilter = function(str) {
         if (str.length > this.filterText && str.lastIndexOf(this.filterText, 0) === 0)
             var matches = this.filtered;
@@ -1857,6 +1857,10 @@ var FilteredList = function(array, filterText) {
     };
     this.filterCompletions = function(items, needle) {
         var results = [];
+        //casl2 order filter
+        var caslWord ={"START":1,"DC":1,"DS":1,"END":1,"IN":1,"OUT":1,"RPUSH":1,"RPOP":1,"LD":1,"LAD":1,"ST":1,"ADDL":1,"ADDA":1,
+        "SUBL":1,"SUBA":1,"PUSH":1,"POP":1,"AND":1,"OR":1,"XOR":1,"CPA":1,"CPL":1,"SLA":1,"SLL":1,
+        "SRA":1,"SRL":1,"JPL":1,"JMI":1,"JNZ":1,"JNZ":1,"JZE":1,"JOV":1,"JUMP":1,"CALL":1,"RET":1,"SVC":1,"NOP":1,"GR1":1,"GR2":1,"GR3":1,"GR4":1,"GR5":1,"GR6":1,"GR7":1};
         var upper = needle.toUpperCase();
         var lower = needle.toLowerCase();
         loop: for (var i = 0, item; item = items[i]; i++) {
@@ -1895,7 +1899,12 @@ var FilteredList = function(array, filterText) {
             item.matchMask = matchMask;
             item.exactMatch = penalty ? 0 : 1;
             item.$score = (item.score || 0) - penalty;
-            results.push(item);
+            if(item.meta=="local" && caslWord[item.caption]){
+                continue;
+            }
+            if(item.$score >= 0)
+                results.push(item);
+            //console.log(item);
         }
         return results;
     };
@@ -1919,12 +1928,10 @@ define("ace/autocomplete/text_completer",["require","exports","module","ace/rang
         var prefixPos = getWordIndex(doc, pos);
         var words = doc.getValue().split(splitRegex);
         var wordScores = Object.create(null);
-        
         var currentWord = words[prefixPos];
 
         words.forEach(function(word, idx) {
             if (!word || word === currentWord) return;
-
             var distance = Math.abs(prefixPos - idx);
             var score = words.length - distance;
             if (wordScores[word]) {

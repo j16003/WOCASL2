@@ -59,7 +59,9 @@ function onLoad() {
   
   editor = ace.edit('input_txt');
   //editor.getSession().setMode('ace/mode/javascript');
+
   langTools.setCompleters([staticWordCompleter,langTools.textCompleter])
+  //langTools.setCompleters([staticWordCompleter]);
   editor.setOptions({
     enableBasicAutocompletion: true,
     enableSnippets: true,
