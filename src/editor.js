@@ -24,11 +24,20 @@ function onLoad() {
   var langTools = ace.require("ace/ext/language_tools");
   var staticWordCompleter = {
     getCompletions: function(editor, session, pos, prefix, callback) {
+        if (prefix.length === 0) { callback(null, []); return }
         var wordList = [
           ["LD"," GR , GR"," LD GR , GR"],["LD ","GR , Addr","LD GR , Addr"],["LAD ","GR , Addr","LAD GR , Addr"],["ST"," GR , Addr"," GR,Addr [,x]"],["ADDA"," GR , GR"," ADDA GR , GR"],["ADDA ","GR , Addr","ADDA GR , Addr [,x]"],
           ["ADDL"," GR , GR"," ADDL GR , GR"],["ADDL ","GR , Addr","ADDL GR , Addr [,x]"],["SUBA"," GR , Addr"," SUBA GR,Addr [,x]"],["SUBA"," GR , Addr","SUBA GR,Addr [,x]"],["SUBL"," GR , Addr"," SUBL GR,Addr [,x]"],["SUBL"," GR , Addr","SUBL GR,Addr [,x]"],
           ["AND"," GR , GR"," AND GR , GR"],["AND "," GR , Addr","AND GR,Addr [,x]"],["OR"," GR , GR"," OR GR , GR"],["OR "," GR , Addr","OR GR,Addr [,x]"],
           ["XOR"," GR , GR"," XOR GR , GR"],["XOR "," GR , Addr","XOR GR,Addr [,x]"],
+          ["CPA"," GR , GR"," CPA GR , GR"],["CPA "," GR , Addr","CPA GR,Addr [,x]"],
+          ["CPL"," GR , GR"," CPA GR , GR"],["CPL "," GR , Addr","CPL GR,Addr [,x]"],
+          ["SLA"," GR , Addr"," SLA GR , Addr [,x]"],["SRA"," GR , Addr"," SRA GR , Addr [,x]"],
+          ["SLL"," GR , Addr"," SLL GR , Addr [,x]"],["SRL"," GR , Addr"," SRL GR , Addr [,x]"],
+          ["JPL"," Addr"," JPL Addr [,x]"],["JMI"," Addr"," JMI Addr [,x]"],
+          ["JNZ"," Addr"," JNZ Addr [,x]"],["JZE"," Addr"," JZE Addr [,x]"],
+          ["JUMP"," Addr"," JUMP Addr [,x]"],["PUSH"," Addr"," PUSH Addr [,x]"],
+          ["POP"," GR"," POP GR"],
           ["GR1","","Register"],["GR2","","Register"],["GR3","","Register"],["GR4","","Register"],["GR5","","Register"],["GR6","","Register"],["GR7","","Register"],
         ];
         var autoWord = [];
@@ -59,19 +68,20 @@ function onLoad() {
   });
   editor.session.setMode("ace/mode/casl2");
   var val = localStorage["caslcode"];
-  /*if(val != undefined){
-    editor.setValue(val,0);
-  }*/
-  
-  if(typeof val != "string"){
-    editor.setSession(sessionFromJSON(JSON.parse(val)));
+
+  let sessionparse = "";
+  try{
+    sessionparse = JSON.parse(val);
+    editor.setSession(sessionFromJSON(sessionparse));
+  }catch(e){
+    errorModal(e);
+    window.localStorage.clear();
   }
-  
+  editor.setSession(sessionFromJSON(sessionparse));
   editor.on("change",function(e){
     localStorage["caslcode"] = JSON.stringify(sessionToJSON(editor.session));
+    setEnableCaslButton(true);
   })
-
-  
 
   // ドラッグ&ドロップ関連処理
   // イベントの伝搬を止めて、アプリケーションのHTMLとファイルが差し替わらないようにする

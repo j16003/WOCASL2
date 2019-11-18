@@ -771,14 +771,13 @@ function ajaxJsonToMemoryMap(obj){
             address += element.Length;
         });
         successModal("アセンブル成功");
+        setEnableCaslButton(false);
         if(obj["warning"]){
             let jsonparsewarning = JSON.parse(obj["warning"]);
             jsonparsewarning.forEach(element => {
             selectLine(parseInt(element.Line));
             message = element.Line+"行目</br>"+element.Message+" <br> ";
-            
             warModal(message);
-            
             });    
         }
     }else{
@@ -788,6 +787,7 @@ function ajaxJsonToMemoryMap(obj){
             errorModal(message);
             selectLine(parseInt(element.Line));
         });
+        setEnableCaslButton(true);
     }
 }
 

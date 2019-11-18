@@ -66,10 +66,12 @@ class StepBackControl{
 // 引数 
 // flag        :  true,false
 function setEnableCaslButton(flag){
-    $("#btnStepBack").prop("disabled", flag);
-    $("#btnExecution").prop("disabled", flag);
-    $("#btnStepExecution").prop("disabled", flag);
-    $("#btnStop").prop("disabled", flag);
+    if($("#btnStepBack").prop("disabled") != flag){
+        $("#btnStepBack").prop("disabled", flag);
+        $("#btnExecution").prop("disabled", flag);
+        $("#btnStepExecution").prop("disabled", flag);
+        $("#btnStop").prop("disabled", flag);
+    }
 }
 function onLoadExe() {
     // フッター領域
@@ -95,7 +97,6 @@ function onLoadExe() {
           .done(function(data) {
             prValueSet(0);
             ajaxJsonToMemoryMap(data);
-            setEnableCaslButton(false);
         })
           .fail(function() {
             errorModal("通信失敗 </br>ネットワークに接続しているか確認してください。");
