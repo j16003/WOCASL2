@@ -2,19 +2,43 @@ window.addEventListener('DOMContentLoaded', onLoadExe);
 var cometExecute = null;
 //cpu cycle
 const COMETCYCLE = 100;
+/**
+ *
+ * Pair型の構造体
+ */
 class Pair{
+    /**
+     *Creates an instance of Pair.
+     * @param {*} first - first 
+     * @param {*} second - second
+     * @memberof Pair
+     */
     constructor(first,second){
         this.first = first;
         this.second = second;
     }
 }
+/**
+ * Stepの構造体
+ * レジスターやメモリ・フラグ・スタックの状態を管理
+ */ 
 class StepStruct{
+    /**
+     *Creates an instance of StepStruct.
+     * @param {number} memory
+     * @memberof StepStruct
+     */
     constructor(memory){
         this.register = document.getElementById("Registertable").cloneNode(true);
         this.memory = memory;
         this.flag = document.getElementById("Flagtable").cloneNode(true);
         this.stack = null;
     }
+    /**
+     * Stackの状態をsetする
+     * @param {number} stack - stackの状態(1の場合Stackを1つ進める)
+     * @memberof StepStruct
+     */
     setStack(stack){
         this.stack=stack;
     }
@@ -61,15 +85,18 @@ class StepBackControl{
 }
 
 
-// setEnableCaslButton CASL2の実行ボタンのdisableを設定
-// falseの場合、表示,trueの場合非表示
-// 引数 
-// flag        :  true,false
+/**
+ * 
+ * CASL2の実行ボタンのdisableを設定
+ * @param {boolean} flag
+ */
 function setEnableCaslButton(flag){
-    $("#btnStepBack").prop("disabled", flag);
-    $("#btnExecution").prop("disabled", flag);
-    $("#btnStepExecution").prop("disabled", flag);
-    $("#btnStop").prop("disabled", flag);
+    if($("#btnStepBack").prop("disabled") != flag){
+        $("#btnStepBack").prop("disabled", flag);
+        $("#btnExecution").prop("disabled", flag);
+        $("#btnStepExecution").prop("disabled", flag);
+        $("#btnStop").prop("disabled", flag);
+    }
 }
 function onLoadExe() {
     // フッター領域
@@ -95,7 +122,6 @@ function onLoadExe() {
           .done(function(data) {
             prValueSet(0);
             ajaxJsonToMemoryMap(data);
-            setEnableCaslButton(false);
         })
           .fail(function() {
             errorModal("通信失敗 </br>ネットワークに接続しているか確認してください。");

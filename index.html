@@ -13,6 +13,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="./src/mdb.min.js"></script>
   <script src="./src/ace.js"></script>
   <script src="./src/mode-casl2.js"></script>
   <script src="./src/ext-language_tools.js"></script>
@@ -26,38 +27,7 @@
 </head>
 
 <body>
-  <!--
-  <div id="header_fixed">
-
-    <div class="btn-group" role="group" aria-label="File">
-      <button type="button" class="btn-sm.rounded-0 btn-primary" id="btnLoad" data-toggle="tooltip" data-placement="bottom" title="ファイル読み込み">
-        <i class="fas fa-folder-open fa-lg"></i>
-      </button>
-      <button type="button" class="btn-sm btn-primary" id="btnSave" data-toggle="tooltip" data-placement="bottom" title="ファイルに保存">
-        <i class="fas fa-save fa-lg"></i>
-      </button>
-    </div>
-    <div class="btn-group" role="group" aria-label="Execution">
-      <button type="button" class="btn-sm btn-primary" id="btnReset" data-toggle="tooltip" data-placement="bottom" title="リセット">
-        <i class="fas fa-redo-alt fa-lg"></i>
-      <button type="button" class="btn-sm btn-primary" id="btnAssemble" data-toggle="tooltip" data-placement="bottom" title="アセンブル">
-        <i class="fas fa-microchip fa-lg"></i>
-      </button>
-      <button type="button" class="btn-sm btn-primary" id="btnStepBack" data-toggle="tooltip" data-placement="bottom" title="ステップバック">
-          <i class="fas fa-step-backward fa-lg"></i>
-      </button>
-      <button type="button" class="btn-sm btn-primary" id="btnExecution" data-toggle="tooltip" data-placement="bottom" title="実行する">
-          <i class="fas fa-play fa-lg"></i>
-      </button>
-      <button type="button" class="btn-sm btn-primary" id="btnStepExecution" data-toggle="tooltip" data-placement="bottom" title="ステップ実行">
-          <i class="fas fa-step-forward fa-lg"></i>
-      </button>
-      <button type="button" class="btn-sm btn-primary" id="btnStop" data-toggle="tooltip" data-placement="bottom" title="停止">
-          <i class="fas fa-stop fa-lg"></i>
-      </button>
-    </div>
-  </div>
-  -->
+  
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="header_fixed">
     <a class="navbar-brand" href="#">
       WOCASL2
@@ -101,8 +71,16 @@
             <i class="fas fa-stop fa-lg " aria-hidden="true"></i>
           </button>
           </li>
-      </ul>
-    </div>
+          <li class="nav-item">          
+            <button type="button" class="btn btn-dark-green px-3" id="btnShare" data-toggle="tooltip" data-placement="bottom" title="URL Share" >
+                <i class="fas fa-external-link-alt"></i>
+            </button>
+          </li>
+        </ul>
+        <button type="button" class="btn btn-cyan px-3" id="btnInfo"  data-placement="bottom" title="infomation" data-toggle="modal" data-target="#infomationModal">
+          <i class="fas fa-info-circle"></i>
+        </button>
+      </div>
   </nav>
 <!--ここからメイン部分-->
 <!--一番外側のdiv-->
@@ -349,5 +327,27 @@
           </div>
         </div>
       </div>
+
+<!-- Modal -->
+<div class="modal fade" id="infomationModal" tabindex="-1" role="dialog" aria-labelledby="infomationModal"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="imfomationModalTile">WOCASL2</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Version 0.1.0
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary">OK</button>
+    </div>
+  </div>
+</div>
+</div>
 </body>
 </html>
