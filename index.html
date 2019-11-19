@@ -80,6 +80,9 @@
         <button type="button" class="btn btn-cyan px-3" id="btnInfo"  data-placement="bottom" title="infomation" data-toggle="modal" data-target="#infomationModal">
           <i class="fas fa-info-circle"></i>
         </button>
+        <a class="btn btn-primary px-3" target="_blank" href="https://wocasl2.herokuapp.com/help" role="button">
+          <i class="fas fa-question-circle"></i>
+        </a>
       </div>
   </nav>
 <!--ここからメイン部分-->
@@ -94,9 +97,9 @@
     <!--レジスタとメモリ表示用のdiv-->
     <div id="register_memory">
       <!--メモリ表示-->
-       <div id="memory_area"></div>
+       <div id="memory_area" class="border border-primary rounded mb-0" ></div>
       <!--レジスタ表示-->
-      <div id="register_area">
+      <div id="register_area" class="border border-success rounded mb-0">
           <table border="1" width="100%" id="Registertable" class="table-hover">
               <tr bgcolor="#A6B3FF">
                 <th>Name</th>
@@ -182,7 +185,7 @@
 <!--COMET2とスタック表示用のdiv-->
     <div id="comet_stack">
       <!--ディスプレイ表示-->
-      <div id="comet_area">
+      <div id="comet_area" class="border border-danger rounded mb-0">
         <ul class="nav nav-tabs">
           <li class="nav-item">
             <a href="#terminal_area" class="nav-link active" data-toggle="tab">ターミナル</a>
@@ -202,7 +205,7 @@
           </div>
         </div>
       </div>
-      <div id="flag_area">
+      <div id="flag_area" class="border border-info rounded mb-0">
         <table border="1" width="100%" id="Flagtable">
             <tr bgcolor="#A6B3FF">
                 <th>Name</th>
@@ -225,7 +228,7 @@
         </table>
       </div>
       <!--スタック表示-->
-      <div id="stack_area"></div>
+      <div id="stack_area" class="border border-success rounded mb-0"></div>
     </div>
   </div>
 <!--input Modal-->

@@ -106,6 +106,20 @@ function onLoadExe() {
         initMemoryRegister();
         setEnableCaslButton(true);
     });
+    document.querySelector('#btnShare').addEventListener('click', () => {
+        $.ajax({
+            url: 'http://localhost:8080/GCASL2/add',
+            type: 'POST',
+            dataType: 'json',
+            // フォーム要素の内容をハッシュ形式に変換
+            data:{
+                'code' : JSON.stringify(sessionToJSON(editor.session)),
+            }
+          })
+          .done(function(data) {
+            alert(data);
+        })
+    });
     // 「アセンブル」ボタンの制御
     document.querySelector('#btnAssemble').addEventListener('click', () => {
         //メモリレジスタスタック初期化

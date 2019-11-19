@@ -172,6 +172,13 @@ class decoderBlock extends Block{
 }
 
 class controlerBlock extends Block{
+    /**
+     *Creates an instance of controlerBlock.
+     * @param {number} x
+     * @param {number} y
+     * @param {string} label
+     * @memberof controlerBlock
+     */
     constructor(x,y,label){
         super(x,y,100,50,label);
         this.str = "";
@@ -325,10 +332,20 @@ const LinePatern = [
 
 
 class Cometp5Line{
+    /**
+     *Creates an instance of Cometp5Line.
+     * @param {number} id - Line id
+     * @memberof Cometp5Line
+     */
     constructor(id){
         this.id = id;
-        this.color = "#000000";
+        this.color = color(0,0,0);
     }
+    /**
+     *
+     * Line draw
+     * @memberof Cometp5Line
+     */
     draw(){
         stroke(this.color);
         noFill();
@@ -337,9 +354,16 @@ class Cometp5Line{
             vertex(element[0],element[1]);
         });
         endShape();
+        stroke(color(0,0,0));
     }
     setColor(col){
         this.color = col;
+    }
+    active(){
+        this.color = color(255,0,0);
+    }
+    inactive(){
+        this.color = color(0,0,0);
     }
 }
 
