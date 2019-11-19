@@ -48,7 +48,7 @@ function onLoad() {
         callback(null, autoWord.map(function(word) {
             return {
                 caption: word[0],
-                value: word[0]+word[1],
+                value: word[0]+"     "+word[1],
                 meta: word[2],
             };
           
