@@ -716,10 +716,12 @@ function zeroFlagGet(){
     return v
 }
 
-// stackHexSet Stacktableの16進数の値を書き換える
-// 引数 
-// address  :  Stacktableの番地
-// value    :  値
+/**
+ * stackHexSet Stacktableの16進数の値を書き換える
+ *
+ * @param {number} address - スタックのアドレス
+ * @param {number} value - スタックのアドレスに入れたい値
+ */
 function stackHexSet(address,value){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -727,10 +729,12 @@ function stackHexSet(address,value){
     table.rows[ r_end-address ].cells[ 1 ].firstChild.data = toHex(value);
 }
 
-// stackUdecSet Stacktableの符号なし10進数の値を書き換える
-// 引数 
-// address  :  Stacktableの番地
-// value    :  値
+/**
+ * stackUdecSet Stacktableの符号なし10進数の値を書き換える
+ *
+ * @param {number} address - スタックのアドレス
+ * @param {number} value - スタックのアドレスに入れたい値
+ */
 function stackUdecSet(address,value){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -738,10 +742,12 @@ function stackUdecSet(address,value){
     table.rows[ r_end-address ].cells[ 2 ].firstChild.data = toUdecOver(value);
 }
 
-// stackSdecSet Stacktableの符号あり10進数の値を書き換える
-// 引数 
-// address  :  Stacktableの番地
-// value    :  値
+/**
+ * stackSdecSet Stacktableの符号あり10進数の値を書き換える
+ *
+ * @param {number} address - スタックのアドレス
+ * @param {number} value - スタックのアドレスに入れたい値
+ */
 function stackSdecSet(address,value){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -749,10 +755,12 @@ function stackSdecSet(address,value){
     table.rows[ r_end-address ].cells[ 3 ].firstChild.data = toSdecOver(value);
 }
 
-// stackSdecSet Stacktableの2進数の値を書き換える
-// 引数 
-// address  :  Stacktableの番地
-// value    :  値
+/**
+ * stackSdecSet Stacktableの2進数の値を書き換える
+ *
+ * @param {number} address - スタックのアドレス
+ * @param {number} value - スタックのアドレスに入れたい値
+ */
 function stackBinSet(address,value){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -760,9 +768,11 @@ function stackBinSet(address,value){
     table.rows[ r_end-address ].cells[ 4 ].firstChild.data = toBin(value);
 }
 
-// stackScrollset Stacktableの要素位置にスクロールを設定する
-// 引数 
-// address  :  stacktableの番地
+/**
+ * stackScrollset Stacktableの要素位置にスクロールを設定する
+ *
+ * @param {number} address - 設定したいスクロールの位置をアドレスとして
+ */
 function stackScrollset(address){
     let table = document.getElementById('Stacktable');
     let stack_Area = document.getElementById('stack_area');
@@ -773,10 +783,12 @@ function stackScrollset(address){
     
 }
 
-// stackAllSet Stacktableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+/**
+ * stackAllSet Stacktableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
+ *
+ * @param {number} address - スタックのアドレス
+ * @param {number} value - スタックのアドレスに入れたい値
+ */
 function stackAllSet(address,value){
     stackHexSet(address,value);
     stackUdecSet(address,value);
@@ -784,11 +796,12 @@ function stackAllSet(address,value){
     stackBinSet(address,value);
 }
 
-// stackHexGet Stacktableの16進数の値を取得する
-// 引数 
-// address  :  Stacktableの番地
-// 戻り値
-// string   :  値
+/**
+ * stackHexGet Stacktableの16進数の値を取得する
+ *
+ * @param {number} address - スタックのアドレス
+ * @returns {number} - 16進数を返す
+ */
 function stackHexGet(address){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -798,11 +811,12 @@ function stackHexGet(address){
     return v
 }
 
-// stackUdecGet Stacktableの符号なし10進数の値を取得する
-// 引数 
-// address  :  Stacktableの番地
-// 戻り値
-// string   :  値
+/**
+ * stackUdecGet Stacktableの符号なし10進数の値を取得する
+ *
+ * @param {number} address - スタックのアドレス
+ * @returns {number} - 符号なし10進数の値を返す
+ */
 function stackUdecGet(address){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
