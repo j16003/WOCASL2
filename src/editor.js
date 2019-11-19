@@ -68,8 +68,8 @@ function onLoad() {
     enableLiveAutocompletion: true
   });
   editor.session.setMode("ace/mode/casl2");
+  //localStorage["caslcode"] editorsession store
   var val = localStorage["caslcode"];
-
   let sessionparse = null;
   try{
     if(val){
@@ -83,6 +83,7 @@ function onLoad() {
   if(sessionparse!=null){
     editor.setSession(sessionFromJSON(sessionparse));
   }
+  //Editor change Events
   editor.on("change",function(e){
     localStorage["caslcode"] = JSON.stringify(sessionToJSON(editor.session));
     setEnableCaslButton(true);

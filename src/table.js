@@ -8,7 +8,7 @@ jQuery でプログラム的にテーブルを作成する
  * COMETIIメモリーテーブルの最大サイズを定義
  * @type {Number}
  */
-const memoryTableMaxRow = 0x500;
+const memoryTableMaxRow = 0x1000;
 /**
  * COMETIIスタックの最大サイズを定義
  * @type {Number} 
@@ -24,15 +24,24 @@ $(document).ready(function () {
     //bootstrapのtooltipの初期化
     $('[data-toggle="tooltip"]').tooltip();
     var r_end = memoryTableMaxRow;  // 行数
-    var c_end = 8;  // 列数 
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
-    var tableJQ = $('<table id="Memorytable" class="table-hover">');
+    var tableJQ = $('<table id="Memorytable" class="table-hover"></table>');
+    var tableHtml ="";
     for (var r = 0; r < r_end; r++) {
         var r000 = toHex(r);
-        var trJQ_r = $('<tr class="table-light"></tr>').appendTo(tableJQ);
+        tableHtml = tableHtml + 
+        '<tr class="table-light"><td>' + r000 + '</td>'+
+        '<td>' + r + '</td>'+
+        '<td>#0000</td>'+
+        '<td>0</td>'+
+        '<td>0</td>'+
+        '<td>0000 0000 0000 0000</td>'+
+        '<td> </td>'+
+        '<td hidden> </td></tr>';
+        //var trJQ_r = $('</tr>').appendTo(tableJQ);
         //0
-        $('<td>' + r000 + '</td>').appendTo(trJQ_r);
+        /*$('<td>' + r000 + '</td>').appendTo(trJQ_r);
         //1
         $('<td>' +  r + '</td>').appendTo(trJQ_r);
         //2
@@ -47,13 +56,22 @@ $(document).ready(function () {
         $('<td> </td>').appendTo(trJQ_r);
         //7
         $('<td hidden> </td>').appendTo(trJQ_r);
+        */
     }
+    $(tableHtml).appendTo(tableJQ);
     $(memory_Area).append(tableJQ);
     var r_end = stackTableMaxRow;
     tableJQ = $('<table id="Stacktable">');
+    tableHtml="";
     for (var r = 0; r < (r_end + 1); r++) {
         var r000 = toHex(65537 - ((r_end + 2) - r));
-        var trJQ_r = $('<tr></tr>').appendTo(tableJQ);
+        tableHtml = tableHtml + 
+        '<tr><td>' + r000 + '</td>'+
+        '<td>#0000</td>'+
+        '<td>0</td>'+
+        '<td>0</td>'+
+        '<td>0000 0000 0000 0000</td></tr>';
+        /*var trJQ_r = $('<tr></tr>').appendTo(tableJQ);
         for (var c = 0; c < c_end; c++) {
             if(c == 0){
                 $('<td>' + r000 + '</td>').appendTo(trJQ_r);
@@ -66,8 +84,9 @@ $(document).ready(function () {
             }else if(c == 4){
                 $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
             }              
-       }
+       }*/
     }
+    $(tableHtml).appendTo(tableJQ);
     $(stack_Area).append(tableJQ);
     let stacktable = document.getElementById('Stacktable');
     let stackPosition = stacktable.rows[r_end].offsetTop;
@@ -91,7 +110,6 @@ $(document).ready(function () {
             cometExecuteStart();
         }
     });
-
 });
 
 //page load and resize Events
