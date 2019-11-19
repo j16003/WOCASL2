@@ -826,11 +826,13 @@ function stackUdecGet(address){
     return v
 }
 
-// stackUdecGet Stacktableの符号あり10進数の値を取得する
-// 引数 
-// address  :  Stacktableの番地
-// 戻り値
-// string   :  値
+
+/**
+ * stackUdecGet Stacktableの符号あり10進数の値を取得する
+ *
+ * @param {number} address - スタックのアドレス
+ * @returns {number} - 符号あり10進数の値を返す
+ */
 function stackSdecGet(address){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -840,11 +842,12 @@ function stackSdecGet(address){
     return v
 }
 
-// stackBinGet stacktableの2進数の値を取得する
-// 引数 
-// address  :  Stacktableの番地
-// 戻り値
-// string   :  値
+/**
+ * stackBinGet stacktableの2進数の値を取得する
+ *
+ * @param {number} address - スタックのアドレス
+ * @returns {number} - 2進数の値を返す
+ */
 function stackBinGet(address){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -854,9 +857,12 @@ function stackBinGet(address){
     return v
 }
 
-// ajaxJsonToMemoryMap memorytableにバイナリを読み込む
-// 引数 
-// obj  :  data type:json
+
+/**
+ * ajaxJsonToMemoryMap memorytableにバイナリを読み込む
+ *
+ * @param {object} obj - jsonファイル
+ */
 function ajaxJsonToMemoryMap(obj){
     
     if(obj["result"]==undefined){
@@ -881,7 +887,7 @@ function ajaxJsonToMemoryMap(obj){
             }
             address += element.Length;
         });
-        successModal("アセンブル成功");
+        
         setEnableCaslButton(false);
         if(obj["warning"]){
             let jsonparsewarning = JSON.parse(obj["warning"]);
@@ -891,6 +897,7 @@ function ajaxJsonToMemoryMap(obj){
             warModal(message);
             });    
         }
+        successModal("アセンブル成功");
     }else{
         let jsonparseerror = JSON.parse(obj["error"]);
         jsonparseerror.forEach(element => {
@@ -902,24 +909,24 @@ function ajaxJsonToMemoryMap(obj){
     }
 }
 
-// memoryTableRowColorSet Memorytableの行の色を変更する
-// 引数 
-// address  :  Memorytableの番地
-// color    :  値
+/**
+ * memoryTableRowColorSet Memorytableの行の色を変更する
+ *
+ * @param {number} address - メモリーのアドレス
+ * @param {number} color - 設定したい色のカラーコード
+ */
 function memoryTableRowColorSet(address,color){
-    //removeClass
     let table = $("#Memorytable tr");
-    //let table = document.getElementById('Memorytable');
-    //table.rows[address].style.backgroundColor=color;
     $(table[address]).removeClass();
     $(table[address]).addClass("table-"+color);
-    //console.log();
 }
 
-// registerTableRowColorSet Registertableの行の色を変更する
-// 引数 
-// address  :  Registertableの番地
-// color    :  値
+/**
+ * registerTableRowColorSet Registertableの行の色を変更する
+ *
+ * @param {number} address - レジスタのアドレス
+ * @param {number} color - 設定したい色のカラーコード
+ */
 function registerTableRowColorSet(address,color){
     let table = document.getElementById('Registertable');
     if(address >= 0 && address <= 7){
@@ -929,10 +936,12 @@ function registerTableRowColorSet(address,color){
     }
 }
 
-// stackTableRowColorSet Stacktableの行の色を変更する
-// 引数 
-// address  :  Stacktableの番地
-// color    :  値
+/**
+ * stackTableRowColorSet Stacktableの行の色を変更する
+ *
+ * @param {number} address - スタックのアドレス
+ * @param {number} color - 設定したい色のカラーコード
+ */
 function stackTableRowColorSet(address,color){
     address = 0xFFFF-address;
     let r_end = stackTableMaxRow;
@@ -940,7 +949,11 @@ function stackTableRowColorSet(address,color){
     table.rows[r_end-address].style.backgroundColor=color;
 }
 
-// initMemoryRegister 全てのテーブルの値、色、スクロールのリセット
+
+/**
+ * initMemoryRegister 全てのテーブルの値、色、スクロールのリセット
+ *
+ */
 function initMemoryRegister(){
     //Memory PR Color Reset
     memoryTableRowColorSet(prUdecGet(),"light");
@@ -971,9 +984,11 @@ function initMemoryRegister(){
     StepBackControler = new StepBackControl();
 }
 
-// errorModal Modalを利用してアラートの表示
-// 引数 
-// message    :  値
+/**
+ * errorModal Modalを利用してアラートの表示
+ *
+ * @param {string} message - モーダルに表示したいメッセージ
+ */
 function errorModal(message){
     if(Math.random()*100%100<1){
         message=message+'<img src="losecat.jpg"  alt="losecat" class="img-fluid">';
@@ -987,9 +1002,11 @@ function errorModal(message){
     $('#errorModal').modal('show');
 }
 
-// successModal Modalを利用してアラートの表示
-// 引数 
-// message    :  値
+/**
+ * successModal Modalを利用してアラートの表示
+ *
+ * @param {string} message - モーダルに表示したいメッセージ
+ */
 function successModal(message){
     if(Math.random()*100%100<1){
         message=message+'<img src="successcat.jpg"  alt="successcat" class="img-fluid">';
@@ -1002,9 +1019,11 @@ function successModal(message){
     $('#successModal').modal('show');
 }
 
-// infoModal Modalを利用してアラートの表示
-// 引数 
-// message    :  値
+/**
+ * infoModal Modalを利用してアラートの表示
+ *
+ * @param {string} message - モーダルに表示したいメッセージ
+ */
 function infoModal(message){
     $('#infoModal').on('shown.bs.modal',function(){
         $('#okButton3').trigger('focus');
@@ -1014,9 +1033,11 @@ function infoModal(message){
     $('#infoModal').modal('show');
 }
 
-// warModal Modalを利用してアラートの表示
-// 引数 
-// message    :  値
+/**
+ * warModal Modalを利用してアラートの表示
+ *
+ * @param {string} message - モーダルに表示したいメッセージ
+ */
 function warModal(message){
     $('#warModal').on('shown.bs.modal',function(){
         $('#okButton4').trigger('focus');
