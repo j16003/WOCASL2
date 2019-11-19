@@ -431,10 +431,13 @@ function memoryScrollset(address){
     $(memory_Area).scrollTop(position);
 }
 
-// memoryAllSet Memorytableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+
+/**
+ * memoryAllSet Memorytableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに入れたい値
+ */
 function memoryAllSet(address,value){
     if(address >= 0 && address < memoryTableMaxRow){
         memoryHexSet(address,value);
@@ -447,10 +450,13 @@ function memoryAllSet(address,value){
     }
     
 }
-// memoryLabelSet Memorytableのラベルを書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+
+/**
+ * memoryLabelSet Memorytableのラベルを書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {string} value - メモリに設定したいリテラル
+ */
 function memoryLabelLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
     if($.isNumeric(table.rows[ address ].cells[ 1 ].firstChild.data) || table.rows[ address ].cells[ 1 ].firstChild.data[0] == '"'){
@@ -461,10 +467,13 @@ function memoryLabelLiteralSet(address,value){
         }
     }
 }
-// memoryLabelSet Memorytableのラベルを書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+
+/**
+ * memoryLabelSet Memorytableのラベルを書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {string} value - メモリに設定したいラベル
+ */
 function memoryLabelSet(address,value){
     let table = document.getElementById('Memorytable');
     if($.isNumeric(value)){
@@ -474,10 +483,12 @@ function memoryLabelSet(address,value){
     }
 }
 
-// memoryLineSet Memorytableのラインを書き換える
-// 引数 
-// address  :  Memorytableの番地
-// value    :  値
+/**
+ * memoryLineSet Memorytableのラインを書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに設定したい値
+ */
 function memoryLineSet(address,value){
     let table = document.getElementById('Memorytable');
     if(address >= 0 && address < memoryTableMaxRow){
@@ -485,29 +496,35 @@ function memoryLineSet(address,value){
     }
 }
 
-// memoryLabelGet Memorytableのラベルを取得
-// 引数 
-// address  :  Memorytableの番地
+/**
+ * memoryLabelGet Memorytableのラベルを取得
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {string} - ラベルの値
+ */
 function memoryLabelGet(address){
     let table = document.getElementById('Memorytable');
     return table.rows[ address ].cells[ 1 ].firstChild.data;
 }
 
-// memoryHexGet Memorytableの16進数の値を取得する
-// 引数 
-// address  :  Memorytableの番地
-// 戻り値
-// string   :  値
+/**
+ * memoryHexGet Memorytableの16進数の値を取得する
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {string} - 16進数を返す
+ */
 function memoryHexGet(address){
     let table = document.getElementById('Memorytable');
     return table.rows[ address ].cells[ 2 ].firstChild.data;
 }
 
-// memoryUdecGet Memorytableの符号なし10進数の値を取得する
-// 引数 
-// address  :  Memorytableの番地
-// 戻り値
-// string   :  値
+
+/**
+ * memoryUdecGet Memorytableの符号なし10進数の値を取得する
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {number} - 符号なし10進数を返す
+ */
 function memoryUdecGet(address){
     let table = document.getElementById('Memorytable');
     var v = table.rows[ address ].cells[ 3 ].firstChild.data;
@@ -515,11 +532,13 @@ function memoryUdecGet(address){
     return v
 }
 
-// memorySdecGet Memorytableの符号あり10進数の値を取得する
-// 引数 
-// address  :  Memorytableの番地
-// 戻り値
-// string   :  値
+
+/**
+ * memorySdecGet Memorytableの符号あり10進数の値を取得する
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {number} - 符号あり10進数を返す
+ */
 function memorySdecGet(address){
     let table = document.getElementById('Memorytable');
     var v = table.rows[ address ].cells[ 4 ].firstChild.data;
@@ -527,11 +546,12 @@ function memorySdecGet(address){
     return v
 }
 
-// memoryBinGet Memorytableの2進数の値を取得する
-// 引数 
-// address  :  Memorytableの番地
-// 戻り値
-// string   :  値
+/**
+ * memoryBinGet Memorytableの2進数の値を取得する
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {number} - 2進数を返す
+ */
 function memoryBinGet(address){
     let table = document.getElementById('Memorytable');
     var v = table.rows[ address ].cells[ 5 ].firstChild.data;
@@ -539,25 +559,34 @@ function memoryBinGet(address){
     return v
 }
 
-// memoryLiteralGet MemorytableのLiteralの値を取得
-// 引数 
-// address  :  Memorytableの番地
+/**
+ * memoryLiteralGet MemorytableのLiteralの値を取得
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {string} - リテラルを文字列として返す
+ */
 function memoryLiteralGet(address){
     let table = document.getElementById('Memorytable');
     return table.rows[ address ].cells[ 6 ].firstChild.data
 }
 
-// memoryLineGet Memorytableのラインを取得
-// 引数 
-// address  :  Memorytableの番地
+/**
+ * memoryLineGet Memorytableのラインを取得
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns {number} - ラインの値を返す
+ */
 function memoryLineGet(address){
     let table = document.getElementById('Memorytable');
     return parseInt( table.rows[ address ].cells[ 7 ].firstChild.data);
 }
 
-// toOverflowFlagSet Overflow Flagを設定する
-// 引数 
-// v        :  値
+
+/**
+ * toOverflowFlagSet Overflow Flagを設定する
+ *
+ * @param {number} value - フラグの値を決定する値
+ */
 function overflowFlagSet(value){
     let table = document.getElementById('Flagtable');
     if(value == 0){
@@ -572,6 +601,11 @@ function overflowFlagSet(value){
 // ofSdecFlagSet Overflow FlagをSdecの数字の範囲を判定して設定する
 // 引数 
 // value        :  値
+/**
+ *
+ *
+ * @param {*} value
+ */
 function ofSdecFlagSet(value){
     if(value <= 32767 && value >= -32768){
         overflowFlagSet(0);
