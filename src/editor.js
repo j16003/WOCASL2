@@ -25,18 +25,22 @@ function onLoad() {
     getCompletions: function(editor, session, pos, prefix, callback) {
         if (prefix.length === 0) { callback(null, []); return }
         var wordList = [
-          ["LD"," GR , GR"," LD GR , GR"],["LD ","GR , Addr","LD GR , Addr"],["LAD ","GR , Addr","LAD GR , Addr"],["ST"," GR , Addr"," GR,Addr [,x]"],["ADDA"," GR , GR"," ADDA GR , GR"],["ADDA ","GR , Addr","ADDA GR , Addr [,x]"],
-          ["ADDL"," GR , GR"," ADDL GR , GR"],["ADDL ","GR , Addr","ADDL GR , Addr [,x]"],["SUBA"," GR , Addr"," SUBA GR,Addr [,x]"],["SUBA"," GR , Addr","SUBA GR,Addr [,x]"],["SUBL"," GR , Addr"," SUBL GR,Addr [,x]"],["SUBL"," GR , Addr","SUBL GR,Addr [,x]"],
-          ["AND"," GR , GR"," AND GR , GR"],["AND "," GR , Addr","AND GR,Addr [,x]"],["OR"," GR , GR"," OR GR , GR"],["OR "," GR , Addr","OR GR,Addr [,x]"],
-          ["XOR"," GR , GR"," XOR GR , GR"],["XOR "," GR , Addr","XOR GR,Addr [,x]"],
-          ["CPA"," GR , GR"," CPA GR , GR"],["CPA "," GR , Addr","CPA GR,Addr [,x]"],
-          ["CPL"," GR , GR"," CPA GR , GR"],["CPL "," GR , Addr","CPL GR,Addr [,x]"],
-          ["SLA"," GR , Addr"," SLA GR , Addr [,x]"],["SRA"," GR , Addr"," SRA GR , Addr [,x]"],
-          ["SLL"," GR , Addr"," SLL GR , Addr [,x]"],["SRL"," GR , Addr"," SRL GR , Addr [,x]"],
-          ["JPL"," Addr"," JPL Addr [,x]"],["JMI"," Addr"," JMI Addr [,x]"],
-          ["JNZ"," Addr"," JNZ Addr [,x]"],["JZE"," Addr"," JZE Addr [,x]"],
-          ["JUMP"," Addr"," JUMP Addr [,x]"],["PUSH"," Addr"," PUSH Addr [,x]"],
-          ["POP"," GR"," POP GR"],
+          ["LD",  "      GR , GR"," LD GR , GR"],["LD ","     GR , Addr","LD GR , Addr"],["LAD ","    GR , Addr","LAD GR , Addr"],["ST","      GR , Addr"," GR,Addr [,x]"],
+          ["ADDA","    GR , GR"," ADDA GR , GR"],["ADDA ","   GR , Addr","ADDA GR , Addr [,x]"],
+          ["ADDL","    GR , GR"," ADDL GR , GR"],["ADDL ","   GR , Addr","ADDL GR , Addr [,x]"],
+          ["SUBA ","   GR , GR"," SUBA GR,GR"],  ["SUBA","    GR , Addr","SUBA GR,Addr [,x]"],
+          ["SUBL ","   GR , GR"," SUBL GR,GR"],  ["SUBL","    GR , Addr","SUBL GR,Addr [,x]"],
+          ["AND", "     GR , GR"," AND GR , GR"],["AND ","    GR , Addr","AND GR,Addr [,x]"],
+          ["OR",  "      GR , GR"," OR GR , GR"],["OR ","     GR , Addr","OR GR,Addr [,x]"],
+          ["XOR", "     GR , GR"," XOR GR , GR"],["XOR ","    GR , Addr","XOR GR,Addr [,x]"],
+          ["CPA","     GR , GR"," CPA GR , GR"],["CPA ","    GR , Addr","CPA GR,Addr [,x]"],
+          ["CPL","     GR , GR"," CPA GR , GR"],["CPL ","    GR , Addr","CPL GR,Addr [,x]"],
+          ["SLA","      GR , Addr"," SLA GR , Addr [,x]"],["SRA","    GR , Addr"," SRA GR , Addr [,x]"],
+          ["SLL","      GR , Addr"," SLL GR , Addr [,x]"],["SRL","    GR , Addr"," SRL GR , Addr [,x]"],
+          ["JPL","     Addr"," JPL Addr [,x]"],["JMI","     Addr"," JMI Addr [,x]"],
+          ["JNZ","     Addr"," JNZ Addr [,x]"],["JZE","     Addr"," JZE Addr [,x]"],
+          ["JUMP","    Addr"," JUMP Addr [,x]"],["PUSH","    Addr"," PUSH Addr [,x]"],
+          ["POP","     GR"," POP GR"],
           ["GR1","","Register"],["GR2","","Register"],["GR3","","Register"],["GR4","","Register"],["GR5","","Register"],["GR6","","Register"],["GR7","","Register"],
         ];
         var autoWord = [];
@@ -47,8 +51,11 @@ function onLoad() {
         }
         callback(null, autoWord.map(function(word) {
             return {
+                //6 space 3 : 6 ,4 : 5 , 5 : 4
+                // LAD     GR1
+                // LD      GR1
                 caption: word[0],
-                value: word[0]+"     "+word[1],
+                value: word[0]+word[1],
                 meta: word[2],
             };
           
