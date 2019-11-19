@@ -616,13 +616,11 @@ function overflowFlagSet(value){
     }
 }
 
-// ofSdecFlagSet Overflow FlagをSdecの数字の範囲を判定して設定する
-// 引数 
-// value        :  値
+
 /**
+ * ofSdecFlagSet Overflow FlagをSdecの数字の範囲を判定して設定する
  *
- *
- * @param {*} value
+ * @param {number} value - フラグの値を決定する値
  */
 function ofSdecFlagSet(value){
     if(value <= 32767 && value >= -32768){
@@ -632,9 +630,11 @@ function ofSdecFlagSet(value){
     }
 }
 
-// ofUdecFlagSet Overflow FlagをUdecの数字の範囲を判定して設定する
-// 引数 
-// value        :  値
+/**
+ * ofUdecFlagSet Overflow FlagをUdecの数字の範囲を判定して設定する
+ *
+ * @param {number} value - フラグの値を決定する値
+ */
 function ofUdecFlagSet(value){
     if(value <= 65535 && value >= 0){
         overflowFlagSet(0);
@@ -643,9 +643,11 @@ function ofUdecFlagSet(value){
     }
 }
 
-// toOverflowFlagGet RegistertableのOverflow Flagの値を取得する
-// 戻り値
-// string   :  値
+/**
+ * toOverflowFlagGet RegistertableのOverflow Flagの値を取得する
+ *
+ * @returns {number} - オーバーフローフラグの値を返す
+ */
 function overflowFlagGet(){
     let table = document.getElementById('Flagtable');
     var v = table.rows[ 1 ].cells[ 4 ].firstChild.data;
@@ -653,9 +655,12 @@ function overflowFlagGet(){
     return v
 }
 
-// SignFlagSet Sign Flagを設定する
-// 引数 
-// v        :  値
+
+/**
+ * SignFlagSet Sign Flagを設定する
+ *
+ * @param {number} value - フラグの値を決定する値
+ */
 function signFlagSet(value){
     let table = document.getElementById('Flagtable');
     value = value & 0x8000;
@@ -668,9 +673,12 @@ function signFlagSet(value){
     }
 }
 
-// toSignFlagGet RegistertableのSign Flagの値を取得する
-// 戻り値
-// string   :  値
+
+/**
+ * toSignFlagGet RegistertableのSign Flagの値を取得する
+ *
+ * @returns {number} - サインフラグの値を返す
+ */
 function signFlagGet(){
     let table = document.getElementById('Flagtable');
     var v = table.rows[ 1 ].cells[ 5 ].firstChild.data;
@@ -678,9 +686,11 @@ function signFlagGet(){
     return v
 }
 
-// toZeroFlagSet Zero Flagを設定する
-// 引数 
-// v        :  値
+/**
+ * toZeroFlagSet Zero Flagを設定する
+ *
+ * @param {number} value - フラグの値を決定する値
+ */
 function zeroFlagSet(value){
     let table = document.getElementById('Flagtable');
     //alert(value);
@@ -693,9 +703,12 @@ function zeroFlagSet(value){
     }
 }
 
-// toZeroFlagGet RegistertableのZero Flagの値を取得する
-// 戻り値
-// string   :  値
+
+/**
+ * toZeroFlagGet RegistertableのZero Flagの値を取得する
+ *
+ * @returns {number} - ゼロフラグの値を返す
+ */
 function zeroFlagGet(){
     let table = document.getElementById('Flagtable');
     var v = table.rows[ 1 ].cells[ 6 ].firstChild.data;
