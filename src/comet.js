@@ -18,10 +18,11 @@ class Block{
         this.bheight = bheight;
         this.label = label;
         this.str = "0000";
+        this.color = color(0,0,0);
     }
     /**
      *
-     *
+     * 
      * @param {string} label
      * @memberof Block
      */
@@ -37,6 +38,9 @@ class Block{
     setText(str){
         this.str = str;
     }
+    getText(){
+        return this.str;
+    }
     /**
      *
      *
@@ -51,16 +55,24 @@ class Block{
 
     draw(){
         rectMode(CORNER);
+        stroke(this.color);
         rect(this.x, this.y,this.bwidth, this.bheight);
-        textSize(9.6);
+        stroke(0);
+        //textSize(9.6);
         strokeWeight(0);
         fill(0);
         textAlign(LEFT,CENTER);
         text(this.label,this.labelX,this.labelY-textSize());
         textAlign(CENTER,CENTER);
-        text(this.str,this.x,this.y,this.bwidth,this.bheight);
+        text(this.str,this.x+2,this.y,this.bwidth,this.bheight);
         strokeWeight(1);
         fill(255);
+    }
+    active(){
+        this.color = color(255,0,0);
+    }
+    inactive(){
+        this.color = color(0,0,0);
     }
 }
 
@@ -168,6 +180,135 @@ class decoderBlock extends Block{
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
+    }
+}
+
+class CometEmulator{
+    constructor(){
+        this.counter = 0;
+
+        //mode 1: 命令取りだしサイクル,2: 命令取り出しサイクル2語,3: 命令解読サイクル,4:アドレス生成,5: 実行命令
+        this.mode = 1;
+    }
+    reset(){
+        this.counter = 0;
+        this.mode = 1;
+    }
+    execute(){
+        console.log(this.mode,this.counter);
+        switch(this.mode){
+            case 1:
+                switch (this.counter){
+                    case 0:
+                        MAR.active();
+                        MAR.setText(PR.str);
+                        PR.active();
+                        this.nextLineActive();
+                    break;
+                    case 1:
+                        PR.inactive();
+                        this.nextLineActive();
+                    break;
+                    case 2:
+                        PR.active();
+                        MDR.active();
+                        MDR.setText(toHex(memoryUdecGet(prUdecGet())));
+                        this.nextLineActive();
+                    break;
+                    case 3:
+                    MAR.inactive();
+                    PR.inactive();
+                    IRLabel[1].active();
+                    IRLabel[1].setText(MDR.getText());
+                    this.nextLineActive();
+                    //TODO debug mode
+                    this.mode = 2;
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+                break;
+            case 2:
+                switch(this.counter){
+                    case 4:
+                        PR.active();
+                        MAR.active();
+                        this.nextLineActive();
+                    break;
+                    case 5:
+                        PR.inactive();
+                        this.nextLineActive();
+                    break;
+                    case 6:
+                        PR.active();
+                        PR.setText(toHex((prUdecGet()+1)));
+                        MAR.active();
+                        MDR.active();
+                        MDR.setText(toHex(memoryUdecGet(prUdecGet()+1)));
+                        this.nextLineActive();
+                    break;
+                    case 7:
+                        IRLabel[0].active();
+                        IRLabel[0].setText(MDR.getText());
+                        PR.inactive();
+                        MAR.inactive();
+                        this.nextLineActive();
+                        this.mode = 3;
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+            break;
+            case 3:
+                switch(this.counter){
+                    case 8:
+                        MDR.inactive();
+                        IRLabel[0].active();
+                        IRLabel[1].active();
+                        this.nextLineActive();
+                    break;
+                    case 9:
+                        this.nextLineActive();
+                    break;
+                    default:
+                        
+                        return 0;
+                    break;
+                }
+                break;
+            break;
+            }
+        redraw();
+
+        if(this.counter < InstructionfetchCycle.length){
+            return 1;
+        }
+        return 0;
+    }
+    nextLineActive(){
+        if(this.counter > 0){
+            for(var i=0;i<InstructionfetchCycle[this.counter-1].length;i++){
+                COMETLine[InstructionfetchCycle[this.counter-1][i]].inactive();
+            }
+        }
+        for(var i=0;i<InstructionfetchCycle[this.counter].length;i++){
+            COMETLine[InstructionfetchCycle[this.counter][i]].active();
+        }
+        if(this.counter <= InstructionfetchCycle.length-1){
+            this.counter++;
+        }
+    }
+    prevClearLine(line){
+        for(var i = 0;i < InstructionfetchCycle[line].length;i++){
+            COMETLine[InstructionfetchCycle[line][i]].inactive();
+        }
+    }
+    clearAllLine(){
+        for(var i = 0;i < COMETLine.length;i++){
+            COMETLine[i].inactive();
+        }
     }
 }
 
@@ -329,17 +470,40 @@ const LinePatern = [
     //65
     [[306,48],[306,80]],
 ];
+var InstructionfetchCycle = [
+    [1,2],
+    [0],
+    [0,11],
+    [61,60,12,14,38],
+    [1,2],
+    [0],
+    [0,12],
+    [62,60,12,14,38],
+    [63,64],
+];
 
-
+/**
+ *
+ *
+ * @class Cometp5Line
+ */
 class Cometp5Line{
+    /** @member {number} */
+    id = 0;
+    /** @member {booleam} disable*/
+    disable = true;
     /**
      *Creates an instance of Cometp5Line.
      * @param {number} id - Line id
      * @memberof Cometp5Line
      */
     constructor(id){
+        /** @member {number} id*/
         this.id = id;
+        /** @member {color} color*/
         this.color = color(0,0,0);
+        /** @member {booleam} disable*/
+        this.disable = true;
     }
     /**
      *
@@ -359,9 +523,19 @@ class Cometp5Line{
     setColor(col){
         this.color = col;
     }
+    /**
+     * Lineをアクティブ(赤色)にする
+     * 
+     * @memberof Cometp5Line
+     */
     active(){
         this.color = color(255,0,0);
     }
+    /**
+     * Lineを非アクティブ(黒色)にする
+     *
+     * @memberof Cometp5Line
+     */
     inactive(){
         this.color = color(0,0,0);
     }
@@ -371,12 +545,8 @@ let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
 var GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
 
-//$(document).ready(function () {}
 // setup comet2の初期描画
 function setup(){
-    //alert(document.getElementById('canvas').clientHeight);
-    //alert(document.getElementById('canvas').clientWidth);
-
     let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height()*2);
     canvas.parent('canvas');
     MAR = new Block(70,30,36,18,"MAR");
@@ -467,12 +637,9 @@ function draw(){
     vertex(60,170);
     endShape();
     COMETLine.forEach(element => {
-        //stroke(255, 255, 0);
         element.draw();
-        //stroke(0, 0, 0);
     });
     fill(255);
-    //noStroke();
 }
 
 function registerCometSync(address){
@@ -484,6 +651,7 @@ function registerCometSync(address){
 function prCometSync(value){
     PR.setText(toHex(value));
 }
+let counter = 0;
 function mousePressed(){
 }
 

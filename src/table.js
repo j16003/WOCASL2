@@ -91,6 +91,13 @@ $(document).ready(function () {
     let stacktable = document.getElementById('Stacktable');
     let stackPosition = stacktable.rows[r_end].offsetTop;
     $(stack_Area).scrollTop(stackPosition);
+    $("#customSwitches").change(function() {
+        if($("#customSwitches").prop("checked")){
+            $("label#checkLabel").text("ON");
+        }else{
+            $("label#checkLabel").text("OFF");
+        }
+    });
     //input Modal hide Event
     $('#inputModal').on('hide.bs.modal',function(e){
         let inputdata = $('#input').val();;

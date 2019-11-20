@@ -71,6 +71,13 @@
             <i class="fas fa-stop fa-lg " aria-hidden="true"></i>
           </button>
           </li>
+          <li class="nav-item">  
+            <span class="badge badge-pill badge-default">COMETII Mode</span>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="customSwitches">
+              <label class="custom-control-label mr-2 text-light" for="customSwitches" id="checkLabel">OFF</label>
+            </div>
+          </li>
           <li class="nav-item">          
             <button type="button" class="btn btn-dark-green px-3" id="btnShare" data-toggle="tooltip" data-placement="bottom" title="URL Share" >
                 <i class="fas fa-external-link-alt"></i>
@@ -343,7 +350,42 @@ aria-hidden="true">
       </button>
     </div>
     <div class="modal-body">
-      Version 0.1.0
+        <div class="accordion" id="accordionMenu">
+            <div class="card z-depth-0 bordered">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+                    Version 0.2.0
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                data-parent="#accordionMenu">
+                <div class="card-body">
+                  releases date 2019/11/19
+                </div>
+              </div>
+            </div>
+            <div class="card z-depth-0 bordered">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                    data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Version 0.1.0
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionMenu">
+                <div class="card-body">
+                    <h4>WOCASL2ベータリリース</h4>
+                    <h5>WOCASL2とは？</h5>
+                    CASL2/COMET2のシュミレータです。
+                    releases date 2019/11/19
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

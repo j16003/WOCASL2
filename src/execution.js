@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', onLoadExe);
 var cometExecute = null;
+var COMETEmu = new CometEmulator();
 //cpu cycle
 const COMETCYCLE = 100;
 /**
@@ -98,6 +99,11 @@ function setEnableCaslButton(flag){
         $("#btnStop").prop("disabled", flag);
     }
 }
+function setExecuteButton(flag){
+    $("#btnStepBack").prop("disabled", flag);
+    $("#btnStepExecution").prop("disabled", flag);
+
+}
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
@@ -148,6 +154,7 @@ function onLoadExe() {
         /*for(i = 3;i != execute();){
             execute();
         }*/
+        setExecuteButton(true);
         cometExecuteStart();
     });
     // 「ステップ実行」ボタンの制御
@@ -161,6 +168,7 @@ function onLoadExe() {
     //
     document.querySelector('#btnStop').addEventListener('click', () => {
         cometExecuteStop();
+        setExecuteButton(false);
     });
 
 }
@@ -730,7 +738,12 @@ function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
     let length;
-
+    if($("#customSwitches").prop("checked")){
+        if(COMETEmu.execute()){
+            return 0;
+        }
+        COMETEmu.reset();
+    }
     beforePC = pr;
     switch (literal){
         case "LD":
