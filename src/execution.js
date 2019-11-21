@@ -163,6 +163,23 @@ function onLoadExe() {
         cometExecuteStop();
     });
 
+    $(document).keydown(function(e){
+
+        switch (e.keyCode){
+            case 13://Enter
+                $("#btnStepExecution").click();
+                break;
+            case 8://Back Space
+                $("#btnStepBack").click();
+                break;
+            case 113://F2
+                $("#btnReset").click();
+                break;
+            case 115://F4
+                $("#btnAssemble").click();
+                break;
+        }
+    });
 }
 
 function cometExecuteStart(){
@@ -1229,3 +1246,4 @@ function wordcode(value){
             return 0;
     }
 }
+
