@@ -38,7 +38,8 @@ $(document).ready(function () {
         '<td>0</td>'+
         '<td>0000 0000 0000 0000</td>'+
         '<td> </td>'+
-        '<td hidden> </td></tr>';
+        '<td hidden> </td>'+
+        '<td hidden>1</td></tr>';
         //var trJQ_r = $('</tr>').appendTo(tableJQ);
         //0
         /*$('<td>' + r000 + '</td>').appendTo(trJQ_r);
@@ -533,6 +534,30 @@ function memoryLabelGet(address){
 }
 
 /**
+ * memoryLengthSet MemorytableのLengthを書き換える
+ *
+ * @param {number} address - 値を入れたいメモリのアドレス
+ * @param {number} value - メモリに設定したい値
+ */
+function memoryLengthSet(address,value){
+    let table = document.getElementById('Memorytable');
+    if(address >= 0 && address < memoryTableMaxRow){
+        table.rows[ address ].cells[ 8 ].firstChild.data = value;
+    }
+}
+
+/**
+ * memoryLengthGet MemorytableのLengthを取得
+ *
+ * @param {number} address - 値を取得したいメモリのアドレス
+ * @returns
+ */
+function memoryLengthGet(address){
+    let table = document.getElementById('Memorytable');
+    return table.rows[ address ].cells[ 8 ].firstChild.data;
+}
+
+/**
  * memoryHexGet Memorytableの16進数の値を取得する
  *
  * @param {number} address - 値を取得したいメモリのアドレス
@@ -883,6 +908,7 @@ function ajaxJsonToMemoryMap(obj){
             memoryAllSet(address,element.Code);
             memoryLiteralSet(address,element.Token.Literal);
             memoryLineSet(address,element.Token.Line);
+            memoryLengthSet(address,element.Length);
             if(element.Label != undefined){
                 memoryLabelSet(address,element.Label.Label);
             }
@@ -968,6 +994,7 @@ function initMemoryRegister(){
         memoryLabelSet(i,i);
         memoryAllSet(i,0);
         memoryLiteralSet(i,"");
+        memoryLengthSet(i,1);
     }
     for(i = 0 ; i < stackTableMaxRow ; i++){
         stackAllSet(0xFFFF-i,0);
