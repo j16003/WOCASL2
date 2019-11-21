@@ -119,7 +119,7 @@ class opcodeBlock extends Block{
 
 class registerBlock extends Block{
     constructor(x,y,label){
-        super(x,y,9,18,label);
+        super(x,y,10,18,label);
         this.str = "0";
         
     }
