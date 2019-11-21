@@ -701,7 +701,6 @@ function cometCALL(pr){
 }
 
 function cometRET(pr){
-    StepBackControler.setStep(new StepStruct(null));
     let sp = registerUdecGet(9);
     let address =stackUdecGet(sp)
     

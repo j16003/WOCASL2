@@ -888,7 +888,7 @@ function ajaxJsonToMemoryMap(obj){
             address += element.Length;
         });
         
-        setEnableCaslButton(false);
+        
         if(obj["warning"]){
             let jsonparsewarning = JSON.parse(obj["warning"]);
             jsonparsewarning.forEach(element => {
@@ -1013,7 +1013,10 @@ function successModal(message){
     }
     $('#successModal').on('shown.bs.modal',function(){
         $('#okButton2').trigger('focus');
-    })
+    });
+    $('#successModal').on('hidden.bs.modal',function (e) {
+        setEnableCaslButton(false);
+    });
     $('#successModal').find('.modal-title').text("Success");
     $('#successModal').find('.modal-body').html(message);
     $('#successModal').modal('show');
