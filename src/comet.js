@@ -131,9 +131,8 @@ class opcodeBlock extends Block{
 
 class registerBlock extends Block{
     constructor(x,y,label){
-        super(x,y,9,18,label);
+        super(x,y,12,18,label);
         this.str = "0";
-        
     }
     setLabel(label){
         this.label = label;
@@ -213,13 +212,15 @@ class CometEmulator{
                         PR.active();
                         MDR.active();
                         MDR.setText(toHex(memoryUdecGet(prUdecGet())));
+                        prValueSet(prUdecGet()+1);
+                        PR.setText(toHex((prUdecGet())));
                         this.nextLineActive();
                     break;
                     case 3:
                     MAR.inactive();
                     PR.inactive();
-                    IRLabel[1].active();
-                    IRLabel[1].setText(MDR.getText());
+                    IRLabel[0].active();
+                    IRLabel[0].setText(MDR.getText());
                     this.nextLineActive();
                     //TODO debug mode
                     this.mode = 2;
@@ -242,15 +243,16 @@ class CometEmulator{
                     break;
                     case 6:
                         PR.active();
-                        PR.setText(toHex((prUdecGet()+1)));
+                        MDR.setText(toHex(memoryUdecGet(prUdecGet()+1)));
+                        prValueSet(prUdecGet()+1);
+                        PR.setText(toHex((prUdecGet())));
                         MAR.active();
                         MDR.active();
-                        MDR.setText(toHex(memoryUdecGet(prUdecGet()+1)));
                         this.nextLineActive();
                     break;
                     case 7:
-                        IRLabel[0].active();
-                        IRLabel[0].setText(MDR.getText());
+                        IRLabel[1].active();
+                        IRLabel[1].setText(MDR.getText());
                         PR.inactive();
                         MAR.inactive();
                         this.nextLineActive();
@@ -267,9 +269,22 @@ class CometEmulator{
                         MDR.inactive();
                         IRLabel[0].active();
                         IRLabel[1].active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        r2.active();
+                        adr.active();
+                        Opcode.setText(IRLabel[0].getText()[1]+IRLabel[0].getText()[2]);
+                        r1.setText(IRLabel[0].getText()[3]);
+                        r2.setText(IRLabel[0].getText()[4]);
+                        adr.setText(IRLabel[1].getText());
                         this.nextLineActive();
                     break;
                     case 9:
+                        IRLabel[0].inactive();
+                        IRLabel[1].inactive();
+                        adr.inactive();
+                        Controler.setText(memoryLiteralGet())
                         this.nextLineActive();
                     break;
                     default:
@@ -474,12 +489,13 @@ var InstructionfetchCycle = [
     [1,2],
     [0],
     [0,11],
-    [61,60,12,14,38],
+    [62,60,12,14,38],
     [1,2],
     [0],
     [0,12],
-    [62,60,12,14,38],
+    [61,60,12,14,38],
     [63,64],
+    [],
 ];
 
 /**
@@ -557,8 +573,8 @@ function setup(){
     FR = new frBlock(130,170,"FR");
     Opcode = new opcodeBlock(280,100,"");
     r1 = new registerBlock(298,100,"");
-    r2 = new registerBlock(307,100,"");
-    adr = new addressBlock(320,100,"");
+    r2 = new registerBlock(310,100,"");
+    adr = new addressBlock(325,100,"");
     Decoder = new decoderBlock(270,80,"Decoder");
     Controler = new controlerBlock(270,160,"Controler");
     for(var i = 0;i < 8;i++){
@@ -654,4 +670,5 @@ function prCometSync(value){
 let counter = 0;
 function mousePressed(){
 }
+
 

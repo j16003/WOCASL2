@@ -171,6 +171,23 @@ function onLoadExe() {
         setExecuteButton(false);
     });
 
+    $(document).keydown(function(e){
+
+        switch (e.keyCode){
+            case 13://Enter
+                $("#btnStepExecution").click();
+                break;
+            case 8://Back Space
+                $("#btnStepBack").click();
+                break;
+            case 113://F2
+                $("#btnReset").click();
+                break;
+            case 115://F4
+                $("#btnAssemble").click();
+                break;
+        }
+    });
 }
 
 function cometExecuteStart(){
@@ -692,7 +709,6 @@ function cometCALL(pr){
 }
 
 function cometRET(pr){
-    StepBackControler.setStep(new StepStruct(null));
     let sp = registerUdecGet(9);
     let address =stackUdecGet(sp)
     
@@ -1242,3 +1258,4 @@ function wordcode(value){
             return 0;
     }
 }
+
