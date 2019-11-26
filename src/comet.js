@@ -49,6 +49,11 @@ class Block{
         this.labelY = y+4;
     }
 
+    /**
+     *
+     *
+     * @memberof Block
+     */
     draw(){
         rectMode(CORNER);
         rect(this.x, this.y,this.bwidth, this.bheight);
@@ -64,113 +69,269 @@ class Block{
     }
 }
 
+/**
+ *
+ *
+ * @class frBlock
+ * @extends {Block}
+ */
 class frBlock extends Block{
     constructor(x,y,label){
         super(x,y,36-9,18,label);
         this.str = "000";
         
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof frBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof frBlock
+     */
     setText(str){
         this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof frBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
     }
 }
 
+/**
+ *
+ *
+ * @class MDRBlock
+ * @extends {Block}
+ */
 class MDRBlock extends Block{
     constructor(x,y,bwidth,bheight,label){
         super(x,y,bwidth,bheight,label);
         this.str = "FFFF";
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof MDRBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof MDRBlock
+     */
     setText(str){
         this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof MDRBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x-18;
         this.labelY = y;
     }
 }
 
+/**
+ *
+ *
+ * @class opcodeBlock
+ * @extends {Block}
+ */
 class opcodeBlock extends Block{
     constructor(x,y,label){
         super(x,y,36-18,18,label);
         this.str = "00";
         
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof opcodeBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof opcodeBlock
+     */
     setText(str){
             this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof opcodeBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
     }
 }
 
+/**
+ *
+ *
+ * @class registerBlock
+ * @extends {Block}
+ */
 class registerBlock extends Block{
     constructor(x,y,label){
         super(x,y,10,18,label);
         this.str = "0";
         
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof registerBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof registerBlock
+     */
     setText(str){
             this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof registerBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
     }
 }
 
+/**
+ *
+ *
+ * @class addressBlock
+ * @extends {Block}
+ */
 class addressBlock extends Block{
     constructor(x,y,label){
         super(x,y,36,18,label);
         this.str = "0000";
         
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof addressBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof addressBlock
+     */
     setText(str){
             this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof addressBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
     }
 }
 
+/**
+ *
+ *
+ * @class decoderBlock
+ * @extends {Block}
+ */
 class decoderBlock extends Block{
     constructor(x,y,label){
         super(x,y,100,60,label);
         this.str = "";
         this.setLabelPosition(x+9,y+18);
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof decoderBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof decoderBlock
+     */
     setText(str){
             this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof decoderBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
     }
 }
 
+/**
+ *
+ *
+ * @class controlerBlock
+ * @extends {Block}
+ */
 class controlerBlock extends Block{
     /**
      *Creates an instance of controlerBlock.
@@ -184,12 +345,31 @@ class controlerBlock extends Block{
         this.str = "";
         this.setLabelPosition(x+9,y+18);
     }
+    /**
+     *
+     *
+     * @param {string} label
+     * @memberof controlerBlock
+     */
     setLabel(label){
         this.label = label;
     }
+    /**
+     *
+     *
+     * @param {string} str
+     * @memberof controlerBlock
+     */
     setText(str){
             this.str = str;
     }
+    /**
+     *
+     *
+     * @param {number} x
+     * @param {number} y
+     * @memberof controlerBlock
+     */
     setLabelPosition(x,y){
         this.labelX = x;
         this.labelY = y;
@@ -331,6 +511,11 @@ const LinePatern = [
 ];
 
 
+/**
+ *
+ *
+ * @class Cometp5Line
+ */
 class Cometp5Line{
     /**
      *Creates an instance of Cometp5Line.
@@ -356,12 +541,28 @@ class Cometp5Line{
         endShape();
         stroke(color(0,0,0));
     }
+    /**
+     *
+     *
+     * @param {string} col
+     * @memberof Cometp5Line
+     */
     setColor(col){
         this.color = col;
     }
+    /**
+     *
+     *
+     * @memberof Cometp5Line
+     */
     active(){
         this.color = color(255,0,0);
     }
+    /**
+     *
+     *
+     * @memberof Cometp5Line
+     */
     inactive(){
         this.color = color(0,0,0);
     }
@@ -371,11 +572,12 @@ let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
 var GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
 
-//$(document).ready(function () {}
-// setup comet2の初期描画
+
+/**
+ *setup comet2の初期描画
+ *
+ */
 function setup(){
-    //alert(document.getElementById('canvas').clientHeight);
-    //alert(document.getElementById('canvas').clientWidth);
 
     let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height()*2);
     canvas.parent('canvas');
@@ -405,19 +607,13 @@ function setup(){
 }
 
 var inc = 0;
+/**
+ *
+ *
+ */
 function draw(){
     background(255);
-    //MAR.setText();
-    /*for(let l = 0;l<=200;l++){
-        if(l%5==0){
-            stroke(color(255,204,0));
-        }else{
-            stroke(color(0,0,0));
-        }
-        line(0,l*10,1000,l*10);
-        line(l*10,0,l*10,1000);
-    }
-    stroke(color(0,0,0));*/
+  
 
     text(str(frameCount),10,10);
     MAR.draw();
@@ -475,15 +671,24 @@ function draw(){
     //noStroke();
 }
 
+/**
+ * registerの値をComet内に反映させる
+ *
+ * @param {number} address
+ */
 function registerCometSync(address){
     if(address >= 0 && address <= 7){
         let registerval = registerHexGet(address);//.replace('#','');
         GR[address].setText(toHex(registerval));
     }
 }
+/**
+ * プログラムレジスタの値をCometに反映させる
+ *
+ * @param {number} value
+ */
 function prCometSync(value){
     PR.setText(toHex(value));
 }
-function mousePressed(){
-}
+
 
