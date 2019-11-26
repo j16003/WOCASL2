@@ -754,13 +754,15 @@ function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
     let length;
+    beforePC = pr;
+    //COMETII Mode On
     if($("#customSwitches").prop("checked")){
         if(COMETEmu.execute()){
             return 0;
         }
         COMETEmu.reset();
+        return 0;
     }
-    beforePC = pr;
     switch (literal){
         case "LD":
             length = cometLD(pr);

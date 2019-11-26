@@ -646,6 +646,7 @@ function overflowFlagSet(value){
         table.rows[ 1 ].cells[ 4 ].firstChild.data = 1;
         table.rows[ 1 ].cells[ 1 ].firstChild.data = '☆';
     }
+    flagRegisterCometSync();
 }
 
 
@@ -703,6 +704,7 @@ function signFlagSet(value){
         table.rows[ 1 ].cells[ 5 ].firstChild.data = 1;
         table.rows[ 1 ].cells[ 2 ].firstChild.data = '負';
     }
+    flagRegisterCometSync();
 }
 
 
@@ -733,6 +735,7 @@ function zeroFlagSet(value){
         table.rows[ 1 ].cells[ 6 ].firstChild.data = 1;
         table.rows[ 1 ].cells[ 3 ].firstChild.data = 'Zero';
     }
+    flagRegisterCometSync();
 }
 
 

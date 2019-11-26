@@ -202,6 +202,7 @@ class CometEmulator{
     execute(){
         console.log(this.mode,this.counter);
         this.clearAllLine();
+        this.clearAllBlock();
         this.activeAllLine(this.counter);
         switch(this.mode){
             case 1:
@@ -212,11 +213,12 @@ class CometEmulator{
                         PR.active();
                     break;
                     case 1:
-                        PR.inactive();
+                       MAR.active();
                     break;
                     case 2:
                         PR.active();
                         MDR.active();
+                        MAR.active();
                         this.address = prUdecGet();
                         MDR.setUdecNumber(memoryUdecGet(this.address));
                         MDR.setText(toHex(MDR.getUdecNumber()));
@@ -228,13 +230,16 @@ class CometEmulator{
 
                     break;
                     case 3:
-                    MAR.inactive();
-                    PR.inactive();
-                    IRLabel[0].active();
-                    IRLabel[0].setUdecNumber(MDR.getUdecNumber());
-                    IRLabel[0].setText(MDR.getText());
-                    //TODO debug mode
-                    this.mode = 2;
+                        MDR.active();
+                        IRLabel[0].active();
+                        IRLabel[0].setUdecNumber(MDR.getUdecNumber());
+                        IRLabel[0].setText(MDR.getText());
+                        if( memoryLengthGet(this.address) == 1){
+                            this.mode = 3;
+                            this.counter = 7;
+                        }else{
+                            this.mode = 2;
+                        }   
                     break;
                     default:
                         return 0;
@@ -248,29 +253,23 @@ class CometEmulator{
                         MAR.active();
                         MAR.setUdecNumber(PR.getUdecNumber());
                         MAR.setText(PR.getText());
-                        
                     break;
                     case 5:
-                        PR.inactive();
-                        
+                        MAR.active();
                     break;
                     case 6:
                         PR.active();
+                        MAR.active();
                         MDR.setUdecNumber(memoryUdecGet(prUdecGet()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
                         prValueSet(prUdecGet()+1);
                         PR.setText(toHex((prUdecGet())));
-                        MAR.active();
                         MDR.active();
-                        
                     break;
                     case 7:
                         IRLabel[1].active();
                         IRLabel[1].setUdecNumber(MDR.getUdecNumber());
                         IRLabel[1].setText(MDR.getText());
-                        PR.inactive();
-                        MAR.inactive();
-                        
                         this.mode = 3;
                     break;
                     default:
@@ -289,7 +288,10 @@ class CometEmulator{
                         r1.active();
                         r2.active();
                         adr.active();
+                        
                         Opcode.setText(IRLabel[0].getText()[1]+IRLabel[0].getText()[2]);
+                        Opcode.udecNumber = parseInt(Opcode.getText(),16);
+
                         r1.setText(IRLabel[0].getText()[3]);
                         r1.setUdecNumber(parseInt(IRLabel[0].getText()[3]));
                         r2.setText(IRLabel[0].getText()[4]);
@@ -299,12 +301,21 @@ class CometEmulator{
                        
                     break;
                     case 9:
-                        IRLabel[0].inactive();
-                        IRLabel[1].inactive();
-                        adr.inactive();
                         Controler.setText(memoryLiteralGet(this.address))
-                        
-                        this.mode = 4;
+                        Controler.active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        r2.active();
+                        if(memoryLengthGet(this.address)==1){
+                            this.opcodeToMode(Opcode.getUdecNumber());
+                        }else{
+                            if(r2.getUdecNumber() > 0){
+                                GR[r2.getUdecNumber()].active();
+                                GRLabel[r2.getUdecNumber()].active();
+                            }
+                            this.mode = 4;
+                        }   
                     break;
                     default:
                         return 0;
@@ -314,21 +325,19 @@ class CometEmulator{
             case 4:
                 switch(this.counter){
                     case 10:
-                        Decoder.inactive();
-                        Opcode.inactive();
                         adr.active();
-                        r1.inactive();
                         r2.active();
                         Controler.active();
-                        
                     break;
                     case 11:
                         Adder.active();
+                        adr.active();
                         MARunder.active();
+                        Controler.active();
+                        r2.active()
                         MARunder.setUdecNumber(adr.getUdecNumber());
                         MARunder.setText(adr.getText());
-                        
-                        this.mode = 5;
+                        this.opcodeToMode(Opcode.getUdecNumber());
                     break;
                     default:
                         return 0;
@@ -342,25 +351,79 @@ class CometEmulator{
                         MAR.active();
                         MAR.setUdecNumber(MARunder.getUdecNumber());
                         MAR.setText(MARunder.getText());
-                        adr.inactive();
-                        Adder.inactive();
-                        r2.inactive();
                         Controler.active();
                     break;
                     case 13:
-                        MARunder.inactive();
+                        Controler.active();
+                        MAR.active();
                     break;
                     case 14:
                         MAR.active();
                         MDR.active();
+                        Controler.active();
                         MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
                     break;
                     case 15:
                         FR.active();
+                        ALU.active();
+                        Controler.active();
+                        Decoder.active();
                         GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        
                         registerAllSet(r1.getUdecNumber(),MDR.getUdecNumber());
                         this.registerALUActiveLine(r1.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //LD GR,GR
+            case 6:
+                switch(this.counter){
+                    case 16:
+                        r1.active();
+                        COMETLine[38-r2.getUdecNumber()].active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        ALU.active();
+                        FR.active();
+                        signFlagSet(registerUdecGet(r1.getUdecNumber()));
+                        zeroFlagSet(registerUdecGet(r1.getUdecNumber()));
+                    break;
+                    case 17:
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        FR.active();
+                        this.registerControlActiveLine(r2.getUdecNumber());
+                        registerAllSet(r2.getUdecNumber(),registerUdecGet(r1.getUdecNumber()));
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+            break;
+            //ST GR1,Addr
+            case 7:
+                switch(this.counter){
+                    case 18:
+                        MAR.active();
+                        MARunder.active();
+                        MDR.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                    break;
+                    case 19:
+                        MAR.active();
+                        MDR.active();
+                        r1.active();
+                        Controler.active();
+                    break;
+                    //TODO memoryに値格納
+                    case 20:
+                        memoryAllSet(registerUdecGet(r1.getUdecNumber()),adr.getUdecNumber());
                     break;
                     default:
                         return 0;
@@ -391,6 +454,13 @@ class CometEmulator{
         };
         COMETLine[37-gr].active();
     }
+    registerControlActiveLine(gr){
+        let n = 47 - gr;
+        for(var i=39;i < n;i++){
+            COMETLine[i].active();
+        }
+        COMETLine[54-gr].active();
+    }
     prevClearLine(line){
         for(var i = 0;i < InstructionfetchCycle[line].length;i++){
             COMETLine[InstructionfetchCycle[line][i]].inactive();
@@ -405,6 +475,47 @@ class CometEmulator{
         for(var i = 0;i < COMETLine.length;i++){
             COMETLine[i].inactive();
         }
+    }
+    clearAllBlock(){
+        ALU.inactive();
+        MAR.inactive();
+        MARunder.inactive();
+        MDR.inactive();
+        PR.inactive();
+        SP.inactive();
+        FR.inactive();
+        Opcode.inactive();
+        r1.inactive();
+        r2.inactive();
+        adr.inactive();
+        Decoder.inactive();
+        Controler.inactive();
+        Adder.inactive();
+        ALU.inactive();
+        for(var i = 0;i < GR.length;i++){
+            GR[i].inactive();
+            GRLabel[i].inactive();
+        }
+        IRLabel[0].inactive();
+        IRLabel[1].inactive();
+    }
+    opcodeToMode(op){
+        switch (op){
+            case 0x10:
+                this.mode = 5;
+            break;
+            case 0x11:
+                this.mode = 7;
+                this.counter = 17;
+            break;
+            case 0x14:
+                this.mode = 6;
+                this.counter = 15;
+            break;
+            default:
+                alert(op);
+            break;
+        }  
     }
 }
 
@@ -451,6 +562,26 @@ class AdderBlock extends Block{
         vertex(120, 90);
         endShape();
         stroke(0);
+    }
+}
+class ALUBlock extends Block{
+    constructor(){
+        super(0,0,0,0,"");
+    }
+    draw(){
+        stroke(this.color);
+        beginShape();
+        vertex(60,170);
+        vertex(80,170);
+        vertex(90,200);
+        vertex(100,170);
+        vertex(120,170);
+        vertex(120,200);
+        vertex(100,220);
+        vertex(80,220);
+        vertex(60,200);
+        vertex(60,170);
+        endShape();
     }
 }
 
@@ -602,8 +733,13 @@ var InstructionfetchCycle = [
     [16,58,59],         //11
     [7],                //12
     [0],                //13
-    [11],               //14
+    [0,11],             //14
     [9,10,13,14,15],    //15
+    [15,20,21],         //16
+    [13,14,15,38],      //17
+    [18,19,21],         //18
+    [0],
+    [],
 ];
 
 /**
@@ -635,14 +771,16 @@ class Cometp5Line{
      * @memberof Cometp5Line
      */
     draw(){
-        stroke(this.color);
-        noFill();
-        beginShape();
-        LinePatern[this.id].forEach(element => {
-            vertex(element[0],element[1]);
-        });
-        endShape();
-        stroke(color(0,0,0));
+        if(this.disable){
+            stroke(this.color);
+            noFill();
+            beginShape();
+            LinePatern[this.id].forEach(element => {
+                vertex(element[0],element[1]);
+            });
+            endShape();
+            stroke(color(0,0,0));
+        }
     }
     setColor(col){
         this.color = col;
@@ -663,9 +801,12 @@ class Cometp5Line{
     inactive(){
         this.color = color(0,0,0);
     }
+    enable(flag){
+        this.enable = flag;
+    }
 }
 
-let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler,Adder;
+let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler,Adder,ALU;
 var GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
 
@@ -686,6 +827,7 @@ function setup(){
     Decoder = new decoderBlock(270,80,"Decoder");
     Controler = new controlerBlock(270,160,"Controler");
     Adder = new AdderBlock();
+    ALU = new ALUBlock();
     for(var i = 0;i < 8;i++){
         GR.push(new Block(180,114+18*i,36,18,""));
         GRLabel.push(new Block(216,114+18*i,27,18,""));
@@ -738,18 +880,7 @@ function draw(){
     //Adder
     Adder.draw();
     //ALU
-    beginShape();
-    vertex(60,170);
-    vertex(80,170);
-    vertex(90,200);
-    vertex(100,170);
-    vertex(120,170);
-    vertex(120,200);
-    vertex(100,220);
-    vertex(80,220);
-    vertex(60,200);
-    vertex(60,170);
-    endShape();
+    ALU.draw();
     COMETLine.forEach(element => {
         element.draw();
     });
@@ -760,7 +891,12 @@ function registerCometSync(address){
     if(address >= 0 && address <= 7){
         let registerval = registerHexGet(address);//.replace('#','');
         GR[address].setText(toHex(registerval));
+        GR[address].setUdecNumber(registerval);
     }
+}
+function flagRegisterCometSync(){
+    let f = overflowFlagGet().toString() + signFlagGet().toString() + zeroFlagGet().toString();
+    FR.setText(f);
 }
 function prCometSync(value){
     PR.setText(toHex(value));
