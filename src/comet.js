@@ -987,7 +987,7 @@ let COMETLine = [];
 
 // setup comet2の初期描画
 function setup(){
-    let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height()*2);
+    let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height());
     canvas.parent('canvas');
     MAR = new Block(70,30,36,18,"MAR");
     MARunder = new Block(70,60,36,18,"");
