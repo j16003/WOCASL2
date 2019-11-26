@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', onLoadExe);
 var cometExecute = null;
+var COMETEmu = new CometEmulator();
 //cpu cycle
 const COMETCYCLE = 100;
 /**
@@ -55,32 +56,31 @@ class StepBackControl{
     removeStep(){
         if(this.stepBackArray.length > 0){
         
-        let struct = this.stepBackArray.pop();
-        let flagtable = document.getElementById("Flagtable");
-        for(var i=3;i<=9;i++){
-            registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
-        }
-        prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
-        if(struct.stack != null){
-            if(struct.stack > 0){
-                stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#00FF00');
-                stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
-            }else{
-                stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#66FFFF');
-                stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+            let struct = this.stepBackArray.pop();
+            let flagtable = document.getElementById("Flagtable");
+            for(var i=3;i<=9;i++){
+                registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
             }
-            registerAllSet(9,registerUdecGet(9)+struct.stack)
+            prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
+            if(struct.stack != null){
+                if(struct.stack > 0){
+                    stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#00FF00');
+                    stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+                }else{
+                    stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#66FFFF');
+                    stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+                }
+                registerAllSet(9,registerUdecGet(9)+struct.stack)
+            }
+            if(struct.memory != null){
+                struct.memory.forEach(element => {
+                    memoryAllSet(element.first,element.second);
+                });
+            }
+            for(var i = 0; i < 7; i++){
+                flagtable.rows[1].cells[i].firstChild.data = struct.flag.rows[1].cells[i].firstChild.data;
+            }
         }
-        if(struct.memory != null){
-            struct.memory.forEach(element => {
-                memoryAllSet(element.first,element.second);
-            });
-        }
-        for(var i=0;i<7;i++){
-            flagtable.rows[1].cells[i].firstChild.data = struct.flag.rows[1].cells[i].firstChild.data;
-        }
-    }
-
     }
 }
 
@@ -97,6 +97,11 @@ function setEnableCaslButton(flag){
         $("#btnStepExecution").prop("disabled", flag);
         $("#btnStop").prop("disabled", flag);
     }
+}
+function setExecuteButton(flag){
+    $("#btnStepBack").prop("disabled", flag);
+    $("#btnStepExecution").prop("disabled", flag);
+
 }
 function onLoadExe() {
     // フッター領域
@@ -148,6 +153,7 @@ function onLoadExe() {
         /*for(i = 3;i != execute();){
             execute();
         }*/
+        setExecuteButton(true);
         cometExecuteStart();
     });
     // 「ステップ実行」ボタンの制御
@@ -161,10 +167,32 @@ function onLoadExe() {
     //
     document.querySelector('#btnStop').addEventListener('click', () => {
         cometExecuteStop();
+        setExecuteButton(false);
     });
+    //ショートカットキーの制御
+    $(document).keydown(function(e){
 
+        switch (e.keyCode){
+            case 13://Enter
+                $("#btnStepExecution").click();
+                break;
+            case 8://Back Space
+                $("#btnStepBack").click();
+                break;
+            case 113://F2
+                $("#btnReset").click();
+                break;
+            case 115://F4
+                $("#btnAssemble").click();
+                break;
+        }
+    });
 }
 
+/**
+ *
+ *
+ */
 function cometExecuteStart(){
     cometExecuteStop();
     cometExecute = setInterval(() => {
@@ -684,7 +712,6 @@ function cometCALL(pr){
 }
 
 function cometRET(pr){
-    StepBackControler.setStep(new StepStruct(null));
     let sp = registerUdecGet(9);
     let address =stackUdecGet(sp)
     
@@ -730,8 +757,15 @@ function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
     let length;
-
     beforePC = pr;
+    //COMETII Mode On
+    if($("#customSwitches").prop("checked")){
+        if(COMETEmu.execute()){
+            return 0;
+        }
+        COMETEmu.reset();
+        return 0;
+    }
     switch (literal){
         case "LD":
             length = cometLD(pr);
@@ -1229,3 +1263,4 @@ function wordcode(value){
             return 0;
     }
 }
+
