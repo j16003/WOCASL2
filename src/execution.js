@@ -56,32 +56,31 @@ class StepBackControl{
     removeStep(){
         if(this.stepBackArray.length > 0){
         
-        let struct = this.stepBackArray.pop();
-        let flagtable = document.getElementById("Flagtable");
-        for(var i=3;i<=9;i++){
-            registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
-        }
-        prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
-        if(struct.stack != null){
-            if(struct.stack > 0){
-                stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#00FF00');
-                stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
-            }else{
-                stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#66FFFF');
-                stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+            let struct = this.stepBackArray.pop();
+            let flagtable = document.getElementById("Flagtable");
+            for(var i=3;i<=9;i++){
+                registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
             }
-            registerAllSet(9,registerUdecGet(9)+struct.stack)
+            prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
+            if(struct.stack != null){
+                if(struct.stack > 0){
+                    stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#00FF00');
+                    stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+                }else{
+                    stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#66FFFF');
+                    stackTableRowColorSet(registerUdecGet(9),'#FFFFFF');
+                }
+                registerAllSet(9,registerUdecGet(9)+struct.stack)
+            }
+            if(struct.memory != null){
+                struct.memory.forEach(element => {
+                    memoryAllSet(element.first,element.second);
+                });
+            }
+            for(var i = 0; i < 7; i++){
+                flagtable.rows[1].cells[i].firstChild.data = struct.flag.rows[1].cells[i].firstChild.data;
+            }
         }
-        if(struct.memory != null){
-            struct.memory.forEach(element => {
-                memoryAllSet(element.first,element.second);
-            });
-        }
-        for(var i=0;i<7;i++){
-            flagtable.rows[1].cells[i].firstChild.data = struct.flag.rows[1].cells[i].firstChild.data;
-        }
-    }
-
     }
 }
 
@@ -170,7 +169,7 @@ function onLoadExe() {
         cometExecuteStop();
         setExecuteButton(false);
     });
-
+    //ショートカットキーの制御
     $(document).keydown(function(e){
 
         switch (e.keyCode){
@@ -190,6 +189,10 @@ function onLoadExe() {
     });
 }
 
+/**
+ *
+ *
+ */
 function cometExecuteStart(){
     cometExecuteStop();
     cometExecute = setInterval(() => {
