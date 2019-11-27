@@ -124,14 +124,14 @@ $(document).ready(function () {
 $(window).on('load resize', function(){
         let headerHeight = $('#header_fixed').height();
         let scrennheight = document.body.clientHeight - headerHeight;
+        $('#comet_area').height(350);
         if($('#register_area').height() < scrennheight/2){
             $('#memory_area').height(scrennheight/2+(scrennheight/2-$('#register_area').height()));
         }else{
             $('#memory_area').height(scrennheight-$('#register_area').height());
         }
         $('#input_area').height(scrennheight);
-        $('#stack_area').height(scrennheight/2-$('#flag_area').height());
-        $('#comet_area').height(scrennheight/2);
+        $('#stack_area').height(scrennheight-$('#flag_area').height()-$('#comet_area').height());
 });
 
 

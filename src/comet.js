@@ -318,7 +318,7 @@ class decoderBlock extends Block{
     }
     /**
      *
-     *
+     * 文字をセットする
      * @param {string} str
      * @memberof decoderBlock
      */
@@ -327,7 +327,7 @@ class decoderBlock extends Block{
     }
     /**
      *
-     *
+     * Labelのポジションをセットする
      * @param {number} x
      * @param {number} y
      * @memberof decoderBlock
@@ -339,21 +339,35 @@ class decoderBlock extends Block{
 }
 
 class CometEmulator{
+
+    /**
+     *Creates an instance of CometEmulator.
+     * @memberof CometEmulator
+     */
     constructor(){
         this.counter = 0;
         this.address = 0;
         //mode 1: 命令取りだしサイクル,2: 命令取り出しサイクル2語,3: 命令解読サイクル,4:アドレス生成,5: 実行命令
         this.mode = 1;
+        this.memoryLineEnable = false;
+        this.memoryLineAddress = memoryTableMaxRow-1;
     }
     reset(){
         this.counter = 0;
         this.mode = 1;
     }
+    /**
+     *
+     * COMET2実行
+     * @returns {number} 
+     * @memberof CometEmulator
+     */
     execute(){
         console.log(this.mode,this.counter);
         this.clearAllLine();
         this.clearAllBlock();
         this.activeAllLine(this.counter);
+        memoryTableRowColorSet(this.memoryLineAddress,"light");
         switch(this.mode){
             case 1:
                 switch (this.counter){
@@ -486,7 +500,10 @@ class CometEmulator{
                         Controler.active();
                         r2.active()
                         MARunder.setUdecNumber(adr.getUdecNumber());
-                        MARunder.setText(adr.getText());
+                        if(r2.getUdecNumber() > 0){
+                            MARunder.setUdecNumber(MARunder.getUdecNumber()+registerUdecGet(r2.getUdecNumber()));
+                        }
+                        MARunder.setText(toHex(MARunder.getUdecNumber()));
                         this.opcodeToMode(Opcode.getUdecNumber());
                     break;
                     default:
@@ -561,6 +578,10 @@ class CometEmulator{
                         MAR.active();
                         MARunder.active();
                         MDR.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        MDR.setText(GR[r1.getUdecNumber()].getText());
+                        MDR.setUdecNumber(GR[r1.getUdecNumber()].getUdecNumber())
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
                         Controler.active();
@@ -573,10 +594,89 @@ class CometEmulator{
                     break;
                     //TODO memoryに値格納
                     case 20:
-                        memoryAllSet(registerUdecGet(r1.getUdecNumber()),adr.getUdecNumber());
+                        MAR.active();
+                        MDR.active();
+                        r1.active();
+                        Controler.active();
+                        memoryAllSet(MAR.getUdecNumber(),registerUdecGet(r1.getUdecNumber()));
                     break;
                     default:
                         return 0;
+                }
+            break;
+            //LAD GR , Addr
+            case 8:
+                switch(this.counter){
+                    case 21:
+                        Controler.active();
+                        r1.active();
+                        MARunder.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        this.registerALUActiveLine(0);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        registerAllSet(r1.getUdecNumber(),MARunder.getUdecNumber());
+                        COMETLine[37].inactive();
+                    break;
+                    deafult:
+                        return 0;
+                }
+            break;
+            //ADDA GR1,Addr
+            case 9:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        Controler.active();
+                    break;
+                    case 25:
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        registerAllSet(r1.getUdecNumber(),registerUdecGet(r1.getUdecNumber())+MDR.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //ADDA GR , GR
+            case 10:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+
+                    break;
                 }
             break;
             }
@@ -621,11 +721,22 @@ class CometEmulator{
             COMETLine[InstructionfetchCycle[index][i]].active();
         }
     }
+    /**
+     * COMET2のLineをすべてinactive
+     *
+     * @memberof CometEmulator
+     */
     clearAllLine(){
         for(var i = 0;i < COMETLine.length;i++){
             COMETLine[i].inactive();
         }
+        this.memoryLineEnable = false;
     }
+    /**
+     * すべてのBlockをinactive
+     *
+     * @memberof CometEmulator
+     */
     clearAllBlock(){
         ALU.inactive();
         MAR.inactive();
@@ -658,9 +769,21 @@ class CometEmulator{
                 this.mode = 7;
                 this.counter = 17;
             break;
+            case 0x12:
+                this.mode = 8;
+                this.counter = 20;
+            break;
             case 0x14:
                 this.mode = 6;
                 this.counter = 15;
+            break;
+            case 0x20:
+                this.mode = 9;
+                this.counter = 21;
+            break;
+            case 0x24:
+                this.mode = 10;
+                this.counter = 26;
             break;
             default:
                 alert(op);
@@ -907,8 +1030,15 @@ var InstructionfetchCycle = [
     [15,20,21],         //16
     [13,14,15,38],      //17
     [18,19,21],         //18
-    [0],
-    [],
+    [0],                //19
+    [0,11],             //20
+    [8,19,21,38],       //21
+    [7],                //22
+    [0],                //23
+    [0,11],
+    [20,21,9,10],
+    [13,14,15,38],
+    [20,21],
 ];
 
 /**
@@ -987,7 +1117,7 @@ let COMETLine = [];
 
 // setup comet2の初期描画
 function setup(){
-    let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height()*2);
+    let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height());
     canvas.parent('canvas');
     MAR = new Block(51,30,45,18,"MAR");
     MARunder = new Block(51,60,45,18,"");
