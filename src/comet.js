@@ -90,7 +90,7 @@ class Block{
  */
 class frBlock extends Block{
     constructor(x,y,label){
-        super(x,y,36-9,18,label);
+        super(x,y,27,18,label);
         this.str = "000";
         
     }
@@ -121,7 +121,7 @@ class frBlock extends Block{
      */
     setLabelPosition(x,y){
         this.labelX = x;
-        this.labelY = y;
+        this.labelY = y+6;
     }
 }
 
@@ -1000,7 +1000,7 @@ const LinePatern = [
     //60
     [[149,90],[256,90],[256,150],[376,150],[376,109],[365,109]],
     //61
-    [[248,270],[382,270],[382,19],[335,19]],
+    [[248,270],[381,270],[381,19],[335,19]],
     //62
     [[335,19],[335,29]],
     //63
