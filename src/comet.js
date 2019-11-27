@@ -260,7 +260,7 @@ class registerBlock extends Block{
  */
 class addressBlock extends Block{
     constructor(x,y,label){
-        super(x,y,36,18,label);
+        super(x,y,45,18,label);
         this.str = "0000";
         
     }
@@ -303,7 +303,7 @@ class addressBlock extends Block{
  */
 class decoderBlock extends Block{
     constructor(x,y,label){
-        super(x,y,100,60,label);
+        super(x,y,108,60,label);
         this.str = "";
         this.setLabelPosition(x+9,y+18);
     }
@@ -881,19 +881,19 @@ const LinePatern = [
     //id 1
     [[0,39],[51,39]],
     //2
-    [[87,39],[149,39]],
+    [[97,39],[149,39]],
     //3
     [[149,39],[161,39]],
     //4
     [[149,39],[149,69],[161,69]],
     //5
-    [[182,30],[181,10],[31,10],[31,69]],
+    [[182,30],[182,10],[31,10],[31,69]],
     //6
     [[31,69],[51,69]],
     //7
     [[31,69],[31,115]],
     //8
-    [[71,48],[71,58]],
+    [[71,48],[71,60]],
     //9
     [[71,78],[71,128]],
     //10
@@ -998,9 +998,9 @@ const LinePatern = [
     //59
     [[149,90],[126,90]],
     //60
-    [[149,90],[256,90],[256,150],[370,150],[370,109],[356,109]],
+    [[149,90],[256,90],[256,150],[376,150],[376,109],[365,109]],
     //61
-    [[248,270],[376,270],[376,19],[335,19]],
+    [[248,270],[382,270],[382,19],[335,19]],
     //62
     [[335,19],[335,29]],
     //63
@@ -1139,8 +1139,8 @@ function setup(){
         GRLabel[i].setText("GR"+i);
         GR[i].setText(toHex(registerHexGet(i)));
     }
-    IRLabel.push(new Block(326-43,30,36,18,"IR"));
-    IRLabel.push(new Block(319,30,36,18,""));
+    IRLabel.push(new Block(326-52,30,45,18,"IR"));
+    IRLabel.push(new Block(319,30,45,18,""));
     for(var i=0;i<LinePatern.length;i++)
     COMETLine.push(new Cometp5Line(i));
     noLoop();
