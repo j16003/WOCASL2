@@ -64,7 +64,7 @@ class Block{
         stroke(this.color);
         rect(this.x, this.y,this.bwidth, this.bheight);
         stroke(0);
-        //textSize(9.6);
+        textSize(10.8);
         strokeWeight(0);
         fill(0);
         textAlign(LEFT,CENTER);
@@ -998,7 +998,7 @@ const LinePatern = [
     //59
     [[149,90],[126,90]],
     //60
-    [[149,90],[256,90],[256,150],[376,150],[376,109],[365,109]],
+    [[149,90],[256,90],[256,68],[376,68],[376,109],[365,109]],
     //61
     [[248,270],[381,270],[381,19],[335,19]],
     //62
@@ -1009,6 +1009,14 @@ const LinePatern = [
     [[335,48],[335,80]],
     //65
     [[299,48],[299,80]],
+    // enable line
+    //66 opcode->controler
+    [[278,118],[278,160]],
+    //67 r1
+    [[295,118],[295,145]],
+    //68 r2
+
+
 ];
 var InstructionfetchCycle = [
     [1,2],              //0

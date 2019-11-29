@@ -471,10 +471,11 @@ function memoryAllSet(address,value){
         memorySdecSet(address,value);
         memoryBinSet(address,value);
         memoryLabelLiteralSet(address,value);
+    }else if(address <= 0xFFFF && address >= 0xFFFF-stackTableMaxRow){
+        stackAllSet(address,value);
     }else{
         errorModal("メモリの最大数"+memoryTableMaxRow+"を超えました");
-    }
-    
+    }    
 }
 
 /**
@@ -576,10 +577,17 @@ function memoryHexGet(address){
  * @returns {number} - 符号なし10進数を返す
  */
 function memoryUdecGet(address){
-    let table = document.getElementById('Memorytable');
-    var v = table.rows[ address ].cells[ 3 ].firstChild.data;
-    v = parseInt(v, 10);
-    return v
+    if(address >= 0 && address < memoryTableMaxRow){
+        let table = document.getElementById('Memorytable');
+        var v = table.rows[ address ].cells[ 3 ].firstChild.data;
+        v = parseInt(v, 10);
+        return v
+    }else if(address <= 0xFFFF && address >= 0xFFFF-stackTableMaxRow){
+        return stackUdecGet(address);
+    }else{
+        errorModal("メモリの最大数"+memoryTableMaxRow+"を超えました");
+    }
+   
 }
 
 
