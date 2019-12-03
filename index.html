@@ -109,7 +109,8 @@
        <div id="memory_area" class="border border-primary rounded mb-0" ></div>
       <!--レジスタ表示-->
       <div id="register_area" class="border border-success rounded mb-0">
-          <table border="1" width="100%" id="Registertable" class="table-hover">
+          <table border="1" width="100%" id="Registertable" class="table-hover" table-bordered>
+              <thead class="thead-light">
               <tr bgcolor="#A6B3FF">
                 <th>Name</th>
                 <th>Hex</th>
@@ -117,6 +118,8 @@
                 <th>sDec</th>
                 <th colspan="3">Bin</th>
               </tr>
+              </thead>
+              <tbody>
               <tr bgcolor="#00BCD4">
                 <td>PR</td>
                 <td>#0000</td>
@@ -131,62 +134,63 @@
                   <td>-1</td>
                   <td colspan="3">1111 1111 1111 1111</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR0</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR1</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR2</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR3</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR4</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR5</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR6</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
-              <tr>
+              <tr class="table-light">
                   <td>GR7</td>
                   <td>#0000</td>
                   <td>0</td>
                   <td>0</td>
                   <td colspan="3">0000 0000 0000 0000</td>
               </tr>
+            </tbody>
             </table>
       </div>
     </div>
@@ -358,14 +362,22 @@ aria-hidden="true">
                 <h5 class="mb-0">
                   <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
                     aria-expanded="true" aria-controls="collapseOne">
-                    Version 0.1.9
+                    Version 0.1.10
                   </button>
                 </h5>
               </div>
               <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                 data-parent="#accordionMenu">
                 <div class="card-body">
-                  <h4>新着情報</h4>
+                    <h4>新着情報 version 0.1.10</h4>
+                    <ul>
+                      <li>プログラム実行時にレジスタが見やすくなるように色が付くようになった</li>
+                    </ul>
+                    <h4>バク修正</h4>
+                    <ul>
+                      <li>指標レジスタがGR0でも機能していた</li>
+                    </ul>
+                  <h4>前回情報 version 0.1.9</h4>
                   <ul>
                     <li>メモリテーブルの色の付き方を向上させた</li>
                     <li>ローカルからファイルを読み込むためのボタンを実装</li>
