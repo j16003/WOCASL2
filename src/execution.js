@@ -213,11 +213,13 @@ function cometLAD(pr){
     StepBackControler.setStep(new StepStruct(null));
     
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let addr = memoryUdecGet(pr+1);
-    registerAllSet(r1,addr+registerUdecGet(r2));
-    registerTableRowColorSet(r1,"primary");
+    if(parseInt(r2) > 0){
+        addr += registerUdecGet(r2);
+    }
+    registerAllSetAndColor(r1,addr,"primary");
     return 2;
 }
 
@@ -226,8 +228,8 @@ function cometLD(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     overflowFlagSet(0);
     if(op == '10'){
@@ -235,13 +237,13 @@ function cometLD(pr){
         if(parseInt(r2) > 0){
             addr += registerUdecGet(r2);
         }
-        registerAllSet(r1,memoryUdecGet(addr));
+        registerAllSetAndColor(r1,memoryUdecGet(addr),"primary");
         overflowFlagSet(0);
         zeroFlagSet(memoryUdecGet(addr));
         signFlagSet(memoryUdecGet(addr));
         return 2;
     }else{
-        registerAllSet(r1,registerUdecGet(r2));
+        registerAllSetAndColor(r1,registerUdecGet(r2),"primary");
         overflowFlagSet(0);
         zeroFlagSet(registerUdecGet(r2));
         signFlagSet(registerUdecGet(r2));
@@ -251,8 +253,8 @@ function cometLD(pr){
 
 function cometST(pr){
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let addr = memoryUdecGet(pr+1);
     if(parseInt(r2) > 0){
         addr += registerUdecGet(r2);
@@ -260,6 +262,7 @@ function cometST(pr){
     let mem = Array(new Pair(addr,memoryUdecGet(addr)));
     StepBackControler.setStep(new StepStruct (mem));
     memoryAllSet(addr,registerUdecGet(r1));
+
     return 2;
 }
 
@@ -267,22 +270,27 @@ function cometADDA(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '20'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerSdecGet(r1) + memorySdecGet(addr+registerUdecGet(r2));
-        registerAllSet(r1,ans);
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerSdecGet(r1) + memorySdecGet(addr);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofSdecFlagSet(ans);
         zeroFlagSet(ans);
         signFlagSet(ans);
         return 2;
     }else{
         ans = registerSdecGet(r1) + registerSdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofSdecFlagSet(ans);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -294,22 +302,27 @@ function cometSUBA(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '21'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
-        registerAllSet(r1,ans);
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerSdecGet(r1) - memorySdecGet(addr);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofSdecFlagSet(ans);
         zeroFlagSet(ans);
         signFlagSet(ans);
         return 2;
     }else{
         ans = registerSdecGet(r1) - registerSdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofSdecFlagSet(ans);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -321,22 +334,27 @@ function cometADDL(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '22'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerUdecGet(r1) + memoryUdecGet(addr+registerUdecGet(r2));
-        registerAllSet(r1,ans);
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerUdecGet(r1) + memoryUdecGet(addr);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofUdecFlagSet(ans);
         zeroFlagSet(ans);
         signFlagSet(ans);
         return 2;
     }else{
         ans = registerUdecGet(r1) + registerUdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofUdecFlagSet(ans);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -348,17 +366,21 @@ function cometSUBL(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0;
     let ans2 = 0; 
 
     if(op == '23'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerUdecGet(r1) - memoryUdecGet(addr+registerUdecGet(r2));
-        ans2 = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
-        registerAllSet(r1,ans);
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerUdecGet(r1) - memoryUdecGet(addr);
+        ans2 = registerSdecGet(r1) - memorySdecGet(addr);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofUdecFlagSet(ans2);
         zeroFlagSet(ans2);
         signFlagSet(ans2);
@@ -366,7 +388,8 @@ function cometSUBL(pr){
     }else{
         ans = registerUdecGet(r1) - registerUdecGet(r2);
         ans2 = registerSdecGet(r1) - registerSdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
+
         ofUdecFlagSet(ans2);
         zeroFlagSet(ans2);
         signFlagSet(ans2);
@@ -378,22 +401,26 @@ function cometAND(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '30'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerUdecGet(r1) & memoryUdecGet(addr+registerUdecGet(r2));
-        registerAllSet(r1,ans);
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerUdecGet(r1) & memoryUdecGet(addr);
+        registerAllSetAndColor(r1,ans,"primary");
+
         overflowFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
         return 2;
     }else{
         ans = registerUdecGet(r1) & registerUdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
         overflowFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -405,22 +432,25 @@ function cometOR(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '31'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerUdecGet(r1) | memoryUdecGet(addr+registerUdecGet(r2));
-        registerAllSet(r1,ans);
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerUdecGet(r1) | memoryUdecGet(addr);
+        registerAllSetAndColor(r1,ans,"primary");
         overflowFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
         return 2;
     }else{
         ans = registerUdecGet(r1) | registerUdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
         overflowFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -432,14 +462,17 @@ function cometXOR(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '32'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerUdecGet(r1) ^ memoryUdecGet(addr+registerUdecGet(r2));
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerUdecGet(r1) ^ memoryUdecGet(addr);
         registerAllSet(r1,ans);
         overflowFlagSet(0);
         zeroFlagSet(ans);
@@ -459,14 +492,17 @@ function cometCPA(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '40'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerSdecGet(r1) - memorySdecGet(addr+registerUdecGet(r2));
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerSdecGet(r1) - memorySdecGet(addr);
         ofSdecFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -484,14 +520,17 @@ function cometCPL(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let op=opcode[1]+opcode[2];
     let ans = 0; 
 
     if(op == '41'){
         let addr = memoryUdecGet(pr+1);
-        ans = registerUdecGet(r1) - memoryUdecGet(addr+registerUdecGet(r2));
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        ans = registerUdecGet(r1) - memoryUdecGet(addr);
         ofUdecFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -509,13 +548,16 @@ function cometSLA(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let ans = 0;
     let sign = 0; 
     let addr = memoryUdecGet(pr+1);
+    if(parseInt(r2) > 0){
+        addr += registerUdecGet(r2);
+    }
 
-    ans = registerSdecGet(r1) << (addr+registerUdecGet(r2));
+    ans = registerSdecGet(r1) << (addr);
     sign = registerSdecGet(r1) & 0x8000;
     if(sign == 0x8000){
         ans = ans | sign;
@@ -537,11 +579,14 @@ function cometSRA(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let ans = 0;
     let sign = 0; 
     let addr = memoryUdecGet(pr+1);
+    if(parseInt(r2) > 0){
+        addr += registerUdecGet(r2);
+    }
 
     ans = registerSdecGet(r1);
     sign = registerSdecGet(r1) & 0x8000;
@@ -550,8 +595,8 @@ function cometSRA(pr){
     }else{
         ans = ans & 0x0000FFFF;
     }
-    ans = registerSdecGet(r1) >> (addr+registerUdecGet(r2));
-    if((registerSdecGet(r1) >>> (addr+registerUdecGet(r2)-1)) & 0x0001 == 0x0001){
+    ans = registerSdecGet(r1) >> (addr);
+    if((registerSdecGet(r1) >>> (addr-1)) & 0x0001 == 0x0001){
         overflowFlagSet(1);
     }else{
         overflowFlagSet(0);
@@ -566,12 +611,14 @@ function cometSLL(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let ans = 0;
     let addr = memoryUdecGet(pr+1);
-
-    ans = registerSdecGet(r1) << (addr+registerUdecGet(r2));
+    if(parseInt(r2) > 0){
+        addr += registerUdecGet(r2);
+    }
+    ans = registerSdecGet(r1) << (addr);
     if((ans & 0x10000) == 0x10000){
         overflowFlagSet(1);
     }else{
@@ -588,14 +635,16 @@ function cometSRL(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
-    let r2 = opcode[4];
+    let r1 = parseInt(opcode[3]);
+    let r2 = parseInt(opcode[4]);
     let ans = 0;
     let addr = memoryUdecGet(pr+1);
-
+    if(parseInt(r2) > 0){
+        addr += registerUdecGet(r2);
+    }
     ans = registerSdecGet(r1) & 0x0000FFFF;
-    ans = ans >>> (addr+registerUdecGet(r2));
-    if((registerSdecGet(r1) >>> (addr+registerUdecGet(r2)-1)) & 0x0001 == 0x0001){
+    ans = ans >>> (addr);
+    if((registerSdecGet(r1) >>> (addr-1)) & 0x0001 == 0x0001){
         overflowFlagSet(1);
     }else{
         overflowFlagSet(0);
@@ -610,9 +659,12 @@ function cometJUMP(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r2 = opcode[4];
-    let addr = memoryUdecGet(pr+1);
-    let address = addr+registerUdecGet(r2);
+    let r2 = parseInt(opcode[4]);
+    let address = memoryUdecGet(pr+1);
+    if(parseInt(r2) > 0){
+        address += registerUdecGet(r2);
+    }
+    
     if(address > memoryTableMaxRow){
         errorModal("実行時エラー：<br>分岐命令で異常な値を検知しました。</br>"+pr+"行目の命令");
         return 0;
@@ -666,9 +718,11 @@ function cometPUSH(pr){
     let stepstruct = new StepStruct(null);
     
     let opcode = memoryHexGet(pr);
-    let r2 = opcode[4];
-    let addr = memoryUdecGet(pr+1);
-    let address = addr+registerUdecGet(r2);
+    let r2 = parseInt(opcode[4]);
+    let address = memoryUdecGet(pr+1);
+    if(parseInt(r2) > 0){
+        address += registerUdecGet(r2);
+    }
     let sp = registerUdecGet(9);
     stepstruct.setStack(1);
     sp -= 1;
@@ -684,7 +738,7 @@ function cometPOP(pr){
     let stepstruct = new StepStruct(null);
 
     let opcode = memoryHexGet(pr);
-    let r1 = opcode[3];
+    let r1 = parseInt(opcode[3]);
     let sp = registerUdecGet(9);
     let val = stackUdecGet(sp);
 
@@ -710,9 +764,11 @@ function cometCALL(pr){
     StepBackControler.setStep(new StepStruct(null));
 
     let opcode = memoryHexGet(pr);
-    let r2 = opcode[4];
-    let addr = memoryUdecGet(pr+1);
-    let address = addr+registerUdecGet(r2);
+    let r2 = parseInt(opcode[4]);
+    let address = memoryUdecGet(pr+1);
+    if(parseInt(r2) > 0){
+        address += registerUdecGet(r2);
+    }
     let sp = registerUdecGet(9);
     sp -= 1;
     stackAllSet(sp,pr+2);
@@ -768,6 +824,9 @@ function execute(){
     let literal = memoryLiteralGet(pr);
     let length;
     beforePC = pr;
+    for(let i=0;i<=7;i++){
+        registerTableRowColorSet(i,"light");
+    }
     //COMETII Mode On
     if($("#customSwitches").prop("checked")){
         if(COMETEmu.execute()){

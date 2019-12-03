@@ -282,6 +282,18 @@ function registerAllSet(address,value){
 }
 
 /**
+ * registerAllSetAndColor Registertableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
+ *
+ * @param {number} address - 値を入れたいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
+ * @param {number} value - レジスタに入れたい値
+ * @param {number} col - 変更を加えたレジスタの色
+ */
+function registerAllSetAndColor(address,value,col){ 
+    registerTableRowColorSet(address,col);
+    registerAllSet(address,value);
+}
+
+/**
  * registerHexGet Registertableの16進数の値を取得する
  *
  * @param {number} address - 値を取得したいレジスタ番号（0~7:レジスタ、8:PR、9:SP)
@@ -480,14 +492,14 @@ function memoryAllSet(address,value){
 }
 
 /**
- * memoryLabelSet Memorytableのラベルを書き換える
+ * memoryLabelLitetalSet Memorytableのラベルを書き換える
  *
  * @param {number} address - 値を入れたいメモリのアドレス
  * @param {string} value - メモリに設定したいリテラル
  */
 function memoryLabelLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
-    if($.isNumeric(table.rows[ address ].cells[ 1 ].firstChild.data) || table.rows[ address ].cells[ 1 ].firstChild.data[0] == '"'){
+    if($.isNumeric(table.rows[ address + 1  ].cells[ 1 ].firstChild.data) || table.rows[ address + 1 ].cells[ 1 ].firstChild.data[0] == '"'){
         if(hexToWord(value)==""){
             table.rows[ address+1 ].cells[ 1 ].firstChild.data = parseInt(address);
         }else{
@@ -1024,15 +1036,11 @@ function initMemoryRegister(){
         stackTableRowColorSet(0xFFFF-i,"#FFFFFF");
     }
     for(i = 0 ; i < 10 ; i++){
-        registerAllSet(i,0);
-        registerTableRowColorSet(i,"#FFFFFF");
+        registerAllSetAndColor(i,0,"light");
     }
     memoryScrollset(0);
-   
     stackScrollset(0xFFFF);
     registerAllSet(9,65535);
-    registerTableRowColorSet(8,"#00BCD4");
-    registerTableRowColorSet(9,"#EEBCD4");
     zeroFlagSet(1);
     signFlagSet(0);
     ofSdecFlagSet(0);
