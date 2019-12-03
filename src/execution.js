@@ -231,11 +231,13 @@ function cometLD(pr){
     overflowFlagSet(0);
     if(op == '10'){
         let addr = memoryUdecGet(pr+1);
-        registerAllSet(r1,memoryUdecGet(addr+registerUdecGet(r2)));
+        if(parseInt(r2) > 0){
+            addr += registerUdecGet(r2);
+        }
+        registerAllSet(r1,memoryUdecGet(addr));
         overflowFlagSet(0);
-        
-        zeroFlagSet(memoryUdecGet(addr+registerUdecGet(r2)));
-        signFlagSet(memoryUdecGet(addr+registerUdecGet(r2)));
+        zeroFlagSet(memoryUdecGet(addr));
+        signFlagSet(memoryUdecGet(addr));
         return 2;
     }else{
         registerAllSet(r1,registerUdecGet(r2));
@@ -251,9 +253,12 @@ function cometST(pr){
     let r1 = opcode[3];
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
-    let mem = Array(new Pair(addr+registerUdecGet(r2),memoryUdecGet(addr+registerUdecGet(r2))));
+    if(parseInt(r2) > 0){
+        addr += registerUdecGet(r2);
+    }
+    let mem = Array(new Pair(addr,memoryUdecGet(addr)));
     StepBackControler.setStep(new StepStruct (mem));
-    memoryAllSet(addr+registerUdecGet(r2),registerUdecGet(r1));
+    memoryAllSet(addr,registerUdecGet(r1));
     return 2;
 }
 
