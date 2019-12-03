@@ -675,7 +675,6 @@ class CometEmulator{
                         Opcode.active();
                         Decoder.active();
                         COMETLine[37-r1.getUdecNumber()].active();
-
                     break;
                 }
             break;

@@ -101,8 +101,8 @@ function setEnableCaslButton(flag){
 function setExecuteButton(flag){
     $("#btnStepBack").prop("disabled", flag);
     $("#btnStepExecution").prop("disabled", flag);
-
 }
+
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
@@ -184,6 +184,10 @@ function onLoadExe() {
                 break;
             case 115://F4
                 $("#btnAssemble").click();
+                break;
+            //TODO Debug Mode リリース時に削除
+            case 120://F9 
+                $("#customSwitches").prop("disabled",  !$("#customSwitches").prop("disabled"));
                 break;
         }
     });
