@@ -473,14 +473,14 @@ function cometXOR(pr){
             addr += registerUdecGet(r2);
         }
         ans = registerUdecGet(r1) ^ memoryUdecGet(addr);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
         overflowFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
         return 2;
     }else{
         ans = registerUdecGet(r1) ^ registerUdecGet(r2);
-        registerAllSet(r1,ans);
+        registerAllSetAndColor(r1,ans,"primary");
         overflowFlagSet(0);
         zeroFlagSet(ans);
         signFlagSet(ans);
@@ -569,7 +569,7 @@ function cometSLA(pr){
     }else{
         overflowFlagSet(0);
     }
-    registerAllSet(r1,ans);
+    registerAllSetAndColor(r1,ans,"primary");
     zeroFlagSet(ans);
     signFlagSet(ans);
     return 2;
@@ -601,7 +601,7 @@ function cometSRA(pr){
     }else{
         overflowFlagSet(0);
     }
-    registerAllSet(r1,ans);
+    registerAllSetAndColor(r1,ans,"primary");
     zeroFlagSet(ans);
     signFlagSet(ans);
     return 2;
@@ -625,7 +625,7 @@ function cometSLL(pr){
         overflowFlagSet(0);
     }
     ans = ans & 0xFFFF;
-    registerAllSet(r1,ans);
+    registerAllSetAndColor(r1,ans,"primary");
     zeroFlagSet(ans);
     signFlagSet(ans);
     return 2;
@@ -649,7 +649,7 @@ function cometSRL(pr){
     }else{
         overflowFlagSet(0);
     }
-    registerAllSet(r1,ans);
+    registerAllSetAndColor(r1,ans,"primary");
     zeroFlagSet(ans);
     signFlagSet(ans);
     return 2;
