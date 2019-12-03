@@ -123,8 +123,19 @@ function onLoad() {
 
   // 「読み込む」ボタンの制御
   document.querySelector('#btnLoad').addEventListener('click', () => {
-    //openLoadFile();
-    btnStepExecution.disabled = true;
+    $("#file").click();
+  
+  });
+  // ファイルが変わったときにそのファイルを読み込みエディタに描画する
+  document.querySelector('#file').addEventListener('change', (evt) => {
+    for(var i = 0,f ;f = evt.target.files[i];i++){
+      var reader = new FileReader();
+      var text="";
+      reader.onload =function (event){
+        editor.setValue(event.target.result);  
+      };
+      reader.readAsText(f);
+    }
   });
   // 「保存する」ボタンの制御
   document.querySelector('#btnSave').addEventListener('click', () => {
@@ -140,7 +151,9 @@ function onLoad() {
       a.href = URL.createObjectURL(blob);
       a.target = '_blank';
       a.download = 'code.txt';
-      a.click();                
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);             
     }
   });
 };

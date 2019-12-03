@@ -18,10 +18,12 @@ class Block{
         this.bheight = bheight;
         this.label = label;
         this.str = "0000";
+        this.color = color(0,0,0);
+        this.udecNumber = 0;
     }
     /**
      *
-     *
+     * 
      * @param {string} label
      * @memberof Block
      */
@@ -37,6 +39,9 @@ class Block{
     setText(str){
         this.str = str;
     }
+    getText(){
+        return this.str;
+    }
     /**
      *
      *
@@ -46,26 +51,34 @@ class Block{
      */
     setLabelPosition(x,y){
         this.labelX = x;
-        this.labelY = y+4;
+        this.labelY = y+6;
     }
-
-    /**
-     *
-     *
-     * @memberof Block
-     */
+    setUdecNumber(n){
+        this.udecNumber=n;
+    }
+    getUdecNumber(){
+        return this.udecNumber;
+    }
     draw(){
         rectMode(CORNER);
+        stroke(this.color);
         rect(this.x, this.y,this.bwidth, this.bheight);
-        textSize(9.6);
+        stroke(0);
+        textSize(10.8);
         strokeWeight(0);
         fill(0);
         textAlign(LEFT,CENTER);
         text(this.label,this.labelX,this.labelY-textSize());
         textAlign(CENTER,CENTER);
-        text(this.str,this.x,this.y,this.bwidth,this.bheight);
+        text(this.str,this.x+2,this.y,this.bwidth,this.bheight);
         strokeWeight(1);
         fill(255);
+    }
+    active(){
+        this.color = color(255,0,0);
+    }
+    inactive(){
+        this.color = color(0,0,0);
     }
 }
 
@@ -77,7 +90,7 @@ class Block{
  */
 class frBlock extends Block{
     constructor(x,y,label){
-        super(x,y,36-9,18,label);
+        super(x,y,27,18,label);
         this.str = "000";
         
     }
@@ -108,7 +121,7 @@ class frBlock extends Block{
      */
     setLabelPosition(x,y){
         this.labelX = x;
-        this.labelY = y;
+        this.labelY = y+6;
     }
 }
 
@@ -162,7 +175,7 @@ class MDRBlock extends Block{
  */
 class opcodeBlock extends Block{
     constructor(x,y,label){
-        super(x,y,36-18,18,label);
+        super(x,y,20,18,label);
         this.str = "00";
         
     }
@@ -205,9 +218,8 @@ class opcodeBlock extends Block{
  */
 class registerBlock extends Block{
     constructor(x,y,label){
-        super(x,y,10,18,label);
+        super(x,y,14,18,label);
         this.str = "0";
-        
     }
     /**
      *
@@ -248,7 +260,7 @@ class registerBlock extends Block{
  */
 class addressBlock extends Block{
     constructor(x,y,label){
-        super(x,y,36,18,label);
+        super(x,y,45,18,label);
         this.str = "0000";
         
     }
@@ -291,7 +303,7 @@ class addressBlock extends Block{
  */
 class decoderBlock extends Block{
     constructor(x,y,label){
-        super(x,y,100,60,label);
+        super(x,y,108,60,label);
         this.str = "";
         this.setLabelPosition(x+9,y+18);
     }
@@ -306,7 +318,7 @@ class decoderBlock extends Block{
     }
     /**
      *
-     *
+     * 文字をセットする
      * @param {string} str
      * @memberof decoderBlock
      */
@@ -315,7 +327,7 @@ class decoderBlock extends Block{
     }
     /**
      *
-     *
+     * Labelのポジションをセットする
      * @param {number} x
      * @param {number} y
      * @memberof decoderBlock
@@ -326,12 +338,463 @@ class decoderBlock extends Block{
     }
 }
 
-/**
- *
- *
- * @class controlerBlock
- * @extends {Block}
- */
+class CometEmulator{
+
+    /**
+     *Creates an instance of CometEmulator.
+     * @memberof CometEmulator
+     */
+    constructor(){
+        this.counter = 0;
+        this.address = 0;
+        //mode 1: 命令取りだしサイクル,2: 命令取り出しサイクル2語,3: 命令解読サイクル,4:アドレス生成,5: 実行命令
+        this.mode = 1;
+        this.memoryLineEnable = false;
+        this.memoryLineAddress = memoryTableMaxRow-1;
+    }
+    reset(){
+        this.counter = 0;
+        this.mode = 1;
+    }
+    /**
+     *
+     * COMET2実行
+     * @returns {number} 
+     * @memberof CometEmulator
+     */
+    execute(){
+        console.log(this.mode,this.counter);
+        this.clearAllLine();
+        this.clearAllBlock();
+        this.activeAllLine(this.counter);
+        memoryTableRowColorSet(this.memoryLineAddress,"light");
+        switch(this.mode){
+            case 1:
+                switch (this.counter){
+                    case 0:
+                        MAR.active();
+                        MAR.setText(PR.str);
+                        PR.active();
+                    break;
+                    case 1:
+                       MAR.active();
+                    break;
+                    case 2:
+                        PR.active();
+                        MDR.active();
+                        MAR.active();
+                        this.address = prUdecGet();
+                        MDR.setUdecNumber(memoryUdecGet(this.address));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+
+                        prValueSet(prUdecGet()+1);
+
+                        PR.setUdecNumber(prUdecGet());
+                        PR.setText(toHex(PR.getUdecNumber()));
+
+                    break;
+                    case 3:
+                        MDR.active();
+                        IRLabel[0].active();
+                        IRLabel[0].setUdecNumber(MDR.getUdecNumber());
+                        IRLabel[0].setText(MDR.getText());
+                        if( memoryLengthGet(this.address) == 1){
+                            this.mode = 3;
+                            this.counter = 7;
+                        }else{
+                            this.mode = 2;
+                        }   
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+                break;
+            case 2:
+                switch(this.counter){
+                    case 4:
+                        PR.active();
+                        MAR.active();
+                        MAR.setUdecNumber(PR.getUdecNumber());
+                        MAR.setText(PR.getText());
+                    break;
+                    case 5:
+                        MAR.active();
+                    break;
+                    case 6:
+                        PR.active();
+                        MAR.active();
+                        MDR.setUdecNumber(memoryUdecGet(prUdecGet()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        prValueSet(prUdecGet()+1);
+                        PR.setText(toHex((prUdecGet())));
+                        MDR.active();
+                    break;
+                    case 7:
+                        IRLabel[1].active();
+                        IRLabel[1].setUdecNumber(MDR.getUdecNumber());
+                        IRLabel[1].setText(MDR.getText());
+                        this.mode = 3;
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+            break;
+            case 3:
+                switch(this.counter){
+                    case 8:
+                        MDR.inactive();
+                        IRLabel[0].active();
+                        IRLabel[1].active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        r2.active();
+                        adr.active();
+                        
+                        Opcode.setText(IRLabel[0].getText()[1]+IRLabel[0].getText()[2]);
+                        Opcode.udecNumber = parseInt(Opcode.getText(),16);
+
+                        r1.setText(IRLabel[0].getText()[3]);
+                        r1.setUdecNumber(parseInt(IRLabel[0].getText()[3]));
+                        r2.setText(IRLabel[0].getText()[4]);
+                        r2.setUdecNumber(parseInt(IRLabel[0].getText()[4]));
+                        adr.setUdecNumber(IRLabel[1].getUdecNumber());
+                        adr.setText(IRLabel[1].getText());
+                       
+                    break;
+                    case 9:
+                        Controler.setText(memoryLiteralGet(this.address))
+                        Controler.active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        r2.active();
+                        if(memoryLengthGet(this.address)==1){
+                            this.opcodeToMode(Opcode.getUdecNumber());
+                        }else{
+                            if(r2.getUdecNumber() > 0){
+                                GR[r2.getUdecNumber()].active();
+                                GRLabel[r2.getUdecNumber()].active();
+                            }
+                            this.mode = 4;
+                        }   
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+            break;
+            case 4:
+                switch(this.counter){
+                    case 10:
+                        adr.active();
+                        r2.active();
+                        Controler.active();
+                    break;
+                    case 11:
+                        Adder.active();
+                        adr.active();
+                        MARunder.active();
+                        Controler.active();
+                        r2.active()
+                        MARunder.setUdecNumber(adr.getUdecNumber());
+                        if(r2.getUdecNumber() > 0){
+                            MARunder.setUdecNumber(MARunder.getUdecNumber()+registerUdecGet(r2.getUdecNumber()));
+                        }
+                        MARunder.setText(toHex(MARunder.getUdecNumber()));
+                        this.opcodeToMode(Opcode.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //LD GR , Addr
+            case 5:
+                switch(this.counter){
+                    case 12:
+                        MARunder.active();
+                        MAR.active();
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        MAR.setText(MARunder.getText());
+                        Controler.active();
+                    break;
+                    case 13:
+                        Controler.active();
+                        MAR.active();
+                    break;
+                    case 14:
+                        MAR.active();
+                        MDR.active();
+                        Controler.active();
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                    break;
+                    case 15:
+                        FR.active();
+                        ALU.active();
+                        Controler.active();
+                        Decoder.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        
+                        registerAllSet(r1.getUdecNumber(),MDR.getUdecNumber());
+                        this.registerALUActiveLine(r1.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //LD GR,GR
+            case 6:
+                switch(this.counter){
+                    case 16:
+                        r1.active();
+                        COMETLine[38-r2.getUdecNumber()].active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        ALU.active();
+                        FR.active();
+                        signFlagSet(registerUdecGet(r1.getUdecNumber()));
+                        zeroFlagSet(registerUdecGet(r1.getUdecNumber()));
+                    break;
+                    case 17:
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        FR.active();
+                        this.registerControlActiveLine(r2.getUdecNumber());
+                        registerAllSet(r2.getUdecNumber(),registerUdecGet(r1.getUdecNumber()));
+                    break;
+                    default:
+                        return 0;
+                    break;
+                }
+            break;
+            //ST GR1,Addr
+            case 7:
+                switch(this.counter){
+                    case 18:
+                        MAR.active();
+                        MARunder.active();
+                        MDR.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        MDR.setText(GR[r1.getUdecNumber()].getText());
+                        MDR.setUdecNumber(GR[r1.getUdecNumber()].getUdecNumber())
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                    break;
+                    case 19:
+                        MAR.active();
+                        MDR.active();
+                        r1.active();
+                        Controler.active();
+                    break;
+                    //TODO memoryに値格納
+                    case 20:
+                        MAR.active();
+                        MDR.active();
+                        r1.active();
+                        Controler.active();
+                        memoryAllSet(MAR.getUdecNumber(),registerUdecGet(r1.getUdecNumber()));
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //LAD GR , Addr
+            case 8:
+                switch(this.counter){
+                    case 21:
+                        Controler.active();
+                        r1.active();
+                        MARunder.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        this.registerALUActiveLine(0);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        registerAllSet(r1.getUdecNumber(),MARunder.getUdecNumber());
+                        COMETLine[37].inactive();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //ADDA GR1,Addr
+            case 9:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        Controler.active();
+                    break;
+                    case 25:
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        registerAllSet(r1.getUdecNumber(),registerUdecGet(r1.getUdecNumber())+MDR.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //ADDA GR , GR
+            case 10:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            }
+        redraw();
+        this.counter++;
+        return 1;
+    }
+    nextLineActive(){
+        if(this.counter > 0){
+            for(var i=0;i<InstructionfetchCycle[this.counter-1].length;i++){
+                COMETLine[InstructionfetchCycle[this.counter-1][i]].inactive();
+            }
+        }
+        for(var i=0;i<InstructionfetchCycle[this.counter].length;i++){
+            COMETLine[InstructionfetchCycle[this.counter][i]].active();
+        }
+        if(this.counter <= InstructionfetchCycle.length-1){
+            this.counter++;
+        }
+    }
+    registerALUActiveLine(gr){
+        let n = 30 - gr;
+        for(var i = 22;i < n;i++){
+            COMETLine[i].active();
+        };
+        COMETLine[37-gr].active();
+    }
+    registerControlActiveLine(gr){
+        let n = 47 - gr;
+        for(var i=39;i < n;i++){
+            COMETLine[i].active();
+        }
+        COMETLine[54-gr].active();
+    }
+    prevClearLine(line){
+        for(var i = 0;i < InstructionfetchCycle[line].length;i++){
+            COMETLine[InstructionfetchCycle[line][i]].inactive();
+        }
+    }
+    activeAllLine(index){
+        if(index < InstructionfetchCycle.length){
+            for(var i =0;i < InstructionfetchCycle[index].length;i++){
+                COMETLine[InstructionfetchCycle[index][i]].active();
+            }
+        }
+    }
+    /**
+     * COMET2のLineをすべてinactive
+     *
+     * @memberof CometEmulator
+     */
+    clearAllLine(){
+        for(var i = 0;i < COMETLine.length;i++){
+            COMETLine[i].inactive();
+        }
+        this.memoryLineEnable = false;
+    }
+    /**
+     * すべてのBlockをinactive
+     *
+     * @memberof CometEmulator
+     */
+    clearAllBlock(){
+        ALU.inactive();
+        MAR.inactive();
+        MARunder.inactive();
+        MDR.inactive();
+        PR.inactive();
+        SP.inactive();
+        FR.inactive();
+        Opcode.inactive();
+        r1.inactive();
+        r2.inactive();
+        adr.inactive();
+        Decoder.inactive();
+        Controler.inactive();
+        Adder.inactive();
+        ALU.inactive();
+        for(var i = 0;i < GR.length;i++){
+            GR[i].inactive();
+            GRLabel[i].inactive();
+        }
+        IRLabel[0].inactive();
+        IRLabel[1].inactive();
+    }
+    opcodeToMode(op){
+        switch (op){
+            case 0x10:
+                this.mode = 5;
+            break;
+            case 0x11:
+                this.mode = 7;
+                this.counter = 17;
+            break;
+            case 0x12:
+                this.mode = 8;
+                this.counter = 20;
+            break;
+            case 0x14:
+                this.mode = 6;
+                this.counter = 15;
+            break;
+            case 0x20:
+                this.mode = 9;
+                this.counter = 21;
+            break;
+            case 0x24:
+                this.mode = 10;
+                this.counter = 26;
+            break;
+            default:
+                alert(op);
+            break;
+        }  
+    }
+}
+
 class controlerBlock extends Block{
     /**
      *Creates an instance of controlerBlock.
@@ -375,141 +838,219 @@ class controlerBlock extends Block{
         this.labelY = y;
     }
 }
+class AdderBlock extends Block{
+    constructor(){
+        super(0,0,0,0,"");
+    }
+    draw(){
+        stroke(this.color);
+        beginShape();
+        vertex(101, 90);
+        vertex(101, 110);
+        vertex(111, 115);
+        vertex(126, 115);
+        vertex(126, 105);
+        vertex(111, 100);
+        vertex(126, 95);
+        vertex(126, 85);
+        vertex(111, 85);
+        vertex(101, 90);
+        endShape();
+        stroke(0);
+    }
+}
+class ALUBlock extends Block{
+    constructor(){
+        super(0,0,0,0,"");
+    }
+    draw(){
+        stroke(this.color);
+        beginShape();
+        vertex(41,170);
+        vertex(61,170);
+        vertex(71,200);
+        vertex(81,170);
+        vertex(101,170);
+        vertex(101,200);
+        vertex(81,220);
+        vertex(61,220);
+        vertex(41,200);
+        vertex(41,170);
+        endShape();
+    }
+}
 
 const LinePatern = [
     //id 1
-    [[0,39],[70,39]],
+    [[0,39],[51,39]],
     //2
-    [[106,39],[168,39]],
+    [[97,39],[149,39]],
     //3
-    [[168,39],[180,39]],
+    [[149,39],[161,39]],
     //4
-    [[168,39],[168,69],[180,69]],
+    [[149,39],[149,69],[161,69]],
     //5
-    [[200,30],[200,10],[50,10],[50,69]],
+    [[182,30],[182,10],[31,10],[31,69]],
     //6
-    [[50,69],[70,69]],
+    [[31,69],[51,69]],
     //7
-    [[50,69],[50,119]],
+    [[31,69],[31,115]],
     //8
-    [[90,48],[90,58]],
+    [[71,48],[71,60]],
     //9
-    [[90,78],[90,128]],
+    [[71,78],[71,128]],
     //10
-    [[67,138],[67,158]],
+    [[48,134],[48,158]],
     //11
-    [[67,158],[67,170]],
+    [[48,158],[48,170]],
     //12
-    [[0,128],[38,128]],
+    [[0,124],[19,124]],
     //13
-    [[50,138],[50,270],[90,270]],
+    [[31,134],[31,270],[71,270]],
     //14
-    [[90,220],[90,270]],
+    [[71,220],[71,270]],
     //15
-    [[90,270],[168,270]],
+    [[71,270],[149,270]],
     //16
-    [[120,180],[130,180]],
+    [[101,180],[111,180]],
     //17
-    [[107,69],[112,69],[112,100],[120,100]],
+    [[90,77],[90,100],[101,100]],
     //18
-    [[90,128],[90,158],[67,158]],
+    [[71,128],[71,158],[48,158]],
     //19
-    [[75,128],[90,128]],
+    [[65,124],[71,124]],
     //20
-    [[90,128],[110,128]],
+    [[71,124],[91,124]],
     //21
-    [[110,128],[110,170]],
+    [[91,124],[91,170]],
     //22
-    [[110,128],[168,128]],
+    [[91,124],[149,124]],
     //GR Line
     //23
-    [[168,270],[168,250]],
+    [[149,270],[149,257]],
     //24
-    [[168,250],[168,232]],
+    [[149,257],[149,238]],
     //25
-    [[168,232],[168,214]],
+    [[149,238],[149,219]],
     //26
-    [[168,214],[168,196]],
+    [[149,219],[149,200]],
     //27
-    [[168,196],[168,178]],
+    [[149,200],[149,181]],
     //28
-    [[168,178],[168,160]],
+    [[149,181],[149,162]],
     //29
-    [[168,160],[168,142]],
+    [[149,162],[149,143]],
     //30
-    [[168,142],[168,124]],
+    [[149,143],[149,124]],
     //31
-    [[168,250],[180,250]],
+    [[149,257],[161,257]],
     //32
-    [[168,232],[180,232]],
+    [[149,238],[161,238]],
     //33
-    [[168,214],[180,214]],
+    [[149,219],[161,219]],
     //34
-    [[168,196],[180,196]],
+    [[149,200],[161,200]],
     //35
-    [[168,178],[180,178]],
+    [[149,181],[161,181]],
     //36
-    [[168,160],[180,160]],
+    [[149,162],[161,162]],
     //37
-    [[168,142],[180,142]],
+    [[149,143],[161,143]],
     //38
-    [[168,124],[180,124]],
+    [[149,124],[161,124]],
     //39
-    [[168,270],[255,270]],
+    [[149,270],[248,270]],
     //40
-    [[255,270],[255,250]],
+    [[248,270],[248,257]],
     //41
-    [[255,250],[255,232]],
+    [[248,257],[248,238]],
     //42
-    [[255,232],[255,214]],
+    [[248,238],[248,219]],
     //43
-    [[255,214],[255,196]],
+    [[248,219],[248,200]],
     //44
-    [[255,196],[255,178]],
+    [[248,200],[248,181]],
     //45
-    [[255,178],[255,160]],
+    [[248,181],[248,162]],
     //46
-    [[255,160],[255,142]],
+    [[248,162],[248,143]],
     //47
-    [[255,142],[255,124]],
+    [[248,143],[248,124]],
     //48
-    [[255,250],[243,250]],
+    [[248,257],[236,257]],
     //49
-    [[255,232],[243,232]],
+    [[248,238],[236,238]],
     //50
-    [[255,214],[243,214]],
+    [[248,219],[236,219]],
     //51
-    [[255,196],[243,196]],
+    [[248,200],[236,200]],
     //52
-    [[255,178],[243,178]],
+    [[248,181],[236,181]],
     //53
-    [[255,160],[243,160]],
+    [[248,162],[236,162]],
     //54
-    [[255,142],[243,142]],
+    [[248,143],[236,143]],
     //55
-    [[255,124],[243,124]],
+    [[248,124],[236,124]],
     //56
-    [[168,124],[168,110]],
+    [[149,124],[149,110]],
     //57
-    [[168,110],[145,110]],
+    [[149,110],[126,110]],
     //58
-    [[168,110],[168,90]],
+    [[149,110],[149,90]],
     //59
-    [[168,90],[145,90]],
+    [[149,90],[126,90]],
     //60
-    [[168,90],[263,90],[263,150],[377,150],[377,109],[355,109]],
+    [[149,90],[256,90],[256,68],[376,68],[376,109],[365,109]],
     //61
-    [[255,270],[382,270],[382,19],[342,19]],
+    [[248,270],[381,270],[381,19],[335,19]],
     //62
-    [[342,19],[342,29]],
+    [[335,19],[335,29]],
     //63
-    [[342,19],[306,19],[306,29]],
+    [[335,19],[299,19],[299,29]],
     //64
-    [[342,48],[342,80]],
+    [[335,48],[335,80]],
     //65
-    [[306,48],[306,80]],
-];
+    [[299,48],[299,80]],
+    // enable line
+    //66 opcode->controler
+    [[278,118],[278,160]],
+    //67 r1
+    [[295,118],[295,145]],
+    //68 r2
 
+
+];
+var InstructionfetchCycle = [
+    [1,2],              //0
+    [0],                //1
+    [0,11],             //2
+    [62,60,12,14,38],   //3
+    [1,2],              //4
+    [0],                //5
+    [0,11],             //6 
+    [61,60,12,14,38],   //7
+    [63,64],            //8
+    [],                 //9
+    [58,59],            //10
+    [16,58,59],         //11
+    [7],                //12
+    [0],                //13
+    [0,11],             //14
+    [9,10,13,14,15],    //15
+    [15,20,21],         //16
+    [13,14,15,38],      //17
+    [18,19,21],         //18
+    [0],                //19
+    [0,11],             //20
+    [8,19,21,38],       //21
+    [7],                //22
+    [0],                //23
+    [0,11],
+    [20,21,9,10],
+    [13,14,15,38],
+    [20,21],
+];
 
 /**
  *
@@ -517,14 +1058,22 @@ const LinePatern = [
  * @class Cometp5Line
  */
 class Cometp5Line{
+    /** @member {number} */
+    id = 0;
+    /** @member {booleam} disable*/
+    disable = true;
     /**
      *Creates an instance of Cometp5Line.
      * @param {number} id - Line id
      * @memberof Cometp5Line
      */
     constructor(id){
+        /** @member {number} id*/
         this.id = id;
+        /** @member {color} color*/
         this.color = color(0,0,0);
+        /** @member {booleam} disable*/
+        this.disable = true;
     }
     /**
      *
@@ -532,14 +1081,16 @@ class Cometp5Line{
      * @memberof Cometp5Line
      */
     draw(){
-        stroke(this.color);
-        noFill();
-        beginShape();
-        LinePatern[this.id].forEach(element => {
-            vertex(element[0],element[1]);
-        });
-        endShape();
-        stroke(color(0,0,0));
+        if(this.disable){
+            stroke(this.color);
+            noFill();
+            beginShape();
+            LinePatern[this.id].forEach(element => {
+                vertex(element[0],element[1]);
+            });
+            endShape();
+            stroke(color(0,0,0));
+        }
     }
     /**
      *
@@ -551,56 +1102,56 @@ class Cometp5Line{
         this.color = col;
     }
     /**
-     *
-     *
+     * Lineをアクティブ(赤色)にする
+     * 
      * @memberof Cometp5Line
      */
     active(){
         this.color = color(255,0,0);
     }
     /**
-     *
+     * Lineを非アクティブ(黒色)にする
      *
      * @memberof Cometp5Line
      */
     inactive(){
         this.color = color(0,0,0);
     }
+    enable(flag){
+        this.enable = flag;
+    }
 }
 
-let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler;
+let MAR,MARunder,MDR,PR,SP,FR,Opcode,r1,r2,adr,Decoder,Controler,Adder,ALU;
 var GR = [],GRLabel = [],IRLabel = [];
 let COMETLine = [];
 
-
-/**
- *setup comet2の初期描画
- *
- */
+// setup comet2の初期描画
 function setup(){
-
-    let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height()*2);
+    let canvas = createCanvas($("#comet_area").width(),$("#comet_area").height());
     canvas.parent('canvas');
-    MAR = new Block(70,30,36,18,"MAR");
-    MARunder = new Block(70,60,36,18,"");
-    MDR = new MDRBlock(38,120,36,18,"MDR");
-    PR = new Block(180,30,36,18,"PR");
-    SP = new Block(180,60,36,18,"SP");
-    FR = new frBlock(130,170,"FR");
-    Opcode = new opcodeBlock(280,100,"");
-    r1 = new registerBlock(298,100,"");
-    r2 = new registerBlock(307,100,"");
-    adr = new addressBlock(320,100,"");
-    Decoder = new decoderBlock(270,80,"Decoder");
-    Controler = new controlerBlock(270,160,"Controler");
+    MAR = new Block(51,30,45,18,"MAR");
+    MARunder = new Block(51,60,45,18,"");
+    MDR = new MDRBlock(19,116,45,18,"MDR");
+    PR = new Block(161,30,45,18,"PR");
+    SP = new Block(161,60,45,18,"SP");
+    FR = new frBlock(111,170,"FR");
+    Opcode = new opcodeBlock(268,100,"");
+    r1 = new registerBlock(289,100,"");
+    r2 = new registerBlock(304,100,"");
+    adr = new addressBlock(321,100,"");
+    Decoder = new decoderBlock(263,80,"Decoder");
+    Controler = new controlerBlock(263,160,"Controler");
+    Adder = new AdderBlock();
+    ALU = new ALUBlock();
     for(var i = 0;i < 8;i++){
-        GR.push(new Block(180,114+18*i,36,18,""));
-        GRLabel.push(new Block(216,114+18*i,27,18,""));
+        GR.push(new Block(161,114+18*i+1*i,45,18,""));
+        GRLabel.push(new Block(206,114+18*i+1*i,30,18,""));
         GRLabel[i].setText("GR"+i);
         GR[i].setText(toHex(registerHexGet(i)));
     }
-    IRLabel.push(new Block(326-36,30,36,18,"IR"));
-    IRLabel.push(new Block(326,30,36,18,""));
+    IRLabel.push(new Block(326-52,30,45,18,"IR"));
+    IRLabel.push(new Block(320,30,45,18,""));
     for(var i=0;i<LinePatern.length;i++)
     COMETLine.push(new Cometp5Line(i));
     noLoop();
@@ -615,7 +1166,7 @@ function draw(){
     background(255);
   
 
-    text(str(frameCount),10,10);
+    text(str(COMETEmu.counter),10,10);
     MAR.draw();
     MARunder.draw();
     MDR.draw();
@@ -637,38 +1188,13 @@ function draw(){
         IRLabel[i].draw();
     }
     //Adder
-    beginShape();
-    vertex(120, 90);
-    vertex(120, 110);
-    vertex(130, 115);
-    vertex(145, 115);
-    vertex(145, 105);
-    vertex(130, 100);
-    vertex(145, 95);
-    vertex(145, 85);
-    vertex(130, 85);
-    vertex(120, 90);
-    endShape();
+    Adder.draw();
     //ALU
-    beginShape();
-    vertex(60,170);
-    vertex(80,170);
-    vertex(90,200);
-    vertex(100,170);
-    vertex(120,170);
-    vertex(120,200);
-    vertex(100,220);
-    vertex(80,220);
-    vertex(60,200);
-    vertex(60,170);
-    endShape();
+    ALU.draw();
     COMETLine.forEach(element => {
-        //stroke(255, 255, 0);
         element.draw();
-        //stroke(0, 0, 0);
     });
     fill(255);
-    //noStroke();
 }
 
 /**
@@ -680,15 +1206,18 @@ function registerCometSync(address){
     if(address >= 0 && address <= 7){
         let registerval = registerHexGet(address);//.replace('#','');
         GR[address].setText(toHex(registerval));
+        GR[address].setUdecNumber(registerval);
     }
 }
-/**
- * プログラムレジスタの値をCometに反映させる
- *
- * @param {number} value
- */
+function flagRegisterCometSync(){
+    let f = overflowFlagGet().toString() + signFlagGet().toString() + zeroFlagGet().toString();
+    FR.setText(f);
+}
 function prCometSync(value){
     PR.setText(toHex(value));
+}
+let counter = 0;
+function mousePressed(){
 }
 
 

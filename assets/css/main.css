@@ -57,7 +57,7 @@ body {
   height: 52%;
   text-align: center;
   background-color: white;
-  overflow-y: scroll;
+  overflow-y: auto;
   /**scrollbar-width: none;**/
 }
 

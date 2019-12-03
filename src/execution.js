@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', onLoadExe);
 var cometExecute = null;
+var COMETEmu = new CometEmulator();
 //cpu cycle
 const COMETCYCLE = 100;
 /**
@@ -97,10 +98,11 @@ function setEnableCaslButton(flag){
         $("#btnStop").prop("disabled", flag);
     }
 }
-/**
- *ボタンイベントの初期化
- *
- */
+function setExecuteButton(flag){
+    $("#btnStepBack").prop("disabled", flag);
+    $("#btnStepExecution").prop("disabled", flag);
+}
+
 function onLoadExe() {
     // フッター領域
     footerArea = document.getElementById('footer_fixed');
@@ -151,6 +153,7 @@ function onLoadExe() {
         /*for(i = 3;i != execute();){
             execute();
         }*/
+        setExecuteButton(true);
         cometExecuteStart();
     });
     // 「ステップ実行」ボタンの制御
@@ -164,6 +167,7 @@ function onLoadExe() {
     //
     document.querySelector('#btnStop').addEventListener('click', () => {
         cometExecuteStop();
+        setExecuteButton(false);
     });
     //ショートカットキーの制御
     $(document).keydown(function(e){
@@ -180,6 +184,10 @@ function onLoadExe() {
                 break;
             case 115://F4
                 $("#btnAssemble").click();
+                break;
+            //TODO Debug Mode リリース時に削除
+            case 120://F9 
+                $("#customSwitches").prop("disabled",  !$("#customSwitches").prop("disabled"));
                 break;
         }
     });
@@ -753,8 +761,15 @@ function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
     let length;
-
     beforePC = pr;
+    //COMETII Mode On
+    if($("#customSwitches").prop("checked")){
+        if(COMETEmu.execute()){
+            return 0;
+        }
+        COMETEmu.reset();
+        return 0;
+    }
     switch (literal){
         case "LD":
             length = cometLD(pr);
