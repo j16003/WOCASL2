@@ -90,7 +90,9 @@ body {
 #Memorytable td {
   border: 1px solid;
 }
-
+#Registertable td {
+  border: 1px solid;
+}
 #Memorytable{
   width: 100%;
   height: 50%;

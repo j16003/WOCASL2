@@ -963,7 +963,6 @@ function ajaxJsonToMemoryMap(obj){
 function memoryTableRowColorSet(address,color){
     let table = $("#Memorytable tr");
     let length = memoryLengthGet(address);
-    console.log(memoryLengthGet(address));
     if(length == 2){
         $(table[address+1]).removeClass();
         $(table[address+2]).removeClass();
@@ -986,11 +985,10 @@ function memoryTableRowColorSet(address,color){
  * @param {number} color - 設定したい色のカラーコード
  */
 function registerTableRowColorSet(address,color){
-    let table = document.getElementById('Registertable');
+    let table = $("#Registertable tr");
     if(address >= 0 && address <= 7){
-        table.rows[address+3].style.backgroundColor=color;
-    }else if(address == 8||address == 9){
-        table.rows[address-7].style.backgroundColor=color;
+        $(table[address+3]).removeClass();
+        $(table[address+3]).addClass("table-"+color);
     }
 }
 

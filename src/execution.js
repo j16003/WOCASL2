@@ -217,6 +217,7 @@ function cometLAD(pr){
     let r2 = opcode[4];
     let addr = memoryUdecGet(pr+1);
     registerAllSet(r1,addr+registerUdecGet(r2));
+    registerTableRowColorSet(r1,"primary");
     return 2;
 }
 
