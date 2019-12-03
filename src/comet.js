@@ -618,7 +618,7 @@ class CometEmulator{
                         registerAllSet(r1.getUdecNumber(),MARunder.getUdecNumber());
                         COMETLine[37].inactive();
                     break;
-                    deafult:
+                    default:
                         return 0;
                 }
             break;
@@ -676,6 +676,8 @@ class CometEmulator{
                         Decoder.active();
                         COMETLine[37-r1.getUdecNumber()].active();
                     break;
+                    default:
+                        return 0;
                 }
             break;
             }
@@ -716,8 +718,10 @@ class CometEmulator{
         }
     }
     activeAllLine(index){
-        for(var i =0;i < InstructionfetchCycle[index].length;i++){
-            COMETLine[InstructionfetchCycle[index][i]].active();
+        if(index < InstructionfetchCycle.length){
+            for(var i =0;i < InstructionfetchCycle[index].length;i++){
+                COMETLine[InstructionfetchCycle[index][i]].active();
+            }
         }
     }
     /**
