@@ -26,8 +26,8 @@ $(document).ready(function () {
     var r_end = memoryTableMaxRow;  // 行数
     memory_Area = document.getElementById('memory_area');
     stack_Area = document.getElementById('stack_area');
-    var tableJQ = $('<table id="Memorytable" class="table-hover"></table>');
-    var tableHtml ="";
+    var tableJQ = $('<table id="Memorytable" class="table-hover table-bordered"></table>');
+    var tableHtml ='<thead class="thead-light"><tr><th>Address</th><th>Label</th><th>16進数</th><th>符号なし10進数</th><th>符号あり10進数</th><th>2進数</th><th>命令</th></tr></thead><tbody>';
     for (var r = 0; r < r_end; r++) {
         var r000 = toHex(r);
         tableHtml = tableHtml + 
@@ -59,6 +59,7 @@ $(document).ready(function () {
         $('<td hidden> </td>').appendTo(trJQ_r);
         */
     }
+    tableHtml+="</tbody>";
     $(tableHtml).appendTo(tableJQ);
     $(memory_Area).append(tableJQ);
     var r_end = stackTableMaxRow;
@@ -387,7 +388,7 @@ function registerBinGet(address){
  */
 function memoryHexSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 2 ].firstChild.data = toHex(value);
+    table.rows[ address+1 ].cells[ 2 ].firstChild.data = toHex(value);
 }
 
 /**
@@ -398,7 +399,7 @@ function memoryHexSet(address,value){
  */
 function memoryUdecSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 3 ].firstChild.data = toUdecOver(value);
+    table.rows[ address+1 ].cells[ 3 ].firstChild.data = toUdecOver(value);
 }
 
 /**
@@ -409,7 +410,7 @@ function memoryUdecSet(address,value){
  */
 function memorySdecSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 4 ].firstChild.data = toSdecOver(value);
+    table.rows[ address+1 ].cells[ 4 ].firstChild.data = toSdecOver(value);
 }
 
 
@@ -421,7 +422,7 @@ function memorySdecSet(address,value){
  */
 function memoryBinSet(address,value){
     let table = document.getElementById('Memorytable');
-    table.rows[ address ].cells[ 5 ].firstChild.data = toBin(value);
+    table.rows[ address+1 ].cells[ 5 ].firstChild.data = toBin(value);
     
 }
 
@@ -434,7 +435,7 @@ function memoryBinSet(address,value){
 function memoryLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
     if(address >= 0 && address < memoryTableMaxRow){
-        table.rows[ address ].cells[ 6 ].firstChild.data = value;
+        table.rows[ address+1 ].cells[ 6 ].firstChild.data = value;
     }
 }
 
@@ -451,9 +452,9 @@ function memoryScrollset(address){
     if(address-offset >=0){
         address-=offset;
     }else{
-        address=0;
+        address=-1;
     }
-    let position = table.rows[address].offsetTop;
+    let position = table.rows[address+1].offsetTop;
     $(memory_Area).scrollTop(position);
 }
 
@@ -488,9 +489,9 @@ function memoryLabelLiteralSet(address,value){
     let table = document.getElementById('Memorytable');
     if($.isNumeric(table.rows[ address ].cells[ 1 ].firstChild.data) || table.rows[ address ].cells[ 1 ].firstChild.data[0] == '"'){
         if(hexToWord(value)==""){
-            table.rows[ address ].cells[ 1 ].firstChild.data = parseInt(address);
+            table.rows[ address+1 ].cells[ 1 ].firstChild.data = parseInt(address);
         }else{
-            table.rows[ address ].cells[ 1 ].firstChild.data = '"'+hexToWord(value)+'"';
+            table.rows[ address+1 ].cells[ 1 ].firstChild.data = '"'+hexToWord(value)+'"';
         }
     }
 }
@@ -504,9 +505,9 @@ function memoryLabelLiteralSet(address,value){
 function memoryLabelSet(address,value){
     let table = document.getElementById('Memorytable');
     if($.isNumeric(value)){
-        table.rows[ address ].cells[ 1 ].firstChild.data = value;
+        table.rows[ address+1 ].cells[ 1 ].firstChild.data = value;
     }else{
-        table.rows[ address ].cells[ 1 ].firstChild.data = value+":";
+        table.rows[ address+1 ].cells[ 1 ].firstChild.data = value+":";
     }
 }
 
@@ -519,7 +520,7 @@ function memoryLabelSet(address,value){
 function memoryLineSet(address,value){
     let table = document.getElementById('Memorytable');
     if(address >= 0 && address < memoryTableMaxRow){
-        table.rows[ address ].cells[ 7 ].firstChild.data = value;
+        table.rows[ address+1 ].cells[ 7 ].firstChild.data = value;
     }
 }
 
@@ -531,7 +532,7 @@ function memoryLineSet(address,value){
  */
 function memoryLabelGet(address){
     let table = document.getElementById('Memorytable');
-    return table.rows[ address ].cells[ 1 ].firstChild.data;
+    return table.rows[ address+1 ].cells[ 1 ].firstChild.data;
 }
 
 /**
@@ -543,7 +544,7 @@ function memoryLabelGet(address){
 function memoryLengthSet(address,value){
     let table = document.getElementById('Memorytable');
     if(address >= 0 && address < memoryTableMaxRow){
-        table.rows[ address ].cells[ 8 ].firstChild.data = value;
+        table.rows[ address+1 ].cells[ 8 ].firstChild.data = value;
     }
 }
 
@@ -555,7 +556,7 @@ function memoryLengthSet(address,value){
  */
 function memoryLengthGet(address){
     let table = document.getElementById('Memorytable');
-    return table.rows[ address ].cells[ 8 ].firstChild.data;
+    return table.rows[ address+1 ].cells[ 8 ].firstChild.data;
 }
 
 /**
@@ -566,7 +567,7 @@ function memoryLengthGet(address){
  */
 function memoryHexGet(address){
     let table = document.getElementById('Memorytable');
-    return table.rows[ address ].cells[ 2 ].firstChild.data;
+    return table.rows[ address+1 ].cells[ 2 ].firstChild.data;
 }
 
 
@@ -579,7 +580,7 @@ function memoryHexGet(address){
 function memoryUdecGet(address){
     if(address >= 0 && address < memoryTableMaxRow){
         let table = document.getElementById('Memorytable');
-        var v = table.rows[ address ].cells[ 3 ].firstChild.data;
+        var v = table.rows[ address+1 ].cells[ 3 ].firstChild.data;
         v = parseInt(v, 10);
         return v
     }else if(address <= 0xFFFF && address >= 0xFFFF-stackTableMaxRow){
@@ -599,7 +600,7 @@ function memoryUdecGet(address){
  */
 function memorySdecGet(address){
     let table = document.getElementById('Memorytable');
-    var v = table.rows[ address ].cells[ 4 ].firstChild.data;
+    var v = table.rows[ address+1 ].cells[ 4 ].firstChild.data;
     v = parseInt(v, 10);
     return v
 }
@@ -612,7 +613,7 @@ function memorySdecGet(address){
  */
 function memoryBinGet(address){
     let table = document.getElementById('Memorytable');
-    var v = table.rows[ address ].cells[ 5 ].firstChild.data;
+    var v = table.rows[ address+1 ].cells[ 5 ].firstChild.data;
     v = parseInt(v.replace(/ /g,''), 2);
     return v
 }
@@ -625,7 +626,7 @@ function memoryBinGet(address){
  */
 function memoryLiteralGet(address){
     let table = document.getElementById('Memorytable');
-    return table.rows[ address ].cells[ 6 ].firstChild.data
+    return table.rows[ address+1 ].cells[ 6 ].firstChild.data
 }
 
 /**
@@ -636,7 +637,7 @@ function memoryLiteralGet(address){
  */
 function memoryLineGet(address){
     let table = document.getElementById('Memorytable');
-    return parseInt( table.rows[ address ].cells[ 7 ].firstChild.data);
+    return parseInt( table.rows[ address+1 ].cells[ 7 ].firstChild.data);
 }
 
 
@@ -961,8 +962,21 @@ function ajaxJsonToMemoryMap(obj){
  */
 function memoryTableRowColorSet(address,color){
     let table = $("#Memorytable tr");
-    $(table[address]).removeClass();
-    $(table[address]).addClass("table-"+color);
+    let length = memoryLengthGet(address);
+    console.log(memoryLengthGet(address));
+    if(length == 2){
+        $(table[address+1]).removeClass();
+        $(table[address+2]).removeClass();
+        $(table[address+1]).addClass("table-"+color);
+        if(color =="light"){
+            $(table[address+2]).addClass("table-"+color);
+        }else{
+            $(table[address+2]).addClass("table-danger");
+        }
+    }else{
+        $(table[address+1]).removeClass();
+        $(table[address+1]).addClass("table-"+color);
+    }
 }
 
 /**
