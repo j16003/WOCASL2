@@ -456,6 +456,8 @@ class CometEmulator{
                         Opcode.setText(IRLabel[0].getText()[1]+IRLabel[0].getText()[2]);
                         Opcode.udecNumber = parseInt(Opcode.getText(),16);
 
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
                         r1.setText(IRLabel[0].getText()[3]);
                         r1.setUdecNumber(parseInt(IRLabel[0].getText()[3]));
                         r2.setText(IRLabel[0].getText()[4]);
@@ -471,7 +473,8 @@ class CometEmulator{
                         Opcode.active();
                         r1.active();
                         r2.active();
-                        if(memoryLengthGet(this.address)==1){
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        if(memoryLengthGet(this.address) == 1){
                             this.opcodeToMode(Opcode.getUdecNumber());
                         }else{
                             if(r2.getUdecNumber() > 0){
@@ -492,13 +495,15 @@ class CometEmulator{
                         adr.active();
                         r2.active();
                         Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                     break;
                     case 11:
                         Adder.active();
                         adr.active();
                         MARunder.active();
                         Controler.active();
-                        r2.active()
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                         MARunder.setUdecNumber(adr.getUdecNumber());
                         if(r2.getUdecNumber() > 0){
                             MARunder.setUdecNumber(MARunder.getUdecNumber()+registerUdecGet(r2.getUdecNumber()));
@@ -519,10 +524,14 @@ class CometEmulator{
                         MAR.setUdecNumber(MARunder.getUdecNumber());
                         MAR.setText(MARunder.getText());
                         Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        COMETLine[67].inactive();
                     break;
                     case 13:
                         Controler.active();
                         MAR.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        COMETLine[67].inactive();
                     break;
                     case 14:
                         MAR.active();
@@ -530,6 +539,8 @@ class CometEmulator{
                         Controler.active();
                         MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        COMETLine[67].inactive();
                     break;
                     case 15:
                         FR.active();
@@ -538,9 +549,10 @@ class CometEmulator{
                         Decoder.active();
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
-                        
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                         registerAllSet(r1.getUdecNumber(),MDR.getUdecNumber());
                         this.registerALUActiveLine(r1.getUdecNumber());
+                        COMETLine[67].inactive();
                     break;
                     default:
                         return 0;
@@ -558,6 +570,7 @@ class CometEmulator{
                         FR.active();
                         signFlagSet(registerUdecGet(r1.getUdecNumber()));
                         zeroFlagSet(registerUdecGet(r1.getUdecNumber()));
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                     break;
                     case 17:
                         GR[r2.getUdecNumber()].active();
@@ -724,6 +737,48 @@ class CometEmulator{
                 COMETLine[InstructionfetchCycle[index][i]].active();
             }
         }
+    }
+    registerAccsessLine(r1,r2){
+        let col = "#00FF00";
+        if(r2 > 0){
+            col = "#00FFFF";
+            COMETLine[67].active();
+        }
+
+        COMETLine[69+r1].active();
+        COMETLine[69+r1].setColor("#00FF00");
+
+        if(COMETLine[69+r2].getActive()){
+            COMETLine[69+r2].setColor("#00FFFF");
+        }else{
+            COMETLine[69+r2].setColor("#0000FF");
+        }
+        if(r1 != 0 && r1 != 7){
+            COMETLine[76+r1].active();
+            COMETLine[76+r1].setColor("#00FF00");
+        }
+        if(r2 != 0 && r2 != 7){
+            if(COMETLine[76+r2].getActive()){
+                COMETLine[76+r2].setColor("#00FFFF");
+            }else{
+                COMETLine[76+r2].active();
+                COMETLine[76+r2].setColor("#0000FF");
+            }
+        }
+
+        for(var i= 71;i < 71 + r1 - 1 && r1 >= 2;i++){
+            COMETLine[i].active();
+            COMETLine[i].setColor("#00FF00");
+        }
+        for(var i= 71;i < 71 + r2 - 1 && r2 >= 2;i++){
+            if(!COMETLine[i].getActive()){
+                COMETLine[i].active();
+                COMETLine[i].setColor("#0000FF");
+            }else{
+                COMETLine[i].setColor("#00FFFF");
+            }
+        }
+        COMETLine[68].setColor(col);
     }
     /**
      * COMET2のLineをすべてinactive
@@ -1064,14 +1119,14 @@ var InstructionfetchCycle = [
     [0,11],             //6 
     [61,60,12,14,38],   //7
     [63,64],            //8
-    [],                 //9
-    [58,59],            //10
-    [16,58,59],         //11
-    [7],                //12
-    [0],                //13
-    [0,11],             //14
-    [9,10,13,14,15],    //15
-    [15,20,21],         //16
+    [65,66,68],         //9
+    [58,59,66,68],      //10
+    [16,58,59,66,68],   //11
+    [7,66,68],          //12
+    [0,66,68],          //13
+    [0,11,66,68],       //14
+    [9,10,13,14,15,66,68],//15
+    [15,20,21,66,68],   //16
     [13,14,15,38],      //17
     [18,19,21],         //18
     [0],                //19
@@ -1140,7 +1195,11 @@ class Cometp5Line{
      * @memberof Cometp5Line
      */
     active(){
-        this.color = color(255,0,0);
+        if (this.id >= 65){
+            this.disable = true;
+        }else{
+            this.color = color(255,0,0);
+        }
     }
     /**
      * Lineを非アクティブ(黒色)にする
@@ -1148,7 +1207,14 @@ class Cometp5Line{
      * @memberof Cometp5Line
      */
     inactive(){
-        this.color = color(0,0,0);
+        if(this.id >= 65){
+            this.disable = false;
+        }else{
+            this.color = color(0,0,0);
+        }
+    }
+    getActive(){
+        return this.disable;
     }
     enable(flag){
         this.enable = flag;
@@ -1190,6 +1256,12 @@ function setup(){
     for(var i=0;i<LinePatern.length;i++){
         COMETLine.push(new Cometp5Line(i));
     }
+    //TODO id:65 color red
+    COMETLine[65].setColor("#FF0000");
+    //TODO id:66 color green
+    COMETLine[66].setColor("#00FF00");
+    //TODO id:67 color blue
+    COMETLine[67].setColor("#0000FF");
     noLoop();
 }
 
