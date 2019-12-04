@@ -676,7 +676,7 @@ class CometEmulator{
                         Decoder.active();
                         COMETLine[37-r1.getUdecNumber()].active();
                     break;
-                    
+
                     default:
                         return 0;
                 }
@@ -1095,7 +1095,7 @@ class Cometp5Line{
     }
     /**
      *
-     *
+     * setColor - 色を設定する
      * @param {string} col
      * @memberof Cometp5Line
      */
@@ -1153,8 +1153,11 @@ function setup(){
     }
     IRLabel.push(new Block(326-52,30,45,18,"IR"));
     IRLabel.push(new Block(320,30,45,18,""));
-    for(var i=0;i<LinePatern.length;i++)
-    COMETLine.push(new Cometp5Line(i));
+
+    //LinePatern add (id:65以降非表示)
+    for(var i=0;i<LinePatern.length;i++){
+        COMETLine.push(new Cometp5Line(i));
+    }
     noLoop();
 }
 
@@ -1165,9 +1168,9 @@ var inc = 0;
  */
 function draw(){
     background(255);
-  
-
+    //Emulator counter
     text(str(COMETEmu.counter),10,10);
+
     MAR.draw();
     MARunder.draw();
     MDR.draw();
@@ -1201,7 +1204,7 @@ function draw(){
 /**
  * registerの値をComet内に反映させる
  *
- * @param {number} address
+ * @param {number} address - レジスターアドレス
  */
 function registerCometSync(address){
     if(address >= 0 && address <= 7){
@@ -1210,14 +1213,22 @@ function registerCometSync(address){
         GR[address].setUdecNumber(registerval);
     }
 }
+/**
+ * flagRegisterTableとCOMETIIの値を同期させる
+ *
+ */
 function flagRegisterCometSync(){
     let f = overflowFlagGet().toString() + signFlagGet().toString() + zeroFlagGet().toString();
     FR.setText(f);
 }
+/**
+ *
+ * prtableとCOMETIIのprを同期させる
+ * @param {*} value
+ */
 function prCometSync(value){
     PR.setText(toHex(value));
 }
-let counter = 0;
 function mousePressed(){
 }
 
