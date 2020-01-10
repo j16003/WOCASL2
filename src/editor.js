@@ -14,6 +14,15 @@ window.addEventListener('DOMContentLoaded', onLoad);
  * Webページ読み込み時の処理
  */
 function onLoad() {
+  var remon = document.cookie.split(';');
+ 
+  remon.forEach(function(value) {
+ 
+    //cookie名と値に分ける
+    var content = value.split('=');
+    
+    console.log( content[1] );
+})
   // 入力関連領域
   inputArea = document.getElementById('input_area');
   // 入力領域
@@ -62,6 +71,7 @@ function onLoad() {
         }));
 
     }
+    
 }
   
   editor = ace.edit('input_txt');

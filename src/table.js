@@ -40,24 +40,6 @@ $(document).ready(function () {
         '<td> </td>'+
         '<td hidden> </td>'+
         '<td hidden>1</td></tr>';
-        //var trJQ_r = $('</tr>').appendTo(tableJQ);
-        //0
-        /*$('<td>' + r000 + '</td>').appendTo(trJQ_r);
-        //1
-        $('<td>' +  r + '</td>').appendTo(trJQ_r);
-        //2
-        $('<td>#0000</td>').appendTo(trJQ_r);
-        //3
-        $('<td>0</td>').appendTo(trJQ_r);
-        //4
-        $('<td>0</td>').appendTo(trJQ_r);
-        //5
-        $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
-        //6
-        $('<td> </td>').appendTo(trJQ_r);
-        //7
-        $('<td hidden> </td>').appendTo(trJQ_r);
-        */
     }
     tableHtml+="</tbody>";
     $(tableHtml).appendTo(tableJQ);
@@ -73,20 +55,6 @@ $(document).ready(function () {
         '<td>0</td>'+
         '<td>0</td>'+
         '<td>0000 0000 0000 0000</td></tr>';
-        /*var trJQ_r = $('<tr></tr>').appendTo(tableJQ);
-        for (var c = 0; c < c_end; c++) {
-            if(c == 0){
-                $('<td>' + r000 + '</td>').appendTo(trJQ_r);
-            }else if(c == 1){
-                $('<td>#0000</td>').appendTo(trJQ_r);
-            }else if(c == 2){
-                $('<td>0</td>').appendTo(trJQ_r);
-            }else if(c == 3){
-                $('<td>0</td>').appendTo(trJQ_r);
-            }else if(c == 4){
-                $('<td>0000 0000 0000 0000</td>').appendTo(trJQ_r);
-            }              
-       }*/
     }
     $(tableHtml).appendTo(tableJQ);
     $(stack_Area).append(tableJQ);
@@ -258,8 +226,6 @@ function registerBinSet(address,value){
     let table = document.getElementById('Registertable');
     table.rows[ address ].cells[ 4 ].firstChild.data = toBin(value);
 }
-
-
 
 /**
  * registerAllSet Registertableの2進数、符号なし10進数、符号あり10進数、16進数の値を書き換える
@@ -709,7 +675,6 @@ function overflowFlagGet(){
     return v
 }
 
-
 /**
  * SignFlagSet Sign Flagを設定する
  *
@@ -727,7 +692,6 @@ function signFlagSet(value){
     }
     flagRegisterCometSync();
 }
-
 
 /**
  * toSignFlagGet RegistertableのSign Flagの値を取得する
@@ -758,7 +722,6 @@ function zeroFlagSet(value){
     }
     flagRegisterCometSync();
 }
-
 
 /**
  * toZeroFlagGet RegistertableのZero Flagの値を取得する
@@ -882,7 +845,6 @@ function stackUdecGet(address){
     return v
 }
 
-
 /**
  * stackUdecGet Stacktableの符号あり10進数の値を取得する
  *
@@ -912,7 +874,6 @@ function stackBinGet(address){
     v = parseInt(v.replace(/ /g,''), 2);
     return v
 }
-
 
 /**
  * ajaxJsonToMemoryMap memorytableにバイナリを読み込む
@@ -944,7 +905,6 @@ function ajaxJsonToMemoryMap(obj){
             }
             address += element.Length;
         });
-        
         
         if(obj["warning"]){
             let jsonparsewarning = JSON.parse(obj["warning"]);

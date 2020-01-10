@@ -58,10 +58,13 @@ class StepBackControl{
         
             let struct = this.stepBackArray.pop();
             let flagtable = document.getElementById("Flagtable");
+            //register table
             for(var i=3;i<=9;i++){
                 registerAllSet(i-3,struct.register.rows[i].cells[2].firstChild.data);
             }
+            //program register
             prValueSet(parseInt(struct.register.rows[1].cells[2].firstChild.data));
+            //stack 
             if(struct.stack != null){
                 if(struct.stack > 0){
                     stackTableRowColorSet(registerUdecGet(9)+struct.stack,'#00FF00');
@@ -72,11 +75,13 @@ class StepBackControl{
                 }
                 registerAllSet(9,registerUdecGet(9)+struct.stack)
             }
+            //memory table
             if(struct.memory != null){
                 struct.memory.forEach(element => {
                     memoryAllSet(element.first,element.second);
                 });
             }
+            //flag Table 
             for(var i = 0; i < 7; i++){
                 flagtable.rows[1].cells[i].firstChild.data = struct.flag.rows[1].cells[i].firstChild.data;
             }
