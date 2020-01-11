@@ -170,10 +170,10 @@ class MDRBlock extends Block{
 /**
  *
  *
- * @class opcodeBlock
+ * @class OpcodeBlock
  * @extends {Block}
  */
-class opcodeBlock extends Block{
+class OpcodeBlock extends Block{
     constructor(x,y,label){
         super(x,y,20,18,label);
         this.str = "00";
@@ -183,7 +183,7 @@ class opcodeBlock extends Block{
      *
      *
      * @param {string} label
-     * @memberof opcodeBlock
+     * @memberof OpcodeBlock
      */
     setLabel(label){
         this.label = label;
@@ -192,7 +192,7 @@ class opcodeBlock extends Block{
      *
      *
      * @param {string} str
-     * @memberof opcodeBlock
+     * @memberof OpcodeBlock
      */
     setText(str){
             this.str = str;
@@ -202,7 +202,7 @@ class opcodeBlock extends Block{
      *
      * @param {number} x
      * @param {number} y
-     * @memberof opcodeBlock
+     * @memberof OpcodeBlock
      */
     setLabelPosition(x,y){
         this.labelX = x;
@@ -250,6 +250,7 @@ class registerBlock extends Block{
         this.labelX = x;
         this.labelY = y;
     }
+
 }
 
 /**
@@ -456,15 +457,17 @@ class CometEmulator{
                         Opcode.setText(IRLabel[0].getText()[1]+IRLabel[0].getText()[2]);
                         Opcode.udecNumber = parseInt(Opcode.getText(),16);
 
-                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
 
                         r1.setText(IRLabel[0].getText()[3]);
                         r1.setUdecNumber(parseInt(IRLabel[0].getText()[3]));
                         r2.setText(IRLabel[0].getText()[4]);
                         r2.setUdecNumber(parseInt(IRLabel[0].getText()[4]));
+
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
                         adr.setUdecNumber(IRLabel[1].getUdecNumber());
                         adr.setText(IRLabel[1].getText());
-                       
+
                     break;
                     case 9:
                         Controler.setText(memoryLiteralGet(this.address))
@@ -473,6 +476,7 @@ class CometEmulator{
                         Opcode.active();
                         r1.active();
                         r2.active();
+
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                         if(memoryLengthGet(this.address) == 1){
                             this.opcodeToMode(Opcode.getUdecNumber());
@@ -549,6 +553,7 @@ class CometEmulator{
                         Decoder.active();
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
+
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                         registerAllSet(r1.getUdecNumber(),MDR.getUdecNumber());
                         this.registerALUActiveLine(r1.getUdecNumber());
@@ -605,13 +610,13 @@ class CometEmulator{
                         r1.active();
                         Controler.active();
                     break;
-                    //TODO memoryに値格納
                     case 20:
                         MAR.active();
                         MDR.active();
                         r1.active();
                         Controler.active();
-                        memoryAllSet(MAR.getUdecNumber(),registerUdecGet(r1.getUdecNumber()));
+                        //memoryAllSet(MAR.getUdecNumber(),registerUdecGet(r1.getUdecNumber()));
+                        cometST(this.address);
                     break;
                     default:
                         return 0;
@@ -640,15 +645,18 @@ class CometEmulator{
                 switch(this.counter){
                     case 22:
                         MAR.active();
+                        MARunder.active();
                         MAR.setText(MARunder.getText());
                         MAR.setUdecNumber(MARunder.getUdecNumber());
                         Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                     break;
                     case 23:
                         MAR.active();
                         this.memoryLineAddress = MAR.getUdecNumber();
                         memoryTableRowColorSet(this.memoryLineAddress,"success");
                         Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                     break;
                     case 24:
                         MAR.active();
@@ -657,6 +665,8 @@ class CometEmulator{
                         MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
                         Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
                     break;
                     case 25:
                         r2.active();
@@ -664,6 +674,8 @@ class CometEmulator{
                         GRLabel[r1.getUdecNumber()].active();
                         MDR.active();
                         COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
                     break;
                     case 26:
                         ALU.active();
@@ -673,7 +685,9 @@ class CometEmulator{
                         Controler.active();
                         FR.active();
                         this.registerControlActiveLine(r1.getUdecNumber());
-                        registerAllSet(r1.getUdecNumber(),registerUdecGet(r1.getUdecNumber())+MDR.getUdecNumber());
+                        cometADDA(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        //registerAllSet(r1.getUdecNumber(),registerUdecGet(r1.getUdecNumber())+MDR.getUdecNumber());
                     break;
                     default:
                         return 0;
@@ -685,11 +699,122 @@ class CometEmulator{
                     case 27:
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
                         Opcode.active();
                         Decoder.active();
                         COMETLine[37-r1.getUdecNumber()].active();
                     break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometADDA(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //SUBA GR1,Addr
+            case 11:
+                switch(this.counter){
+                    case 30:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 31:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 32:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
 
+                    break;
+                    case 33:
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 34:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometSUBA(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //SUBA GR1,GR2
+            case 12:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometADDA(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
                     default:
                         return 0;
                 }
@@ -844,8 +969,16 @@ class CometEmulator{
                 this.mode = 10;
                 this.counter = 26;
             break;
+            case 0x21:
+                this.mode = 11;
+                this.counter = 29;
+            break;
+            case 0x25:
+                this.mode = 12;
+                this.counter = 26;
+            break;
             default:
-                alert(op);
+                alert("未定義op : "+op);
             break;
         }  
     }
@@ -894,6 +1027,12 @@ class controlerBlock extends Block{
         this.labelY = y;
     }
 }
+/**
+ *
+ *
+ * @class AdderBlock
+ * @extends {Block}
+ */
 class AdderBlock extends Block{
     constructor(){
         super(0,0,0,0,"");
@@ -915,6 +1054,12 @@ class AdderBlock extends Block{
         stroke(0);
     }
 }
+/**
+ *
+ *
+ * @class ALUBlock
+ * @extends {Block}
+ */
 class ALUBlock extends Block{
     constructor(){
         super(0,0,0,0,"");
@@ -1109,6 +1254,7 @@ const LinePatern = [
 
 
 ];
+// Cycle別CPUラインの表示パターン定義
 var InstructionfetchCycle = [
     [1,2],              //0
     [0],                //1
@@ -1118,7 +1264,7 @@ var InstructionfetchCycle = [
     [0],                //5
     [0,11],             //6 
     [61,60,12,14,38],   //7
-    [63,64],            //8
+    [63,64,66,68],      //8
     [65,66,68],         //9
     [58,59,66,68],      //10
     [16,58,59,66,68],   //11
@@ -1132,12 +1278,19 @@ var InstructionfetchCycle = [
     [0],                //19
     [0,11],             //20
     [8,19,21,38],       //21
-    [7],                //22
-    [0],                //23
-    [0,11],
-    [20,21,9,10],
-    [13,14,15,38],
-    [20,21],
+    [7,66,68],          //22
+    [0,66,68],          //23
+    [0,11,66,68],       //24
+    [20,21,9,10,66,68], //25
+    [13,14,15,38,66,68],//26
+    [20,21,66,68],      //27
+    [20,21,66,68],      //28
+    [13,14,15,38],      //29
+    [7,66,68],          //30
+    [0,66,68],          //31
+    [0,11,66,68],       //32
+    [20,21,9,10,66,68], //25
+    [13,14,15,38,66,68],//33
 ];
 
 /**
@@ -1235,7 +1388,7 @@ function setup(){
     PR = new Block(161,30,45,18,"PR");
     SP = new Block(161,60,45,18,"SP");
     FR = new frBlock(111,170,"FR");
-    Opcode = new opcodeBlock(268,100,"");
+    Opcode = new OpcodeBlock(268,100,"");
     r1 = new registerBlock(289,100,"");
     r2 = new registerBlock(304,100,"");
     adr = new addressBlock(321,100,"");
