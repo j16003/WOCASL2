@@ -463,7 +463,7 @@ class CometEmulator{
                         r2.setText(IRLabel[0].getText()[4]);
                         r2.setUdecNumber(parseInt(IRLabel[0].getText()[4]));
 
-                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        //this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
 
                         adr.setUdecNumber(IRLabel[1].getUdecNumber());
                         adr.setText(IRLabel[1].getText());
@@ -500,6 +500,16 @@ class CometEmulator{
                         r2.active();
                         Controler.active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        
+                        //r2が0以外の時は指標レジスタ有効のためALUにアクセスする
+                        if(r2.getUdecNumber() != 0){
+                            GR[r2.getUdecNumber()].active();
+                            GRLabel[r2.getUdecNumber()].active();
+                            this.registerAddressActiveLine(r2.getUdecNumber());
+                            COMETLine[55].active();
+                            COMETLine[56].active();
+                        }
+
                     break;
                     case 11:
                         Adder.active();
@@ -513,6 +523,16 @@ class CometEmulator{
                             MARunder.setUdecNumber(MARunder.getUdecNumber()+registerUdecGet(r2.getUdecNumber()));
                         }
                         MARunder.setText(toHex(MARunder.getUdecNumber()));
+
+                        //r2が0以外の時は指標レジスタ有効のためALUにアクセスする
+                        if(r2.getUdecNumber() != 0){
+                            GR[r2.getUdecNumber()].active();
+                            GRLabel[r2.getUdecNumber()].active();
+                            this.registerAddressActiveLine(r2.getUdecNumber());
+                            COMETLine[55].active();
+                            COMETLine[56].active();
+                        }
+
                         this.opcodeToMode(Opcode.getUdecNumber());
                     break;
                     default:
@@ -543,6 +563,7 @@ class CometEmulator{
                         Controler.active();
                         MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                         COMETLine[67].inactive();
                     break;
@@ -664,18 +685,18 @@ class CometEmulator{
                         memoryTableRowColorSet(this.memoryLineAddress,"success");
                         MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
                         Controler.active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
 
                     break;
                     case 25:
-                        r2.active();
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
                         MDR.active();
                         COMETLine[37-r1.getUdecNumber()].active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
-
+                        Controler.active();
                     break;
                     case 26:
                         ALU.active();
@@ -733,7 +754,7 @@ class CometEmulator{
             //SUBA GR1,Addr
             case 11:
                 switch(this.counter){
-                    case 30:
+                    case 22:
                         MAR.active();
                         MARunder.active();
                         MAR.setText(MARunder.getText());
@@ -741,35 +762,34 @@ class CometEmulator{
                         Controler.active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                     break;
-                    case 31:
+                    case 23:
                         MAR.active();
                         this.memoryLineAddress = MAR.getUdecNumber();
                         memoryTableRowColorSet(this.memoryLineAddress,"success");
                         Controler.active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                     break;
-                    case 32:
+                    case 24:
                         MAR.active();
                         this.memoryLineAddress = MAR.getUdecNumber();
                         memoryTableRowColorSet(this.memoryLineAddress,"success");
                         MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
                         MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
                         Controler.active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
 
                     break;
-                    case 33:
-                        r2.active();
+                    case 25:
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
                         MDR.active();
                         COMETLine[37-r1.getUdecNumber()].active();
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
-
+                        Controler.active();
                     break;
-                    case 34:
+                    case 26:
                         ALU.active();
-                        r2.active();
                         GR[r1.getUdecNumber()].active();
                         GRLabel[r1.getUdecNumber()].active();
                         Controler.active();
@@ -819,6 +839,742 @@ class CometEmulator{
                         return 0;
                 }
             break;
+            //ADDL GR1,10
+            case 13:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometADDL(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //ADDL GR1,GR2
+            case 14:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometADDL(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //AND GR1,Addr
+            case 15:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometAND(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //AND GR1,GR2
+            case 16:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometAND(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //OR GR1,Addr
+            case 17:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometOR(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //OR GR1,GR2
+            case 18:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometOR(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //XOR GR1,Addr
+            case 19:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 25:
+                        r1.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r1.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometXOR(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //XOR GR1,GR2
+            case 20:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometXOR(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //CPA GR1, Addr
+            case 21:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometCPA(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //CPA GR1,GR3
+            case 22:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometCPA(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //CPL GR1,Addr
+            case 23:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometCPA(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //CPL GR1,GR3
+            case 24:
+                switch(this.counter){
+                    case 27:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 28:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        r2.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        Opcode.active();
+                        Decoder.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                    break;
+                    case 29:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        GR[r2.getUdecNumber()].active();
+                        GRLabel[r2.getUdecNumber()].active();
+                        cometCPA(this.address);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        FR.active();
+                        ALU.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //SLA GR1,100
+            case 25:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometSLA(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //SRL GR1,100
+            case 26:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometSRA(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //SLL GR1,100
+            case 27:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometSLL(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //SRL GR1,100
+            case 28:
+                switch(this.counter){
+                    case 22:
+                        MAR.active();
+                        MARunder.active();
+                        MAR.setText(MARunder.getText());
+                        MAR.setUdecNumber(MARunder.getUdecNumber());
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 23:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 24:
+                        MAR.active();
+                        this.memoryLineAddress = MAR.getUdecNumber();
+                        memoryTableRowColorSet(this.memoryLineAddress,"success");
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                        MDR.active();
+                        Controler.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    case 25:
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        MDR.active();
+                        COMETLine[37-r1.getUdecNumber()].active();
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        Controler.active();
+                    break;
+                    case 26:
+                        ALU.active();
+                        r2.active();
+                        GR[r1.getUdecNumber()].active();
+                        GRLabel[r1.getUdecNumber()].active();
+                        Controler.active();
+                        FR.active();
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        cometSRL(this.address);
+                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
             }
         redraw();
         this.counter++;
@@ -842,6 +1598,13 @@ class CometEmulator{
         for(var i = 22;i < n;i++){
             COMETLine[i].active();
         };
+        COMETLine[37-gr].active();
+    }
+    registerAddressActiveLine(gr){
+        let n = 30 - gr;
+        for(var i= n;i<30;i++){
+            COMETLine[i].active();
+        }
         COMETLine[37-gr].active();
     }
     registerControlActiveLine(gr){
@@ -946,21 +1709,26 @@ class CometEmulator{
     }
     opcodeToMode(op){
         switch (op){
+            //LD GR1,Addr
             case 0x10:
                 this.mode = 5;
             break;
+            //ST GR1,Addr
             case 0x11:
                 this.mode = 7;
                 this.counter = 17;
             break;
+            //LAD GR1,Addr
             case 0x12:
                 this.mode = 8;
                 this.counter = 20;
             break;
+            //LD GR1,GR2
             case 0x14:
                 this.mode = 6;
                 this.counter = 15;
             break;
+            //ADDA 
             case 0x20:
                 this.mode = 9;
                 this.counter = 21;
@@ -969,6 +1737,7 @@ class CometEmulator{
                 this.mode = 10;
                 this.counter = 26;
             break;
+            //SUBA
             case 0x21:
                 this.mode = 11;
                 this.counter = 29;
@@ -976,6 +1745,80 @@ class CometEmulator{
             case 0x25:
                 this.mode = 12;
                 this.counter = 26;
+            break;
+            //ADDL
+            case 0x22:
+                this.mode = 13;
+                this.counter = 21;
+            break;
+            case 0x26:
+                this.mode = 14;
+                this.counter = 26;
+            break;
+            //AND
+            case 0x30:
+                this.mode = 15;
+                this.counter = 21;
+            break;
+            case 0x34:
+                this.mode = 16;
+                this.counter = 26;
+            break;
+            //OR
+            case 0x31:
+                this.mode = 17;
+                this.counter = 21;
+            break;
+            case 0x35:
+                this.mode = 18;
+                this.counter = 26;
+            break;
+            //XOR
+            case 0x32:
+                this.mode = 19;
+                this.counter = 21;
+            break;
+            case 0x36:
+                this.mode = 20;
+                this.counter = 26;
+            break;
+            //CPA
+            case 0x40:
+                this.mode = 21;
+                this.counter = 21;
+            break;
+            case 0x44:
+                this.mode = 22;
+                this.counter = 26;
+            break;
+            //CPL
+            case 0x41:
+                this.mode = 23;
+                this.counter = 21;
+            break;
+            case 0x45:
+                this.mode = 24;
+                this.counter = 26;
+            break;
+            //SLA
+            case 0x50:
+                this.mode = 25;
+                this.counter = 21;
+            break;
+            //SRA
+            case 0x51:
+                this.mode = 26;
+                this.counter = 21;
+            break;
+            //SLL
+            case 0x52:
+                this.mode = 27;
+                this.counter = 21;
+            break;
+            //SRA
+            case 0x53:
+                this.mode = 28;
+                this.counter = 21;
             break;
             default:
                 alert("未定義op : "+op);
@@ -986,7 +1829,7 @@ class CometEmulator{
 
 class controlerBlock extends Block{
     /**
-     *Creates an instance of controlerBlock.
+     * Creates an instance of controlerBlock.
      * @param {number} x
      * @param {number} y
      * @param {string} label
@@ -1264,7 +2107,7 @@ var InstructionfetchCycle = [
     [0],                //5
     [0,11],             //6 
     [61,60,12,14,38],   //7
-    [63,64,66,68],      //8
+    [63,64],      //8
     [65,66,68],         //9
     [58,59,66,68],      //10
     [16,58,59,66,68],   //11
@@ -1278,6 +2121,7 @@ var InstructionfetchCycle = [
     [0],                //19
     [0,11],             //20
     [8,19,21,38],       //21
+    //ADDA~XOR
     [7,66,68],          //22
     [0,66,68],          //23
     [0,11,66,68],       //24
@@ -1286,11 +2130,12 @@ var InstructionfetchCycle = [
     [20,21,66,68],      //27
     [20,21,66,68],      //28
     [13,14,15,38],      //29
+    //CPA,CPL
     [7,66,68],          //30
     [0,66,68],          //31
     [0,11,66,68],       //32
-    [20,21,9,10,66,68], //25
-    [13,14,15,38,66,68],//33
+    [20,21,9,10,66,68], //33
+    [13,14,15,38,66,68],//34
 ];
 
 /**
