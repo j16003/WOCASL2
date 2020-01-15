@@ -1667,7 +1667,51 @@ class CometEmulator{
                     default:
                         return 0;
                 }
-            break;            
+            break;
+            //PUSH    
+            case 0x70:
+                switch(this.counter){
+                    case 32:
+                        SP.active();
+                        Controler.active();
+                        registerAllSet(9,SP.getUdecNumber()-1);
+                    break;
+                    case 33:
+                        MAR.active();
+                        MARunder.active();
+                        MDR.active();
+                        MAR.setText(SP.getText());
+                        MAR.setUdecNumber(SP.getUdecNumber());
+                    break;
+                    case 34:
+                        MAR.active();
+                        MDR.active();
+                        registerAllSet(9,SP.getUdecNumber()+1);
+                        cometPUSH(this.address);
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //POP
+            case 0x71:
+                switch(this.counter){
+                    case 35:
+                        SP.active();
+                        MAR.active();
+                        MAR.setText(SP.getText());
+                        MAR.setUdecNumber(SP.getUdecNumber());
+                    break;
+                    case 36:
+                        SP.active();
+                        registerAllSet(9,SP.getUdecNumber()+1);
+                        MAR.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
             }
         //再描画
         redraw();
@@ -1943,6 +1987,16 @@ class CometEmulator{
             case 0x66:
                 this.mode = op;
                 this.counter = 29;
+            break;
+            //PUSH
+            case 0x70:
+                this.mode = op;
+                this.counter = 31;
+            break;
+            //POP
+            case 0x71:
+                this.mode = op;
+                this.counter = 34;
             break;
             default:
                 alert("未定義op : "+op);
@@ -2255,8 +2309,13 @@ var InstructionfetchCycle = [
     [20,21,66,68],      //28
     [13,14,15,38],      //29
     //JUMP系統
-    [],          //30
-    [4,5]               //31
+    [],                 //30
+    [4,5],              //31
+    [],                 //32             
+    [1,38,18],          //33
+    [0],                //34
+    [1,3],              //35
+    [0],                //36
 ];
 
 /**
@@ -2435,6 +2494,8 @@ function registerCometSync(address){
         GR[address].setText(toHex(registerval));
         GR[address].setUdecNumber(registerval);
     }
+    SP.setText(toHex(registerHexGet(9)));
+    SP.setUdecNumber(registerHexGet(9));
 }
 /**
  * flagRegisterTableとCOMETIIの値を同期させる
