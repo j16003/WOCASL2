@@ -1525,7 +1525,7 @@ class CometEmulator{
                 }
             break;
             //SRL GR1,100
-            case 28:
+            case 0x53:
                 switch(this.counter){
                     case 22:
                         MAR.active();
@@ -1575,7 +1575,101 @@ class CometEmulator{
                         return 0;
                 }
             break;
+            //JMI Addr,100
+            case 0x61:
+                switch(this.counter){
+                    case 30:
+                        var address = cometJMI(this.address);
+                        if(address != 2){
+                            prValueSet(this.address+address);
+                            COMETLine[4].active();
+                            COMETLine[5].active();
+                        }
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //JNZ Addr,100
+            case 0x62:
+                switch(this.counter){
+                    case 30:
+                        var address = cometJNZ(this.address);
+                        if(address != 2){
+                            prValueSet(this.address+address);
+                            COMETLine[4].active();
+                            COMETLine[5].active();
+                        }
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //JZE Addr,100
+            case 0x63:
+                switch(this.counter){
+                    case 30:
+                        var address = cometJZE(this.address);
+                        if(address != 2){
+                            prValueSet(this.address+address);
+                            COMETLine[4].active();
+                            COMETLine[5].active();
+                        }
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //JUMP Addr,100
+            case 0x64:
+                switch(this.counter){
+                    case 31:
+                        prValueSet(cometJUMP(this.address));
+                        MARunder.active();
+                        PR.active();
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //JPL Addr,100
+            case 0x65:
+                switch(this.counter){
+                    case 30:
+                        var address = cometJPL(this.address);
+                        if(address != 2){
+                            prValueSet(this.address+address);
+                            COMETLine[4].active();
+                            COMETLine[5].active();
+                        }
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //JOV Addr,100
+            case 0x66:
+                switch(this.counter){
+                    case 30:
+                        var address = cometJOV(this.address);
+                        if(address != 2){
+                            prValueSet(this.address+address);
+                            COMETLine[4].active();
+                            COMETLine[5].active();
+                        }
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;            
             }
+        //再描画
         redraw();
         this.counter++;
         return 1;
@@ -1817,8 +1911,38 @@ class CometEmulator{
             break;
             //SRA
             case 0x53:
-                this.mode = 28;
+                this.mode = op;
                 this.counter = 21;
+            break;
+            //JMI
+            case 0x61:
+                this.mode = op;
+                this.counter = 29;
+            break;
+            //JNZ
+            case 0x62:
+                this.mode = op;
+                this.counter = 29;
+            break;
+            //JZE
+            case 0x63:
+                this.mode = op;
+                this.counter = 29;
+            break;
+            //JUMP
+            case 0x64:
+                this.mode = op;
+                this.counter = 30;
+            break;
+            //JPL
+            case 0x65:
+                this.mode = op;
+                this.counter = 29;
+            break;
+            //JOV
+            case 0x66:
+                this.mode = op;
+                this.counter = 29;
             break;
             default:
                 alert("未定義op : "+op);
@@ -2130,12 +2254,9 @@ var InstructionfetchCycle = [
     [20,21,66,68],      //27
     [20,21,66,68],      //28
     [13,14,15,38],      //29
-    //CPA,CPL
-    [7,66,68],          //30
-    [0,66,68],          //31
-    [0,11,66,68],       //32
-    [20,21,9,10,66,68], //33
-    [13,14,15,38,66,68],//34
+    //JUMP系統
+    [],          //30
+    [4,5]               //31
 ];
 
 /**
