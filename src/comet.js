@@ -477,7 +477,12 @@ class CometEmulator{
                         r1.active();
                         r2.active();
 
-                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                        if(r1.getUdecNumber() != 0){
+                            this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                            COMETLine[66].active();
+                            COMETLine[68].active();
+                        }
+
                         if(memoryLengthGet(this.address) == 1){
                             this.opcodeToMode(Opcode.getUdecNumber());
                         }else{
@@ -499,7 +504,12 @@ class CometEmulator{
                         adr.active();
                         r2.active();
                         Controler.active();
-                        this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+
+                        if(r1.getUdecNumber() != 0){
+                            this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
+                            COMETLine[66].active();
+                            COMETLine[68].active();
+                        }
                         
                         //r2が0以外の時は指標レジスタ有効のためALUにアクセスする
                         if(r2.getUdecNumber() != 0){
@@ -531,6 +541,7 @@ class CometEmulator{
                             this.registerAddressActiveLine(r2.getUdecNumber());
                             COMETLine[55].active();
                             COMETLine[56].active();
+                            COMETLine[68].active();
                         }
 
                         this.opcodeToMode(Opcode.getUdecNumber());
@@ -1667,7 +1678,180 @@ class CometEmulator{
                     default:
                         return 0;
                 }
-            break;            
+            break;
+            //PUSH    
+            case 0x70:
+                switch(this.counter){
+                    case 32:
+                        SP.active();
+                        Controler.active();
+                        registerAllSet(9,SP.getUdecNumber()-1);
+                    break;
+                    case 33:
+                        MAR.active();
+                        MARunder.active();
+                        MDR.active();
+                        MAR.setText(SP.getText());
+                        MAR.setUdecNumber(SP.getUdecNumber());
+                    break;
+                    case 34:
+                        MAR.active();
+                        MDR.active();
+                        registerAllSet(9,SP.getUdecNumber()+1);
+                        cometPUSH(this.address);
+                        Controler.active();
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //POP
+            case 0x71:
+                switch(this.counter){
+                    case 35:
+                        SP.active();
+                        MAR.active();
+                        MAR.setText(SP.getText());
+                        MAR.setUdecNumber(SP.getUdecNumber());
+                        Controler.active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                    break;
+                    case 36:
+                        SP.active();
+                        registerAllSet(9,SP.getUdecNumber()+1);
+                        MAR.active();
+                        Controler.active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                    break;
+                    case 37:
+                        SP.active();
+                        MDR.active();
+                        Controler.active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(memoryUdecGet(MAR.getUdecNumber())));
+                    break;
+                    case 38:
+                        MDR.active();
+                        Decoder.active();
+                        Opcode.active();
+                        r1.active();
+                        this.registerAccsessLine(r1.getUdecNumber(),0);
+                        this.registerControlActiveLine(r1.getUdecNumber());
+                        Controler.active();
+                        registerAllSet(9,SP.getUdecNumber()-1);
+                        cometPOP(this.address);
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //CALL
+            case 0x80:
+                switch(this.counter){
+                    case 39:
+                        SP.active();
+                        Controler.active();
+                        registerAllSet(9,SP.getUdecNumber()-1);
+                    break;
+                    case 40:
+                        SP.active();
+                        Controler.active();
+                        MAR.active();
+                        MAR.setText(SP.getText());
+                        MAR.setUdecNumber(SP.getUdecNumber());
+                    break;
+                    case 41:
+                        MAR.active();
+                        MDR.active();
+                        Controler.active();
+                        PR.active();
+                        MDR.setUdecNumber(registerUdecGet(8));
+                        MDR.setText(PR.getText());
+                    break;
+                    case 42:
+                        MDR.active();
+                        MAR.active();
+                        Controler.active();
+                        memoryAllSet(registerUdecGet(9),MDR.getUdecNumber());
+                        stackTableRowColorSet(registerUdecGet(9),'#00FF00');
+                        stackTableRowColorSet(registerUdecGet(9)+1,'#FFFFFF');
+                    break;
+                    case 43:
+                        Controler.active();
+                        MARunder.active();
+                        PR.active();
+                        prValueSet(MARunder.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            //RET
+            case 0x81:
+                switch(this.counter){
+                    case 44:
+                        if(registerUdecGet(9)>=0xFFFF){
+                            infoModal("プログラム終了");
+                            this.counter=44;
+                            return 1;
+                        }
+                        Decoder.active();
+                        Controler.active();
+                        SP.active();
+                        MAR.active();
+                        Opcode.active();
+                        MAR.setUdecNumber(registerUdecGet(9));
+                        MAR.setText(toHex(registerUdecGet(9)));
+                    break;
+                    case 45:
+                        Decoder.active();
+                        Controler.active();
+                        SP.active();
+                        MAR.active();
+                        Opcode.active();
+                        registerAllSet(9,SP.getUdecNumber()+1);
+                        stackTableRowColorSet(registerUdecGet(9),'#00FF00');
+                        stackTableRowColorSet(SP.getUdecNumber(),'#FFFFFF');
+                    break;
+                    case 46:
+                        Decoder.active();
+                        Controler.active();
+                        MAR.active();
+                        MDR.active();
+                        Opcode.active();
+                        MDR.setUdecNumber(memoryUdecGet(MAR.getUdecNumber()));
+                        MDR.setText(toHex(MDR.getUdecNumber()));
+                    break;
+                    case 47:
+                        Decoder.active();
+                        Controler.active();
+                        MAR.active();
+                        MDR.active();
+                        Opcode.active();
+                        PR.active();
+                        prValueSet(MDR.getUdecNumber());
+                    break;
+                    default:
+                        return 0;
+                }
+            break;
+            case 0x00:
+                return 0;
+            break;
+            case 0xF0:
+                cometSVC(this.address);
+                return 0;
+            break;
             }
         //再描画
         redraw();
@@ -1735,6 +1919,12 @@ class CometEmulator{
         }else{
             COMETLine[69+r2].setColor("#0000FF");
         }
+
+        if(r1 > 0){
+            COMETLine[66].active();
+            COMETLine[68].active();
+        }
+
         if(r1 != 0 && r1 != 7){
             COMETLine[76+r1].active();
             COMETLine[76+r1].setColor("#00FF00");
@@ -1752,6 +1942,7 @@ class CometEmulator{
             COMETLine[i].active();
             COMETLine[i].setColor("#00FF00");
         }
+
         for(var i= 71;i < 71 + r2 - 1 && r2 >= 2;i++){
             if(!COMETLine[i].getActive()){
                 COMETLine[i].active();
@@ -1760,6 +1951,7 @@ class CometEmulator{
                 COMETLine[i].setColor("#00FFFF");
             }
         }
+
         COMETLine[68].setColor(col);
     }
     /**
@@ -1943,6 +2135,36 @@ class CometEmulator{
             case 0x66:
                 this.mode = op;
                 this.counter = 29;
+            break;
+            //PUSH
+            case 0x70:
+                this.mode = op;
+                this.counter = 31;
+            break;
+            //POP
+            case 0x71:
+                this.mode = op;
+                this.counter = 34;
+            break;
+            //CALL
+            case 0x80:
+                this.mode = op;
+                this.counter = 38;
+            break;
+            //CALL
+            case 0x81:
+                this.mode = op;
+                this.counter = 43;
+            break;
+            //RET
+            case 0x00:
+                this.mode = op;
+                this.counter = 100;
+            break;
+            //SVC
+            case 0xF0:
+                this.mode = op;
+                this.counter = 100;
             break;
             default:
                 alert("未定義op : "+op);
@@ -2231,12 +2453,12 @@ var InstructionfetchCycle = [
     [0],                //5
     [0,11],             //6 
     [61,60,12,14,38],   //7
-    [63,64],      //8
-    [65,66,68],         //9
-    [58,59,66,68],      //10
-    [16,58,59,66,68],   //11
-    [7,66,68],          //12
-    [0,66,68],          //13
+    [63,64],            //8
+    [65],               //9
+    [58,59],            //10
+    [16,58,59],         //11
+    [7],                //12
+    [0],                //13
     [0,11,66,68],       //14
     [9,10,13,14,15,66,68],//15
     [15,20,21,66,68],   //16
@@ -2255,8 +2477,25 @@ var InstructionfetchCycle = [
     [20,21,66,68],      //28
     [13,14,15,38],      //29
     //JUMP系統
-    [],          //30
-    [4,5]               //31
+    [],                 //30
+    [4,5],              //31
+    [],                 //32             
+    [1,38,18],          //33
+    [0],                //34
+    //POP
+    [1,3,66,68],        //35
+    [0,66,68],          //36
+    [11,66,68],         //37
+    [12,14,38,66,68],   //38
+    [],                 //39
+    [1,3],              //40
+    [0],                //41
+    [0,11],             //42
+    [5,4],              //43
+    [1,3],              //44
+    [0],                //45
+    [0,11],             //46
+    [4,6],
 ];
 
 /**
@@ -2435,6 +2674,8 @@ function registerCometSync(address){
         GR[address].setText(toHex(registerval));
         GR[address].setUdecNumber(registerval);
     }
+    SP.setText(toHex(registerHexGet(9)));
+    SP.setUdecNumber(registerHexGet(9));
 }
 /**
  * flagRegisterTableとCOMETIIの値を同期させる
@@ -2451,6 +2692,7 @@ function flagRegisterCometSync(){
  */
 function prCometSync(value){
     PR.setText(toHex(value));
+    PR.setUdecNumber(value);
 }
 function mousePressed(){
 }
