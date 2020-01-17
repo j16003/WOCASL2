@@ -921,6 +921,7 @@ function ajaxJsonToMemoryMap(obj){
             message = element.Line+"行目</br>"+element.Message+" <br> ";
             errorModal(message);
             selectLine(parseInt(element.Line));
+            
         });
         setEnableCaslButton(true);
     }
@@ -1015,9 +1016,7 @@ function initMemoryRegister(){
  * @param {string} message - モーダルに表示したいメッセージ
  */
 function errorModal(message){
-    if(Math.random()*100%100<1){
-        message=message+'<img src="losecat.jpg"  alt="losecat" class="img-fluid">';
-    }
+
     $('#errorModal').on('shown.bs.modal',function(){
         $('#okButton').trigger('focus');
         
@@ -1033,9 +1032,7 @@ function errorModal(message){
  * @param {string} message - モーダルに表示したいメッセージ
  */
 function successModal(message){
-    if(Math.random()*100%100<1){
-        message=message+'<img src="successcat.jpg"  alt="successcat" class="img-fluid">';
-    }
+
     $('#successModal').on('shown.bs.modal',function(){
         $('#okButton2').trigger('focus');
     });

@@ -527,6 +527,7 @@ class CometEmulator{
                         MARunder.active();
                         Controler.active();
                         r2.active();
+                        
                         this.registerAccsessLine(r1.getUdecNumber(),r2.getUdecNumber());
                         MARunder.setUdecNumber(adr.getUdecNumber());
                         if(r2.getUdecNumber() > 0){
