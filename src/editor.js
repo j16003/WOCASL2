@@ -173,6 +173,7 @@ function onLoad() {
 function selectLine(value){
   editor.selection.moveCursorToPosition({row:value-1,column:0});
   editor.selection.selectLine();
+  editor.gotoLine(value);
 }
 
 

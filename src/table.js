@@ -921,6 +921,7 @@ function ajaxJsonToMemoryMap(obj){
             message = element.Line+"行目</br>"+element.Message+" <br> ";
             errorModal(message);
             selectLine(parseInt(element.Line));
+            
         });
         setEnableCaslButton(true);
     }
