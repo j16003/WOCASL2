@@ -235,6 +235,13 @@ function registerBinSet(address,value){
  */
 function registerAllSet(address,value){
     let adr = parseInt(address, 10);
+
+    //Stackのカラー設定
+    if(adr == 9){
+        stackTableRowColorSet(registerUdecGet(9),"#FFFFFF");
+        stackTableRowColorSet(value,"#66FFFF");
+    }
+
     if(address >= 0 && address <= 7){
         adr += 3;
     }else if(address == 8||address == 9){
@@ -921,7 +928,7 @@ function ajaxJsonToMemoryMap(obj){
             message = element.Line+"行目</br>"+element.Message+" <br> ";
             errorModal(message);
             selectLine(parseInt(element.Line));
-            
+
         });
         setEnableCaslButton(true);
     }
@@ -944,6 +951,7 @@ function memoryTableRowColorSet(address,color){
             $(table[address+2]).addClass("table-"+color);
         }else{
             $(table[address+2]).addClass("table-danger");
+            //$(table[address+1]).addClass("blinking")
         }
     }else{
         $(table[address+1]).removeClass();
@@ -996,12 +1004,12 @@ function initMemoryRegister(){
         stackAllSet(0xFFFF-i,0);
         stackTableRowColorSet(0xFFFF-i,"#FFFFFF");
     }
-    for(i = 0 ; i < 10 ; i++){
+    for(i = 0 ; i < 9 ; i++){
         registerAllSetAndColor(i,0,"light");
     }
     memoryScrollset(0);
     stackScrollset(0xFFFF);
-    registerAllSet(9,65535);
+    registerAllSetAndColor(9,65535,"light");
     zeroFlagSet(1);
     signFlagSet(0);
     ofSdecFlagSet(0);

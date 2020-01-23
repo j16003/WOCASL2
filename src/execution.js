@@ -146,6 +146,7 @@ function onLoadExe() {
           .done(function(data) {
             prValueSet(0);
             ajaxJsonToMemoryMap(data);
+            prValueSet(0);
         })
           .fail(function() {
             errorModal("通信失敗 </br>ネットワークに接続しているか確認してください。");
@@ -733,8 +734,8 @@ function cometPUSH(pr){
     sp -= 1;
     stackAllSet(sp,address);
     registerAllSet(9,sp);
-    stackTableRowColorSet(sp,'#00FF00');
-    stackTableRowColorSet(sp+1,'#FFFFFF');
+    //stackTableRowColorSet(sp,'#00FF00');
+    //stackTableRowColorSet(sp+1,'#FFFFFF');
     StepBackControler.setStep(stepstruct);
     return 2;
 }
@@ -751,8 +752,8 @@ function cometPOP(pr){
         sp += 1;
         registerAllSet(9,sp);
         registerAllSet(r1,val);
-        stackTableRowColorSet(sp,'#66FFFF');
-        stackTableRowColorSet(sp-1,'#FFFFFF');
+        //stackTableRowColorSet(sp,'#66FFFF');
+        //stackTableRowColorSet(sp-1,'#FFFFFF');
         stepstruct.setStack(-1);
         StepBackControler.setStep(stepstruct);
     }else if(sp == 0xFFFE){
