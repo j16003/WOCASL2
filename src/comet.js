@@ -1803,8 +1803,9 @@ class CometEmulator{
                     case 44:
                         if(registerUdecGet(9)>=0xFFFF){
                             infoModal("プログラム終了");
+                            cometExecuteStop();
                             this.counter=44;
-                            return 1;
+                            return 0;
                         }
                         Decoder.active();
                         Controler.active();
