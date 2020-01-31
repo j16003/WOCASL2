@@ -103,6 +103,11 @@ function setEnableCaslButton(flag){
         $("#btnStop").prop("disabled", flag);
     }
 }
+/**
+ *
+ * setExecuteButton btnStepBackとbtnStepExecutionのdisableの値をセットする
+ * @param {boolean} flag - trueで有効、falseで無効
+ */
 function setExecuteButton(flag){
     $("#btnStepBack").prop("disabled", flag);
     $("#btnStepExecution").prop("disabled", flag);
@@ -209,6 +214,7 @@ function cometExecuteStart(){
         execute();
     }, COMETCYCLE);
 }
+
 function cometExecuteStop(){
     if(cometExecute != null){
         clearInterval(cometExecute);
@@ -825,6 +831,10 @@ function cometSVC(pr){
 
 let beforePC=0;
 
+/**
+ * execute プログラムレジスタのさすメモリ番地の命令を実行
+ * 
+ */
 function execute(){
     let pr = prUdecGet();
     let literal = memoryLiteralGet(pr);
