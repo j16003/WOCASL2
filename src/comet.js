@@ -2507,9 +2507,9 @@ var InstructionfetchCycle = [
  */
 class Cometp5Line{
     /** @member {number} */
-    id = 0;
+    //id=0;
     /** @member {booleam} disable*/
-    disable = true;
+    //disable = true;
     /**
      *Creates an instance of Cometp5Line.
      * @param {number} id - Line id
