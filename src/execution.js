@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', onLoadExe);
 var cometExecute = null;
 var COMETEmu = new CometEmulator();
 //cpu cycle
-const COMETCYCLE = 100;
+const COMETCYCLE = 1;
 /**
  *
  * Pair型の構造体
@@ -20,7 +20,7 @@ class Pair{
     }
 }
 /**
- * Stepの構造体
+ * StepStruct Stepの構造体
  * レジスターやメモリ・フラグ・スタックの状態を管理
  */ 
 class StepStruct{
@@ -44,7 +44,12 @@ class StepStruct{
         this.stack=stack;
     }
 }
-//stepBackControl
+
+/**
+ *
+ * StepBackControl StepStructのデータ操作用
+ * @class StepBackControl
+ */
 class StepBackControl{
     constructor(){
         this.stepBackArray = new Array();
@@ -204,8 +209,9 @@ function onLoadExe() {
     });
 }
 
+
 /**
- *
+ * cometExecuteStart 実行
  *
  */
 function cometExecuteStart(){
@@ -214,14 +220,23 @@ function cometExecuteStart(){
         execute();
     }, COMETCYCLE);
 }
-
+/**
+ * cometExecuteStop 停止
+ *
+ */
 function cometExecuteStop(){
     if(cometExecute != null){
         clearInterval(cometExecute);
     }
 }
+
+/**
+ *
+ * cometLAD LAD命令
+ * @param {number} pr プログラムレジスタ
+ * @returns {number} 命令語長
+ */
 function cometLAD(pr){
-    //
     StepBackControler.setStep(new StepStruct(null));
     
     let opcode = memoryHexGet(pr);
